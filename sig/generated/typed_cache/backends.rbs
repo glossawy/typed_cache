@@ -1,0 +1,21 @@
+# Generated from lib/typed_cache/backends.rb with RBS::Inline
+
+module TypedCache
+  module Backends
+    # Backend registry using composition
+    REGISTRY: untyped
+
+    extend Forwardable
+
+    # : -> Registry
+    def self.registry: () -> Registry
+
+    def resolve: (Symbol, *untyped, **untyped) -> either[Error, Store[untyped]]
+
+    def available: () -> Array[Symbol]
+
+    def register: (Symbol, Class) -> either[Error, void]
+
+    def registered?: (Symbol) -> bool
+  end
+end

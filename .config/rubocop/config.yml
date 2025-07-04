@@ -1,0 +1,34 @@
+inherit_mode:
+  Include:
+    - Include
+    - Exclude
+    - inherit_gem
+    - plugins
+    - requires
+
+inherit_from:
+  - shopify.yml
+  - rspec.yml
+  - performance.yml
+
+plugins:
+  - rubocop-thread_safety
+  - rubocop-rake
+
+AllCops:
+  TargetRubyVersion: 3.2
+
+Style/StringLiterals:
+  EnforcedStyle: single_quotes
+
+Style/Alias:
+  EnforcedStyle: prefer_alias
+
+Style/MethodCallWithArgsParentheses:
+  EnforcedStyle: require_parentheses
+
+Style/SymbolProc:
+  Enabled: false
+
+Layout/LeadingCommentSpace:
+  AllowRBSInlineAnnotation: true

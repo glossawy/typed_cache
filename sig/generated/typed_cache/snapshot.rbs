@@ -1,0 +1,50 @@
+# Generated from lib/typed_cache/snapshot.rb with RBS::Inline
+
+module TypedCache
+  # Immutable snapshot of a cached value with metadata about its source and age
+  # @rbs generic V
+  class Snapshot[V]
+    attr_reader value: V
+
+    attr_reader retrieved_at: Time
+
+    attr_reader source: Symbol
+
+    # : (V, source: Symbol, retrieved_at: Time) -> void
+    def initialize: (V, source: Symbol, retrieved_at: Time) -> void
+
+    # Age of the snapshot in seconds
+    # : -> Float
+    def age: () -> Float
+
+    # Whether this value came from cache
+    # : -> bool
+    def from_cache?: () -> bool
+
+    # Whether this value was freshly computed
+    # : -> bool
+    def computed?: () -> bool
+
+    # Whether this value was updated
+    # : -> bool
+    def updated?: () -> bool
+
+    # Map over the value while preserving snapshot metadata
+    # : [R] () { (V) -> R } -> Snapshot[R]
+    def map: [R] () { (V) -> R } -> Snapshot[R]
+
+    # Bind over the value with Either error handling
+    # : [R] () { (V) -> either[Error, R] } -> either[Error, Snapshot[R]]
+    def bind: [R] () { (V) -> either[Error, R] } -> either[Error, Snapshot[R]]
+
+    alias flat_map bind
+
+    # Creates a snapshot for a computed value
+    # : [V] (V) -> Snapshot[V]
+    def self.computed: [V] (V) -> Snapshot[V]
+
+    # Creates a snapshot for an updated value
+    # : [V] (V) -> Snapshot[V]
+    def self.updated: [V] (V) -> Snapshot[V]
+  end
+end

@@ -1,0 +1,19 @@
+= Versions
+
+== 0.1.0 (2025-07-21)
+
+* Added robust, type-safe caching library with monadic results
+* Implemented core features:
+  - Monadic cache operations with explicit `Either` result types
+  - Immutable cache objects with rich metadata (source, age)
+  - Flexible backend implementations with consistent `Store` interface
+  - Support for ActiveSupport::Cache backend out of the box
+* Introduced namespacing to prevent key collisions
+* Added instrumentation decorator for cache operation tracking
+* Provided RBS type signatures for strong type safety
+* Implemented error handling with comprehensive cache miss and store error scenarios
+
+
+== 0.0.0 (2025-07-04)
+
+* Added initial implementation.

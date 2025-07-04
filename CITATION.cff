@@ -1,0 +1,16 @@
+cff-version: 1.2.0
+message:
+  Please use the following metadata when citing this project in your work.
+title: Typed Cache
+abstract:
+version: 0.1.0
+license: Apache-2.0
+date-released: 2025-07-21
+authors:
+  - family-names: Winter
+    given-names: Autumn
+keywords:
+  - ruby
+repository-code: https://github.com/glossawy/typed_cache
+repository-artifact: https://rubygems.org/gems/typed_cache
+url: https://github.com/glossawy/typed_cache

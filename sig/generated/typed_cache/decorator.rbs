@@ -1,0 +1,14 @@
+# Generated from lib/typed_cache/decorator.rb with RBS::Inline
+
+module TypedCache
+  # Marker mixin for cache store decorators. A decorator behaves exactly like a
+  # Store but must accept another Store instance in its constructor.
+  # @rbs generic V
+  module Decorator[V]
+    include Store[V]
+
+    include Store::_Store[V]
+
+    include Store::_Decorator[V]
+  end
+end

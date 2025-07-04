@@ -1,0 +1,60 @@
+# Generated from lib/typed_cache/backends/active_support.rb with RBS::Inline
+
+module TypedCache
+  module Backends
+    # Adapter that wraps any ActiveSupport::Cache::Store to work with TypedCache
+    # @rbs generic V
+    class ActiveSupport[V]
+      include Backend[V]
+
+      attr_reader namespace: Namespace
+
+      attr_reader cache_store: ::ActiveSupport::Cache::Store
+
+      attr_reader default_options: Hash[Symbol, top]
+
+      # : (Namespace, ::ActiveSupport::Cache::Store, ?Hash[Symbol, top]) -> void
+      def initialize: (Namespace, ::ActiveSupport::Cache::Store, ?Hash[Symbol, top]) -> void
+
+      # @rbs override
+      # : (cache_key) -> either[Error, Snapshot[V]]
+      def get: ...
+
+      # @rbs override
+      # : (cache_key) -> CacheRef[V]
+      def ref: ...
+
+      # @rbs override
+      # : (cache_key, V) -> either[Error, Snapshot[V]]
+      def set: ...
+
+      # @rbs override
+      # : (cache_key) -> either[Error, Snapshot[V]]
+      def delete: ...
+
+      # @rbs override
+      # : (cache_key) -> bool
+      def key?: ...
+
+      # @rbs override
+      # : -> maybe[Error]
+      def clear: ...
+
+      # @rbs override
+      # : -> String
+      def store_type: ...
+
+      # : (Hash[Symbol, top]) -> ActiveSupport[V]
+      def with_options: (Hash[Symbol, top]) -> ActiveSupport[V]
+
+      # : -> ::ActiveSupport::Cache::Store
+      def raw_cache: () -> ::ActiveSupport::Cache::Store
+
+      private
+
+      # Regex patterns that match keys for this namespace (with trailing colon)
+      # : -> Array[Regexp]
+      def namespace_prefix_patterns: () -> Array[Regexp]
+    end
+  end
+end

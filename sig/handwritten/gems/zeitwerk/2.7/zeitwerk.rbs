@@ -1,0 +1,9 @@
+
+
+module Zeitwerk
+  class Loader
+    def self.for_gem: -> instance
+
+    def setup: -> void
+  end
+end

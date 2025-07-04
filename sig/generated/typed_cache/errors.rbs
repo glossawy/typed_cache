@@ -1,0 +1,51 @@
+# Generated from lib/typed_cache/errors.rb with RBS::Inline
+
+module TypedCache
+  # Base error class for TypedCache operations
+  class Error < StandardError
+  end
+
+  # Store operation errors (network, I/O, etc.)
+  class StoreError < Error
+    attr_reader operation: untyped
+
+    attr_reader key: untyped
+
+    attr_reader original_error: untyped
+
+    # @rbs (Symbol, String, String, Exception?) -> void
+    def initialize: (Symbol, String, String, Exception?) -> void
+
+    # @rbs () -> String
+    def detailed_message: () -> String
+
+    # @rbs () -> bool
+    def has_cause?: () -> bool
+  end
+
+  # Type safety violations
+  class TypeError < Error
+    attr_reader expected_type: untyped
+
+    attr_reader actual_type: untyped
+
+    attr_reader value: untyped
+
+    # @rbs (String, String, untyped, String) -> void
+    def initialize: (String, String, untyped, String) -> void
+
+    # @rbs () -> String
+    def type_mismatch_message: () -> String
+  end
+
+  # Cache miss (when expecting a value to exist)
+  class CacheMissError < Error
+    attr_reader key: untyped
+
+    # @rbs (CacheKey) -> void
+    def initialize: (CacheKey) -> void
+
+    # @rbs () -> bool
+    def cache_miss?: () -> bool
+  end
+end

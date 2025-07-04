@@ -1,0 +1,34 @@
+# Generated from lib/typed_cache.rb with RBS::Inline
+
+module TypedCache
+  extend Dry::Configurable
+
+  interface _TypedCacheInstrumentationConfig
+    def enabled: () -> bool
+
+    def namespace: () -> String
+  end
+
+  interface _TypedCacheConfig
+    def default_namespace: () -> String
+
+    def instrumentation: () -> _TypedCacheInstrumentationConfig
+  end
+
+  type typed_cache_config = _TypedCacheConfig
+
+  # Returns a CacheBuilder with the fluent interface
+  # @rbs [V] () -> CacheBuilder[V]
+  def self.builder: [V] () -> CacheBuilder[V]
+
+  def config: () -> _TypedCacheConfig
+
+  # @rbs () -> singleton(Instrumentation)
+  def self.instrumentation: () -> singleton(Instrumentation)
+
+  # @rbs () -> Registry[backend[untyped]]
+  def self.backends: () -> Registry[backend[untyped]]
+
+  # @rbs () -> Register[decorator[untyped]]
+  def self.decorators: () -> Register[decorator[untyped]]
+end

@@ -1,0 +1,30 @@
+# Generated from lib/typed_cache/instrumentation.rb with RBS::Inline
+
+module TypedCache
+  # Instrumentation hooks for ActiveSupport::Notifications integration
+  # All instrumentation is explicit and opt-in - no automatic behavior
+  module Instrumentation
+    type config = TypedCache::_TypedCacheInstrumentationConfig
+
+    # @rbs () -> config
+    def self.config: () -> config
+
+    # Check if ActiveSupport::Notifications is available
+    # @rbs () -> bool
+    def self.notifications_available?: () -> bool
+
+    # Main instrumentation method
+    # : [T] (String, String, String, Hash[Symbol, untyped]) { -> T } -> T
+    def self.instrument: [T] (String, String, String, Hash[Symbol, untyped]) { () -> T } -> T
+
+    # Cross-platform current time helper (uses Time.current when available)
+    # : -> Time
+    private def self.current_time: () -> Time
+
+    # @rbs (String, String, Time) -> Hash[Symbol, untyped]
+    private def self.base_payload: (String, String, Time) -> Hash[Symbol, untyped]
+
+    # @rbs (Either[StandardError, Snapshot]) -> [bool, Hash[Symbol, untyped]]
+    private def self.extract_result_metadata: (Either[StandardError, Snapshot]) -> [ bool, Hash[Symbol, untyped] ]
+  end
+end

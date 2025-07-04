@@ -1,0 +1,91 @@
+# Generated from lib/typed_cache/cache_ref.rb with RBS::Inline
+
+module TypedCache
+  # A monadic wrapper for cached values that provides safe access with rich error context.
+  # All operations return Either[Error, Snapshot[V]] to provide detailed information about
+  # cache operations and the source of values.
+  #
+  # @rbs generic V
+  class CacheRef[V]
+    attr_reader store: Store[V]
+
+    attr_reader key: CacheKey
+
+    # : (Store[V], CacheKey) -> void
+    def initialize: (Store[V], CacheKey) -> void
+
+    # Gets a value from the cache as a snapshot
+    # : -> either[Error, Snapshot[V]]
+    def get: () -> either[Error, Snapshot[V]]
+
+    # Sets a value in the cache and returns it as an updated snapshot
+    # : (V) -> either[Error, Snapshot[V]]
+    def set: (V) -> either[Error, Snapshot[V]]
+
+    # Deletes the value from the cache and returns the deleted value as a snapshot
+    # : -> either[Error, Snapshot[V]]
+    def delete: () -> either[Error, Snapshot[V]]
+
+    # Fetches a value from cache, computing and storing it if not found
+    # The snapshot indicates whether the value came from cache or was computed
+    # : () { -> V } -> either[Error, Snapshot[V]]
+    def fetch: () { () -> V } -> either[Error, Snapshot[V]]
+
+    # Checks if the cache contains a value for this key
+    # : -> bool
+    def present?: () -> bool
+
+    # Checks if the cache is empty for this key
+    # : -> bool
+    def empty?: () -> bool
+
+    # Maps over the cached value if it exists, preserving snapshot metadata
+    # : [R] () { (V) -> R } -> either[Error, Snapshot[R]]
+    def map: [R] () { (V) -> R } -> either[Error, Snapshot[R]]
+
+    # Binds over the cached value, allowing for monadic composition with snapshots
+    # : [R] () { (V) -> either[Error, R] } -> either[Error, Snapshot[R]]
+    def bind: [R] () { (V) -> either[Error, R] } -> either[Error, Snapshot[R]]
+
+    alias flat_map bind
+
+    # Updates the cached value using the provided block
+    # Returns the updated value as a snapshot with source=:updated
+    # : () { (V) -> V } -> either[Error, Snapshot[V]]
+    def update: () { (V) -> V } -> either[Error, Snapshot[V]]
+
+    # Returns the cached value or a default if the cache is empty/errored
+    # : (V) -> V
+    def value_or: (V) -> V
+
+    # Returns a Maybe containing the cached value, or None if not present
+    # This provides a more functional approach than value_or
+    # : -> maybe[V]
+    def value_maybe: () -> maybe[V]
+
+    # Computes and caches a value if the cache is currently empty
+    # Returns existing snapshot if present, computed snapshot if cache miss, error otherwise
+    # : () { -> V } -> either[Error, Snapshot[V]]
+    def compute_if_absent: () { () -> V } -> either[Error, Snapshot[V]]
+
+    # Creates a new CacheRef with the same store but different key
+    # : [R] (String) -> CacheRef[R]
+    def with_key: [R] (String) -> CacheRef[R]
+
+    # Creates a scoped CacheRef by appending to the current key path
+    # : [R] (String) -> CacheRef[R]
+    def scope: [R] (String) -> CacheRef[R]
+
+    # Pattern matching support for Either[Error, Snapshot[V]] results
+    # : [R] () { (Error) -> R } () { (Snapshot[V]) -> R } -> R
+    def fold: (untyped left_fn, untyped right_fn) -> untyped
+
+    # Convenience method to work with the snapshot directly
+    # : [R] () { (Snapshot[V]) -> R } -> either[Error, R]
+    def with_snapshot: [R] () { (Snapshot[V]) -> R } -> either[Error, R]
+
+    # Convenience method to work with just the value (losing snapshot context)
+    # : [R] () { (V) -> R } -> either[Error, R]
+    def with: [R] () { (V) -> R } -> either[Error, R]
+  end
+end

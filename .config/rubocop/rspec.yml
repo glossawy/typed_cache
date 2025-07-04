@@ -1,0 +1,33 @@
+plugins:
+  - rubocop-rspec
+
+RSpec/ChangeByZero:
+  Enabled: true
+
+RSpec/SubjectDeclaration:
+  Enabled: true
+
+RSpec/NamedSubject:
+  Enabled: true
+
+RSpec/ExampleLength:
+  Enabled: true
+  Max: 10
+
+RSpec/MultipleMemoizedHelpers:
+  Enabled: true
+  Max: 15
+
+RSpec/ContextWording:
+  Exclude:
+    - spec/integration/**/*.rb
+
+RSpec/ContextMethod:
+  Enabled: true
+
+RSpec/DescribeMethod:
+  Enabled: true
+
+RSpec/MultipleExpectations:
+  Exclude:
+    - spec/integration/**/*.rb

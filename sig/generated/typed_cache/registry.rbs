@@ -1,0 +1,25 @@
+# Generated from lib/typed_cache/registry.rb with RBS::Inline
+
+module TypedCache
+  # Generic registry for managing class-based factories
+  # @rbs generic T
+  class Registry[T]
+    # @rbs (String, Hash[Symbol, Class[T]]) -> void
+    def initialize: (String, Hash[Symbol, Class[T]]) -> void
+
+    # @rbs (Symbol, *untyped, **untyped) -> either[Error, T]
+    def resolve: (Symbol, *untyped, **untyped) -> either[Error, T]
+
+    # @rbs (Symbol) -> maybe[Class[T]]
+    def find: (Symbol) -> maybe[Class[T]]
+
+    # @rbs (Symbol, Class[T]) -> either[Error, void]
+    def register: (Symbol, Class[T]) -> either[Error, void]
+
+    # @rbs () -> Array[Symbol]
+    def available: () -> Array[Symbol]
+
+    # @rbs (Symbol) -> bool
+    def registered?: (Symbol) -> bool
+  end
+end

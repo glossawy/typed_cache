@@ -1,0 +1,106 @@
+# Generated from lib/typed_cache/either.rb with RBS::Inline
+
+module TypedCache
+  type either[out E, out R] = (Left[E] | Right[R]) & _Either[E, R]
+
+  module Either
+    include Kernel
+
+    # : [E] (E) -> either[E, bot]
+    def self.left: [E] (E) -> either[E, bot]
+
+    # : [R] (R) -> either[bot, R]
+    def self.right: [R] (R) -> either[bot, R]
+
+    # : [E, R] (E | R) -> either[E, R]
+    def self.wrap: [E, R] (E | R) -> either[E, R]
+  end
+
+  interface _Either[out E, out R]
+    def left?: () -> bool
+
+    def right?: () -> bool
+
+    def map: [T] () { (R) -> T } -> either[E, T]
+
+    def bind: [E2, R2] () { (R) -> either[E2, R2] } -> either[E | E2, R2]
+
+    def map_left: [F] () { (E) -> F } -> either[F, R]
+
+    def fold: [T, E, R] (^(E) -> T, ^(R) -> T) -> T
+  end
+
+  # @rbs generic out E
+  class Left[out E]
+    include _Either[E, bot]
+
+    attr_reader error: E
+
+    # : (E) -> void
+    def initialize: (E) -> void
+
+    # @rbs override
+    # : -> true
+    def left?: ...
+
+    # @rbs override
+    # : -> false
+    def right?: ...
+
+    # @rbs override
+    # : [T] () { (R) -> T } -> either[E, T]
+    def map: ...
+
+    # @rbs override
+    # : [E2, R2] () { (R) -> either[E2, R2] } -> either[E | E2, R2]
+    def bind: ...
+
+    # @rbs override
+    # : [F] () { (E) -> F } -> either[F, R]
+    def map_left: ...
+
+    # @rbs override
+    # : [T, E, R] (^(E) -> T, ^(R) -> T) -> T
+    def fold: ...
+
+    # : (Array[top]) -> ({ error: E })
+    def deconstruct_keys: (Array[top]) -> { error: E }
+  end
+
+  # @rbs generic out R
+  class Right[out R]
+    include _Either[bot, R]
+
+    attr_reader value: R
+
+    # : (R) -> void
+    def initialize: (R) -> void
+
+    # @rbs override
+    # : -> false
+    def left?: ...
+
+    # @rbs override
+    # : -> true
+    def right?: ...
+
+    # @rbs override
+    # : [T] () { (R) -> T } -> either[E, T]
+    def map: ...
+
+    # @rbs override
+    # : [E2, R2] () { (R) -> either[E2, R2] } -> either[E | E2, R2]
+    def bind: ...
+
+    # @rbs override
+    # : [F] () { (E) -> F } -> either[F, R]
+    def map_left: ...
+
+    # @rbs override
+    # : [T, E, R] (^(E) -> T, ^(R) -> T) -> T
+    def fold: ...
+
+    # : (Array[top]) -> ({ value: R })
+    def deconstruct_keys: (Array[top]) -> { value: R }
+  end
+end

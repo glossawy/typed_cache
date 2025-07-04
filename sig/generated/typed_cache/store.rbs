@@ -1,0 +1,101 @@
+# Generated from lib/typed_cache/store.rb with RBS::Inline
+
+module TypedCache
+  # Generic interface for type-safe cache storage implementations
+  # All stores are assumed to handle namespacing internally
+  #
+  # This interface follows the Command-Query Separation principle:
+  # - Commands (set, delete, clear) perform actions and may return results
+  # - Queries (get, key?, fetch) ask questions without side effects
+  #
+  # @rbs generic V
+  module Store[V]
+    type cache_key = String | CacheKey
+
+    interface _Store[V]
+      def get: (cache_key) -> either[Error, Snapshot[V]]
+
+      def ref: (cache_key) -> CacheRef[V]
+
+      def set: (cache_key, V) -> either[Error, Snapshot[V]]
+
+      def delete: (cache_key) -> either[Error, Snapshot[V]]
+
+      def key?: (cache_key) -> bool
+
+      def clear: () -> maybe[Error]
+
+      def fetch: (cache_key) { () -> V } -> either[Error, Snapshot[V]]
+
+      def namespace: () -> Namespace
+
+      def with_namespace: (Namespace) -> Store[V]
+
+      def store_type: () -> String
+    end
+
+    include _Store[V]
+
+    interface _Decorator[V]
+      def initialize: (Store[V]) -> void
+    end
+
+    # @rbs (Store[V]) -> void
+    def initialize_copy: (Store[V]) -> void
+
+    # Retrieves a value from the cache
+    # @rbs (cache_key) -> either[Error, Snapshot[V]]
+    def get: (cache_key) -> either[Error, Snapshot[V]]
+
+    # Retrieves a cache reference for a key
+    # @rbs (cache_key) -> CacheRef[V]
+    def ref: (cache_key) -> CacheRef[V]
+
+    # Stores a value in the cache
+    # @rbs (cache_key, V) -> either[Error, Snapshot[V]]
+    def set: (cache_key, V) -> either[Error, Snapshot[V]]
+
+    # Removes a value from the cache, returning the removed value
+    # @rbs (cache_key) -> either[Error, Snapshot[V]]
+    def delete: (cache_key) -> either[Error, Snapshot[V]]
+
+    # Checks if a key exists in the cache (query operation)
+    # @rbs (cache_key) -> bool
+    def key?: (cache_key) -> bool
+
+    # Clears all values from the cache namespace (command operation)
+    # @rbs () -> maybe[Error]
+    def clear: () -> maybe[Error]
+
+    # Fetches a value from cache, computing and storing it if not found
+    # This is an atomic operation that combines get and set
+    # @rbs (cache_key) { () -> V } -> either[Error, Snapshot[V]]
+    def fetch: (cache_key) { () -> V } -> either[Error, Snapshot[V]]
+
+    # Returns the namespace for this store (for instrumentation/debugging)
+    # @rbs () -> Namespace
+    def namespace: () -> Namespace
+
+    # Accepts a String segment or a fully-formed Namespace and returns a cloned
+    # store scoped to that namespace.
+    # @rbs (Namespace | String) -> Store[V]
+    def with_namespace: (Namespace | String) -> Store[V]
+
+    # Returns the store type identifier for instrumentation/debugging
+    # @rbs () -> String
+    def store_type: () -> String
+
+    attr_writer namespace: Namespace
+
+    private
+
+    # : (cache_key) -> CacheKey
+    def namespaced_key: (cache_key) -> CacheKey
+  end
+
+  type backend[V] = Store::_Store[V]
+
+  type decorator[V] = backend[V] & Store::_Decorator[V]
+
+  type store[V] = backend[V] | decorator[V]
+end

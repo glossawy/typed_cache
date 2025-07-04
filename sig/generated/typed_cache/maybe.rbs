@@ -1,0 +1,85 @@
+# Generated from lib/typed_cache/maybe.rb with RBS::Inline
+
+module TypedCache
+  type maybe[T] = (Nothing | Some[T]) & _Maybe[T]
+
+  module Maybe
+    include Kernel
+
+    # : [V](V) -> maybe[V]
+    def self.some: [V] (V) -> maybe[V]
+
+    # : -> maybe[bot]
+    def self.none: () -> maybe[bot]
+
+    # : [V](V? | maybe[V]) -> maybe[V]
+    def self.wrap: [V] (V? | maybe[V]) -> maybe[V]
+
+    alias self.[] self.some
+  end
+
+  interface _Maybe[out V]
+    def some?: () -> bool
+
+    def nothing?: () -> bool
+
+    def map: [T] () { (V) -> T } -> maybe[T]
+
+    def bind: [T] () { (V) -> maybe[T] } -> maybe[T]
+
+    alias flat_map bind
+  end
+
+  # @rbs generic out V
+  class Some[out V]
+    include _Maybe[V]
+
+    attr_reader value: V
+
+    # : (V) -> void
+    def initialize: (V) -> void
+
+    # @rbs override
+    # : -> TrueClass
+    def some?: ...
+
+    # @rbs override
+    # : -> FalseClass
+    def nothing?: ...
+
+    # @rbs override
+    # : [T] () { (V) -> T } -> maybe[T]
+    def map: ...
+
+    # @rbs override
+    # : [T] () { (V) -> maybe[T] } -> maybe[T]
+    def bind: ...
+
+    alias flat_map bind
+
+    # : (Array[top]) -> ({ value: V })
+    def deconstruct_keys: (Array[top]) -> { value: V }
+  end
+
+  class Nothing
+    include _Maybe[bot]
+
+    # @rbs override
+    # : -> FalseClass
+    def some?: ...
+
+    # @rbs override
+    # : -> TrueClass
+    def nothing?: ...
+
+    # @rbs override
+    # : [T] () { (V) -> T } -> maybe[T]
+    def map: ...
+
+    # @rbs override
+    # : [T] () { (V) -> maybe[T] } -> maybe[T]
+    def bind: ...
+
+    alias flat_map bind
+  end
+end

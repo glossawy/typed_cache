@@ -1,0 +1,37 @@
+# Generated from lib/typed_cache/cache_builder.rb with RBS::Inline
+
+module TypedCache
+  class CacheBuilder
+    type config = TypedCache::typed_cache_config
+
+    # @rbs (config, Registry[backend[untyped]], Registry[decorator[untyped]]) -> void
+    def initialize: (config, Registry[backend[untyped]], Registry[decorator[untyped]]) -> void
+
+    # Builds the cache - the only method that can fail
+    # @rbs (?Namespace) -> either[Error, Store[V]]
+    def build: (?Namespace) -> either[Error, Store[V]]
+
+    # Familiar Ruby fluent interface - always succeeds
+    # Invalid configurations are caught during build()
+    # @rbs [V]() { (Registry[Store[untyped]], Namespace) -> Store[V] } -> self
+    def with_backend: [V] () { (Registry[Store[untyped]], Namespace) -> Store[V] } -> self
+
+    # Adds an arbitrary decorator by registry key
+    # @rbs (Symbol) -> self
+    def with_decorator: (Symbol) -> self
+
+    # @rbs () -> self
+    def with_instrumentation: () -> self
+
+    private
+
+    # @rbs (Namespace) -> either[Error, Store[V]]
+    def validate_and_build: (Namespace) -> either[Error, Store[V]]
+
+    # @rbs (Namespace) -> either[Error, Store[V]]
+    def create_store: (Namespace) -> either[Error, Store[V]]
+
+    # @rbs (Store[V]) -> either[Error, Store[V]]
+    def apply_decorators: (Store[V]) -> either[Error, Store[V]]
+  end
+end

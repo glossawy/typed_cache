@@ -1,0 +1,12 @@
+plugins:
+  - rubocop-performance
+
+Performance/OpenStruct:
+  Enabled: true
+
+Performance/Casecmp:
+  Enabled: true
+  Severity: info
+  Details:
+    Using casecmp could improve performance here, but will not work with
+    non-ASCII character sets

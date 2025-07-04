@@ -1,0 +1,33 @@
+# Generated from lib/typed_cache/cache_key.rb with RBS::Inline
+
+module TypedCache
+  class CacheKey
+    extend Forwardable
+
+    attr_reader namespace: Namespace
+
+    attr_reader key: String
+
+    # @rbs (Namespace, String) -> void
+    def initialize: (Namespace, String) -> void
+
+    # @rbs (Namespace) -> bool
+    def belongs_to?: (Namespace) -> bool
+
+    # @rbs () -> String
+    def to_s: () -> String
+
+    alias cache_key to_s
+
+    # @rbs () -> String
+    def inspect: () -> String
+
+    # @rbs () -> Integer
+    def hash: () -> Integer
+
+    # @rbs (Object) -> bool
+    def ==: (Object) -> bool
+
+    alias eql? ==
+  end
+end
