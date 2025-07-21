@@ -10,24 +10,16 @@ Gem::Specification.new do |spec|
   spec.homepage = 'https://github.com/glossawy/typed_cache'
   spec.summary = 'A robust, type-safe caching library that provides explicit, predictable cache interactions with rich, context-aware results'
   spec.description = <<~DESCRIPTION
-    TypedCache is a Ruby caching library designed to eliminate common caching pitfalls by providing a monadic, type-safe API that makes cache operations explicit and predictable.
-
-    Key features:
-    - Monadic results for all cache operations
-    - Immutable cache objects with rich metadata (source, age)
-    - Explicit, non-magical interactions with clear outcomes
-    - Strong type safety through RBS signatures
-    - Flexible backend implementations with a consistent interface
-
-    Unlike traditional caching libraries, TypedCache treats cache interactions as first-class operations with comprehensive error handling and transparent state management.
-
-    The library supports wrapping any other caching library that can implement the Store interface or be provided as a Backend. ActiveSupport::Cache is supported out of the box.
+    TypedCache is a Ruby caching library designed to eliminate common caching pitfalls by providing a monadic, type-safe API that makes cache operations explicit and predictable. Cache interactions are first-class operations with
+    comprehensive error handling and transparent state management. The library supports wrapping other caching libraries via custom backends and ActiveSupport::Cache is supported out of the box.
   DESCRIPTION
-  spec.license = 'Hippocratic-2.1'
+  spec.license = 'Apache-2.0'
 
   spec.metadata = {
     'issue_tracker_uri' => 'https://github.com/glossawy/typed_cache/issues',
-    'changelog_uri' => 'https://github.com/glossawy/typed_cache/releases',
+    'changelog_uri' => "https://github.com/glossawy/typed_cache/blob/main/VERSIONS.adoc##{TypedCache::VERSION.delete(".")}",
+    'license_uri' => 'https://github.com/glossawy/typed_cache/blob/main/LICENSE',
+    'label' => 'caching',
     'labels' => ['typed_cache', 'ruby', 'caching', 'type-safety', 'rails', 'rbs'].join(','),
     'rubygems_mfa_required' => 'true',
     'source_code_uri' => 'https://github.com/glossawy/typed_cache',
