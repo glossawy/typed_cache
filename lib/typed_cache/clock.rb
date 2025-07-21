@@ -10,6 +10,7 @@ module TypedCache
       # it falls back to the system's `Time.now`.
       #
       # @return [Time] The current time.
+      # @rbs () -> Time
       def moment
         if Time.respond_to?(:current)
           Time.current

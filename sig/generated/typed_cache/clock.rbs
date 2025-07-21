@@ -1,0 +1,15 @@
+# Generated from lib/typed_cache/clock.rb with RBS::Inline
+
+module TypedCache
+  # A simple, testable wrapper around Time to provide a consistent way of
+  # getting the current time, respecting ActiveSupport's time zone when available.
+  class Clock
+    # Retrieves the current time. If ActiveSupport's `Time.current` is
+    # available, it will be used to respect the configured timezone. Otherwise,
+    # it falls back to the system's `Time.now`.
+    #
+    # @return [Time] The current time.
+    # @rbs () -> Time
+    def self.moment: () -> Time
+  end
+end

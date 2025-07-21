@@ -31,3 +31,4 @@ tmp
 !Steepfile
 !sig/
 !certs/
+!.gitattributes

@@ -89,6 +89,9 @@ module TypedCache
 
     private
 
+    # : (String) -> String
+    def snake_case: (String) -> String
+
     # : (cache_key) -> CacheKey
     def namespaced_key: (cache_key) -> CacheKey
   end

@@ -150,10 +150,12 @@ module TypedCache
 
       private
 
+      #: -> Hash[CacheKey, Entry[V]]
       def namespaced_entries
         backing_store.select { |key, _entry| key.belongs_to?(namespace) }
       end
 
+      #: -> void
       def purge_expired_keys
         namespaced_entries.each do |key, entry|
           backing_store.delete(key) if entry.expired?

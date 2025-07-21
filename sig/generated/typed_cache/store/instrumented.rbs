@@ -25,6 +25,10 @@ module TypedCache
     # : -> String
     def store_type: ...
 
+    # @rbs override
+    # : (cache_key) -> either[Error, CacheRef[V]]
+    def ref: ...
+
     # Additional methods that might exist on the wrapped store
     def respond_to_missing?: (untyped method_name, ?untyped include_private) -> untyped
 

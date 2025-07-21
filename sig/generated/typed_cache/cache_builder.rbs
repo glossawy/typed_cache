@@ -13,8 +13,8 @@ module TypedCache
 
     # Familiar Ruby fluent interface - always succeeds
     # Invalid configurations are caught during build()
-    # @rbs [V]() { (Registry[Store[untyped]], Namespace) -> Store[V] } -> self
-    def with_backend: [V] () { (Registry[Store[untyped]], Namespace) -> Store[V] } -> self
+    # @rbs (Symbol, *untyped, **untyped) -> self
+    def with_backend: (Symbol, *untyped, **untyped) -> self
 
     # Adds an arbitrary decorator by registry key
     # @rbs (Symbol) -> self

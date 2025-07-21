@@ -30,20 +30,32 @@ module TypedCache
 
       type hash_like[K, V] = _HashLike[K, V]
 
+      # @private
+      # @rbs generic V
+      class Entry[V] < Dry::Struct
+        attr_accessor expires_at: Time
+
+        attr_reader value: V
+
+        # @rbs (value: V, expires_in: Integer) -> Entry[V]
+        def self.expiring: (value: V, expires_in: Integer) -> Entry[V]
+
+        # @rbs () -> bool
+        def expired?: () -> bool
+      end
+
       attr_reader namespace: Namespace
 
-      attr_reader backing_store: hash_like[CacheKey, V]
+      attr_reader ttl: Namespace
 
-      # : (Namespace, shared: bool) -> void
-      def initialize: (Namespace, shared: bool) -> void
+      attr_reader backing_store: hash_like[CacheKey, Entry[V]]
+
+      # : (Namespace, shared: bool, ttl: Integer) -> void
+      def initialize: (Namespace, shared: bool, ttl: Integer) -> void
 
       # @rbs override
       # : (cache_key) -> either[Error, Snapshot[V]]
       def get: ...
-
-      # @rbs override
-      # : (cache_key) -> CacheRef[V]
-      def ref: ...
 
       # @rbs override
       # : (cache_key, V) -> either[Error, Snapshot[V]]
@@ -70,6 +82,14 @@ module TypedCache
 
       # : -> Array[CacheKey]
       def keys: () -> Array[CacheKey]
+
+      private
+
+      # : -> Hash[CacheKey, Entry[V]]
+      def namespaced_entries: () -> Hash[CacheKey, Entry[V]]
+
+      # : -> void
+      def purge_expired_keys: () -> void
     end
   end
 end

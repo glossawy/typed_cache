@@ -131,6 +131,7 @@ module TypedCache
 
     private
 
+    #: (String) -> String
     def snake_case(string)
       string
         .gsub(/([A-Z]+)([A-Z][a-z])/, '\1_\2')

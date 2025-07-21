@@ -21,10 +21,6 @@ module TypedCache
       def get: ...
 
       # @rbs override
-      # : (cache_key) -> CacheRef[V]
-      def ref: ...
-
-      # @rbs override
       # : (cache_key, V) -> either[Error, Snapshot[V]]
       def set: ...
 
