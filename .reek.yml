@@ -1,7 +1,13 @@
 exclude_paths:
   - tmp
   - vendor
+  - sig
+  - bin
 
 detectors:
   LongParameterList:
+    enabled: false
+  UncommunicativeVariableName:
+    enabled: false
+  IrresponsibleModule:
     enabled: false

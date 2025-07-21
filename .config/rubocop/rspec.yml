@@ -18,6 +18,10 @@ RSpec/MultipleMemoizedHelpers:
   Enabled: true
   Max: 15
 
+RSpec/DescribeClass:
+  Exclude:
+    - spec/integration/**/*.rb
+
 RSpec/ContextWording:
   Exclude:
     - spec/integration/**/*.rb

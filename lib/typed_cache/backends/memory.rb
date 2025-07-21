@@ -42,9 +42,11 @@ module TypedCache
         # @rbs! attr_accessor expires_at: Time
         # @rbs! attr_reader value: V
 
-        # @rbs (value: V, expires_in: Integer) -> Entry[V]
-        def self.expiring(value:, expires_in:)
-          new(value: value, expires_at: Clock.moment + expires_in)
+        class << self
+          # @rbs (value: V, expires_in: Integer) -> Entry[V]
+          def expiring(value:, expires_in:)
+            new(value: value, expires_at: Clock.moment + expires_in)
+          end
         end
 
         # @rbs () -> bool

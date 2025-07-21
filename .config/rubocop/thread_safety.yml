@@ -1,0 +1,5 @@
+plugins:
+  - rubocop-thread_safety
+
+ThreadSafety/DirChdir:
+  Enabled: false

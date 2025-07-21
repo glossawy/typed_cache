@@ -9,9 +9,13 @@ module TypedCache
     let(:namespace) { make_namespace('cache_key_spec') }
 
     describe '#initialize' do
-      it 'creates a new cache key' do
+      it 'creates a new cache key with the correct namespace' do
         key = described_class.new(namespace, 'my_key')
         expect(key.namespace).to(eq(namespace))
+      end
+
+      it 'creates a new cache key with the correct key' do
+        key = described_class.new(namespace, 'my_key')
         expect(key.key).to(eq('my_key'))
       end
     end

@@ -9,7 +9,7 @@ using(Module.new do
 end)
 
 module Namespacing
-  module_function
+  extend self
 
   class SimpleStore
     include TypedCache::Store

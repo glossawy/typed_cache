@@ -10,13 +10,18 @@ inherit_from:
   - shopify.yml
   - rspec.yml
   - performance.yml
+  - thread_safety.yml
 
 plugins:
-  - rubocop-thread_safety
   - rubocop-rake
 
 AllCops:
   TargetRubyVersion: 3.2
+  Exclude:
+    - bin/**/*.rb
+    - sig/generated/**/*.rb
+    - tmp/**/*.rb
+    - vendor/**/*.rb
 
 Style/StringLiterals:
   EnforcedStyle: single_quotes

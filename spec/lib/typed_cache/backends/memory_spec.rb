@@ -55,39 +55,53 @@ module TypedCache
           end
         end
 
-        it 'respects the specified TTL' do
+        it 'returns a cached value before the TTL' do
           store.set('k', 'v')
-          expect(store.get('k')).to be_cached_value('v')
-
-          Timecop.travel('2024-01-01 12:00:11 UTC')
-          expect(store.get('k')).to be_left.with(an_instance_of(CacheMissError))
+          expect(store.get('k')).to(be_cached_value('v'))
         end
 
-        it 'key? returns false for an expired key' do
+        it 'returns a cache miss after the TTL' do
           store.set('k', 'v')
-          expect(store.key?('k')).to be(true)
-
           Timecop.travel('2024-01-01 12:00:11 UTC')
-          expect(store.key?('k')).to be(false)
+          expect(store.get('k')).to(be_left.with(an_instance_of(CacheMissError)))
         end
 
-        it 'size does not count expired keys' do
+        it 'returns true for key? before expiry' do
+          store.set('k', 'v')
+          expect(store.key?('k')).to(be(true))
+        end
+
+        it 'returns false for key? after expiry' do
+          store.set('k', 'v')
+          Timecop.travel('2024-01-01 12:00:11 UTC')
+          expect(store.key?('k')).to(be(false))
+        end
+
+        it 'has the correct size before expiry' do
           store.set('k1', 'v1')
           store.set('k2', 'v2')
-          expect(store.size).to eq(2)
-
-          Timecop.travel('2024-01-01 12:00:11 UTC')
-          expect(store.size).to eq(0)
+          expect(store.size).to(eq(2))
         end
 
-        it 'get removes an expired key' do
+        it 'has the correct size after expiry' do
+          store.set('k1', 'v1')
+          store.set('k2', 'v2')
+          Timecop.travel('2024-01-01 12:00:11 UTC')
+          expect(store.size).to(eq(0))
+        end
+
+        it 'has a key in the backing store before expiry' do
           store.set('k', 'v')
           namespaced_key = store.send(:namespaced_key, 'k')
-          expect(store.send(:backing_store)).to have_key(namespaced_key)
+          expect(store.send(:backing_store)).to(have_key(namespaced_key))
+        end
 
+        it 'removes an expired key from the backing store on get' do
+          store.set('k', 'v')
+          namespaced_key = store.send(:namespaced_key, 'k')
           Timecop.travel('2024-01-01 12:00:11 UTC')
           store.get('k') # Trigger the passive eviction
-          expect(store.send(:backing_store)).not_to have_key(namespaced_key)
+          expect(store.send(:backing_store)).not_to(have_key(namespaced_key))
         end
       end
 
@@ -100,12 +114,15 @@ module TypedCache
           end
         end
 
-        it 'expires the key after the default TTL' do
+        it 'returns a cached value before the default TTL' do
           store.set('k', 'v')
-          expect(store.get('k')).to be_cached_value('v')
+          expect(store.get('k')).to(be_cached_value('v'))
+        end
 
+        it 'returns a cache miss after the default TTL' do
+          store.set('k', 'v')
           Timecop.travel('2024-01-01 12:10:01 UTC') # 601 seconds later
-          expect(store.get('k')).to be_left.with(an_instance_of(CacheMissError))
+          expect(store.get('k')).to(be_left.with(an_instance_of(CacheMissError)))
         end
       end
     end

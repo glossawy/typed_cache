@@ -175,9 +175,13 @@ module TypedCache
       context 'when value is cached' do
         before { store.set('test_key', 'cached') }
 
-        it 'returns Some with the value' do
+        it 'returns Some' do
           maybe = ref.value_maybe
           expect(maybe.some?).to(be(true))
+        end
+
+        it 'returns the correct value' do
+          maybe = ref.value_maybe
           expect(maybe.value).to(eq('cached'))
         end
       end

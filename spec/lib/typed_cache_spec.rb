@@ -3,8 +3,8 @@
 require 'spec_helper'
 
 RSpec.describe(TypedCache) do
-  before { TypedCache.reset_config }
-  after { TypedCache.reset_config }
+  before { described_class.reset_config }
+  after { described_class.reset_config }
 
   describe '.builder' do
     it 'returns a CacheBuilder instance' do

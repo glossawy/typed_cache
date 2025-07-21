@@ -8,6 +8,7 @@ gemspec
 
 group :development do
   gem 'rake', '~> 13.3'
+  gem 'reek'
 end
 
 group :test do

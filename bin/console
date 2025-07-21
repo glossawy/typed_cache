@@ -1,10 +1,10 @@
 #! /usr/bin/env ruby
 # frozen_string_literal: true
 
-require "bundler/setup"
+require 'bundler/setup'
 Bundler.require :tools
 
-require "irb"
-require "typed_cache"
+require 'irb'
+require 'typed_cache'
 
-IRB.start __FILE__
+IRB.start(__FILE__)
