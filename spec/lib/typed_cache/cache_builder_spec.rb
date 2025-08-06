@@ -64,10 +64,9 @@ module TypedCache
             end
           end
         end
+        let(:decorator_configs) { [described_class::DecoratorConfig.new(name: :custom, options: {})] }
 
         before { Decorators.register(:custom, decorator_class) }
-
-        let(:decorator_configs) { [described_class::DecoratorConfig.new(name: :custom, options: {})] }
 
         it 'applies the decorator' do
           store.set('k', 'v')
