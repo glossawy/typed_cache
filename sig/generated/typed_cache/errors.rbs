@@ -3,6 +3,8 @@
 module TypedCache
   # Base error class for TypedCache operations
   class Error < StandardError
+    # @rbs (*untyped) -> void
+    def initialize: (*untyped) -> void
   end
 
   # Store operation errors (network, I/O, etc.)

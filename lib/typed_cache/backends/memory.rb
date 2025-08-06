@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
 require 'singleton'
-require 'forwardable'
+
+require 'concurrent/map'
 
 module TypedCache
   class MemoryStoreRegistry
@@ -51,7 +52,7 @@ module TypedCache
 
         # @rbs () -> bool
         def expired?
-          Clock.moment >= expires_at
+          Clock.now >= expires_at
         end
       end
       private_constant :Entry
@@ -86,7 +87,7 @@ module TypedCache
       #: (cache_key, V) -> either[Error, Snapshot[V]]
       def set(key, value)
         key = namespaced_key(key)
-        expires_at = Clock.moment + @ttl
+        expires_at = Clock.now + @ttl
         entry = Entry.new(value: value, expires_at: expires_at)
         backing_store[key] = entry
         Either.right(Snapshot.new(value, source: :cache))

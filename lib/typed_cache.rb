@@ -1,17 +1,34 @@
 # frozen_string_literal: true
 
-require 'zeitwerk'
-require 'dry-configurable'
-require 'concurrent-ruby'
+require 'dry/configurable'
+require 'dry/struct'
+require 'dry/types'
 
-# Load core registry before Zeitwerk
-require_relative 'typed_cache/registry'
-require_relative 'typed_cache/errors'
+require 'typed_cache/either'
+require 'typed_cache/maybe'
 
-Zeitwerk::Loader.for_gem.setup
+require 'typed_cache/cache_key'
+require 'typed_cache/errors'
+require 'typed_cache/namespace'
+require 'typed_cache/registry'
+require 'typed_cache/clock'
+
+require 'typed_cache/store'
+require 'typed_cache/instrumenter'
+require 'typed_cache/backend'
+require 'typed_cache/decorator'
+
+require 'typed_cache/snapshot'
+require 'typed_cache/cache_ref'
+
+require 'typed_cache/cache_builder'
 
 module TypedCache
   extend Dry::Configurable
+
+  autoload :Backends, 'typed_cache/backends'
+  autoload :Decorators, 'typed_cache/decorators'
+  autoload :Instrumenters, 'typed_cache/instrumenters'
 
   # @rbs!
   #   interface _TypedCacheInstrumentationConfig
@@ -33,6 +50,7 @@ module TypedCache
   setting :instrumentation do
     setting :enabled, default: false
     setting :namespace, default: 'typed_cache'
+    setting :instrumenter, default: :default
   end
 
   class << self
@@ -44,15 +62,13 @@ module TypedCache
 
     # @rbs! def config: -> _TypedCacheConfig
 
-    # @rbs () -> singleton(Instrumentation)
-    def instrumentation
-      Instrumentation
-    end
-
-    # @rbs () -> Registry[backend[untyped]]
+    # @rbs () -> singleton(Backends)
     def backends = Backends
 
-    # @rbs () -> Register[decorator[untyped]]
+    # @rbs () -> singleton(Decorators)
     def decorators = Decorators
+
+    # @rbs () -> singleton(Instrumenters)
+    def instrumenters = Instrumenters
   end
 end

@@ -1,0 +1,20 @@
+# Generated from lib/typed_cache/instrumenters/active_support.rb with RBS::Inline
+
+module TypedCache
+  module Instrumenters
+    # Instrumenter for ActiveSupport::Notifications
+    class ActiveSupport
+      include Instrumenter
+
+      include Mixins::NamespacedSingleton
+
+      # @rbs override
+      # : [R] (String, String, Hash[Symbol, untyped]) { -> R } -> R
+      def instrument: ...
+
+      # @rbs override
+      # @rbs (String, **top) { (event) -> void } -> void
+      def subscribe: ...
+    end
+  end
+end

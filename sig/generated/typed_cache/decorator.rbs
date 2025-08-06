@@ -5,10 +5,18 @@ module TypedCache
   # Store but must accept another Store instance in its constructor.
   # @rbs generic V
   module Decorator[V]
+    extend Forwardable
+
     include Store[V]
 
     include Store::_Store[V]
 
     include Store::_Decorator[V]
+
+    def store: () -> Store[V]
+
+    # @rbs override
+    # : (cache_key) -> either[Error, CacheRef[V]]
+    def ref: ...
   end
 end

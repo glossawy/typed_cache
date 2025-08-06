@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'typed_cache/registry'
+
 module TypedCache
   # Holds store decorators (e.g., instrumentation wrappers) that can be composed
   # by the CacheBuilder. Decorators must conform to the same API as the wrapped
@@ -14,10 +16,12 @@ module TypedCache
   #              .build.value
   #
   module Decorators
+    autoload :Instrumented, 'typed_cache/decorators/instrumented'
+
     # Default decorator set – starts with instrumentation only, but this registry
     # lets end-users register their own via `Decorators.register`.
     REGISTRY = Registry.new('decorator', {
-      instrumented: Store::Instrumented,
+      instrumented: Instrumented,
     }).freeze
 
     private_constant :REGISTRY

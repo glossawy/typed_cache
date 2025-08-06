@@ -1,0 +1,19 @@
+# Generated from lib/typed_cache/instrumenters/monitor.rb with RBS::Inline
+
+module TypedCache
+  module Instrumenters
+    class Monitor
+      include Instrumenter
+
+      include Mixins::NamespacedSingleton
+
+      # @rbs override
+      # : [R] (String, String, **untyped) { -> R } -> R
+      def instrument: ...
+
+      # @rbs override
+      # @rbs (String, **top) { (event) -> void } -> void
+      def subscribe: ...
+    end
+  end
+end

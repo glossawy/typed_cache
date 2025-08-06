@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative 'namespace'
+
 module TypedCache
   class CacheKey
     extend Forwardable

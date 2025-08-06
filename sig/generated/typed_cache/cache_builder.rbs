@@ -4,6 +4,14 @@ module TypedCache
   class CacheBuilder
     type config = TypedCache::typed_cache_config
 
+    type instrumenter_source = :default | :dry | :rails | Instrumenter
+
+    class BackendConfig < Dry::Struct
+    end
+
+    class DecoratorConfig < Dry::Struct
+    end
+
     # @rbs (config, Registry[backend[untyped]], Registry[decorator[untyped]]) -> void
     def initialize: (config, Registry[backend[untyped]], Registry[decorator[untyped]]) -> void
 
@@ -20,8 +28,9 @@ module TypedCache
     # @rbs (Symbol) -> self
     def with_decorator: (Symbol) -> self
 
-    # @rbs () -> self
-    def with_instrumentation: () -> self
+    # Adds instrumentation using the specified strategy.
+    # @rbs (instrumenter_source) -> either[Error, self]
+    def with_instrumentation: (instrumenter_source) -> either[Error, self]
 
     private
 
@@ -33,5 +42,7 @@ module TypedCache
 
     # @rbs (Store[V]) -> either[Error, Store[V]]
     def apply_decorators: (Store[V]) -> either[Error, Store[V]]
+
+    def apply_instrumentation: (untyped store) -> untyped
   end
 end

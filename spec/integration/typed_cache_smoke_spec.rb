@@ -8,25 +8,27 @@ RSpec.describe('TypedCache integration smoke test') do
 
   let(:namespace) { make_namespace('integration_smoke') }
   let(:events) { [] }
-  let(:store) do
+  let(:builder) do
     TypedCache.builder
       .with_backend(:memory)
-      .with_instrumentation
-      .build(namespace).value
+      .with_instrumentation(:rails)
+  end
+  let(:store) do
+    builder.build(namespace).value
   end
 
   before do
     TypedCache.configure do |config|
       config.instrumentation.enabled = true
     end
-    ActiveSupport::Notifications.subscribe(/\.typed_cache\z/) do |*payload|
+    ActiveSupport::Notifications.subscribe(/\Atyped_cache\./) do |*payload|
       events << payload
     end
   end
 
   after do
     TypedCache.reset_config
-    ActiveSupport::Notifications.unsubscribe(/\.typed_cache\z/)
+    ActiveSupport::Notifications.unsubscribe(/\Atyped_cache\./)
   end
 
   it 'correctly fetches a computed value and then a cached value' do

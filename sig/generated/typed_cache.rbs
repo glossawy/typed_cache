@@ -23,12 +23,12 @@ module TypedCache
 
   def config: () -> _TypedCacheConfig
 
-  # @rbs () -> singleton(Instrumentation)
-  def self.instrumentation: () -> singleton(Instrumentation)
+  # @rbs () -> singleton(Backends)
+  def self.backends: () -> singleton(Backends)
 
-  # @rbs () -> Registry[backend[untyped]]
-  def self.backends: () -> Registry[backend[untyped]]
+  # @rbs () -> singleton(Decorators)
+  def self.decorators: () -> singleton(Decorators)
 
-  # @rbs () -> Register[decorator[untyped]]
-  def self.decorators: () -> Register[decorator[untyped]]
+  # @rbs () -> singleton(Instrumenters)
+  def self.instrumenters: () -> singleton(Instrumenters)
 end

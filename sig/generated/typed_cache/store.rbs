@@ -72,6 +72,9 @@ module TypedCache
     # @rbs (cache_key) { () -> V } -> either[Error, Snapshot[V]]
     def fetch: (cache_key) { () -> V } -> either[Error, Snapshot[V]]
 
+    # @rbs () -> Instrumenter
+    def instrumenter: () -> Instrumenter
+
     # Returns the namespace for this store (for instrumentation/debugging)
     # @rbs () -> Namespace
     def namespace: () -> Namespace

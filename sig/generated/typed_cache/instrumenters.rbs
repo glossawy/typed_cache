@@ -1,0 +1,22 @@
+# Generated from lib/typed_cache/instrumenters.rb with RBS::Inline
+
+module TypedCache
+  module Instrumenters
+    # Registry mapping symbols to instrumenter classes. We can't reuse the generic
+    # Registry class directly because many instrumenters mix in `Singleton`,
+    # making `.new` inaccessible. Instead we implement a thin facade that
+    # returns either the singleton instance (preferred) or a fresh instance.
+    REGISTRY: Registry[Symbol, Class[Instrumenter]]
+
+    extend Forwardable
+
+    # @rbs () -> Registry[Symbol, Class[Instrumenter]]
+    def self.registry: () -> Registry[Symbol, Class[Instrumenter]]
+
+    def resolve: (Symbol, **untyped) -> either[Error, Instrumenter]
+
+    def available: () -> Array[Symbol]
+
+    def registered?: (Symbol) -> Boolean
+  end
+end

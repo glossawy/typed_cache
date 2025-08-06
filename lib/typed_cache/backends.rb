@@ -1,17 +1,15 @@
 # frozen_string_literal: true
 
-require 'dry/struct'
-require 'dry/types'
-
-require_relative 'backends/memory'
-require_relative 'backends/active_support'
+require 'typed_cache/registry'
 
 module TypedCache
   module Backends
+    autoload :Memory, 'typed_cache/backends/memory'
+    autoload :ActiveSupport, 'typed_cache/backends/active_support'
+
     # Backend registry using composition
     REGISTRY = Registry.new('backend', {
       memory: Memory,
-      active_support: ActiveSupport,
     }).freeze
 
     private_constant :REGISTRY

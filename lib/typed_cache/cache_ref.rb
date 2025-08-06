@@ -1,5 +1,9 @@
 # frozen_string_literal: true
 
+require_relative 'cache_key'
+require_relative 'store'
+require_relative 'snapshot'
+
 module TypedCache
   # A monadic wrapper for cached values that provides safe access with rich error context.
   # All operations return Either[Error, Snapshot[V]] to provide detailed information about

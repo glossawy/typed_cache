@@ -2,7 +2,13 @@
 
 module TypedCache
   # Base error class for TypedCache operations
-  class Error < StandardError; end
+  class Error < StandardError
+    # @rbs (*untyped) -> void
+    def initialize(*args)
+      super(*args)
+      set_backtrace(caller(2))
+    end
+  end
 
   # Store operation errors (network, I/O, etc.)
   class StoreError < Error
@@ -14,6 +20,8 @@ module TypedCache
       @operation = operation
       @key = key
       @original_error = original_error
+
+      set_backtrace(original_error.backtrace) if original_error
     end
 
     # @rbs () -> String

@@ -1,0 +1,29 @@
+# Generated from lib/typed_cache/instrumenters/mixins/namespaced_singleton.rb with RBS::Inline
+
+module TypedCache
+  module Instrumenters
+    module Mixins
+      module NamespacedSingleton
+        # @rbs (Class[Instrumenter & NamespacedSingleton]) -> void
+        def self.included: (Class[Instrumenter & NamespacedSingleton]) -> void
+
+        NAMESPACE_CACHE: Concurrent::Map[String, Class[Instrumenter & NamespacedSingleton]]
+
+        # @rbs override
+        # @rbs () -> String
+        def namespace: ...
+
+        # @rbs (String | Namespace) -> void
+        def initialize: (String | Namespace) -> void
+
+        module ClassMethods
+          # @rbs (String | Namespace) -> class
+          def new: (String | Namespace) -> class
+
+          # @rbs (String) -> maybe[class]
+          def get: (String) -> maybe[class]
+        end
+      end
+    end
+  end
+end

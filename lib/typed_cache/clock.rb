@@ -1,22 +1,39 @@
 # frozen_string_literal: true
 
+require 'dry/struct'
+require 'dry/types'
+
 module TypedCache
-  # A simple, testable wrapper around Time to provide a consistent way of
-  # getting the current time, respecting ActiveSupport's time zone when available.
-  class Clock
+  module Clock
+    # @rbs generic R
+    class Measured < Dry::Struct
+      # @rbs! def start: () -> Float
+      # @rbs! def end: () -> Float
+      # @rbs! def result: () -> [R]
+
+      attribute :start, Dry.Types::Float
+      attribute :end, Dry.Types::Float
+      attribute :result, Dry.Types.Instance(Object) #: [R]
+
+      # @rbs! def initialize: (start: Float, end: Float, result: [R]) -> void
+
+      #: -> Float
+      def duration
+        self.end - start
+      end
+    end
+
     class << self
-      # Retrieves the current time. If ActiveSupport's `Time.current` is
-      # available, it will be used to respect the configured timezone. Otherwise,
-      # it falls back to the system's `Time.now`.
-      #
-      # @return [Time] The current time.
+      # @rbs [R]() { () -> R } -> Measured[R]
+      def measure(&)
+        start = now
+        result = yield
+        Measured.new(start:, end: now, result:)
+      end
+
       # @rbs () -> Time
-      def moment
-        if Time.respond_to?(:current)
-          Time.current
-        else
-          Time.now
-        end
+      def now
+        Time.now
       end
     end
   end

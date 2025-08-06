@@ -1,0 +1,31 @@
+# Generated from lib/typed_cache/instrumenter.rb with RBS::Inline
+
+module TypedCache
+  # Instrumenter for cache operations
+  module Instrumenter
+    type event = Dry::Events::Event | ActiveSupport::Notifications::Event
+
+    # @rbs [R](String, String, **untyped) { -> R } -> R
+    def instrument: [R] (String, String, **untyped) { () -> R } -> R
+
+    # @rbs (String, **untyped) { (event) -> void } -> void
+    def subscribe: (String, **untyped) { (event) -> void } -> void
+
+    # : -> String
+    def namespace: () -> String
+
+    # @rbs (String, String, **untyped) -> Hash[Symbol, untyped]
+    def build_payload: (String, String, **untyped) -> Hash[Symbol, untyped]
+
+    # @rbs () -> bool
+    def enabled?: () -> bool
+
+    # @rbs (String) -> String
+    def event_name: (String) -> String
+
+    private
+
+    # @rbs () -> TypedCache::_TypedCacheInstrumentationConfig
+    def config: () -> TypedCache::_TypedCacheInstrumentationConfig
+  end
+end

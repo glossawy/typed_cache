@@ -4,14 +4,14 @@ require 'spec_helper'
 require 'active_support/notifications'
 
 module TypedCache
-  RSpec.describe(Store::Instrumented) do
+  RSpec.describe(Decorators::Instrumented) do
     include Namespacing
 
     let(:namespace) { make_namespace('instrumented_spec') }
     let(:builder) do
       TypedCache.builder
         .with_backend(:memory)
-        .with_instrumentation
+        .with_instrumentation(:rails)
     end
     let(:store) { builder.build(namespace).value }
 
@@ -35,7 +35,7 @@ module TypedCache
       it 'emits an ActiveSupport event' do
         events = []
         callback = ->(*payload) { events << payload }
-        ActiveSupport::Notifications.subscribed(callback, 'set.typed_cache') do
+        ActiveSupport::Notifications.subscribed(callback, 'typed_cache.set') do
           store.set('key', 'value')
         end
         expect(events.size).to(eq(1))

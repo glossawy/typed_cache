@@ -29,13 +29,14 @@ Gem::Specification.new do |spec|
   spec.cert_chain = [Gem.default_cert_path]
 
   spec.required_ruby_version = '>= 3.2.0'
-  spec.add_dependency('concurrent-ruby', '~> 1.3.5')
-  spec.add_dependency('concurrent-ruby-edge', '~>0.7.2')
+
+  spec.add_dependency('concurrent-ruby', '~> 1.0')
+
   spec.add_dependency('dry-configurable', '~> 1.0')
+  spec.add_dependency('dry-monitor', '~>1.0')
   spec.add_dependency('dry-struct', '~> 1.0')
   spec.add_dependency('dry-types', '~>1.0')
   spec.add_dependency('multi_json', '~> 1.17')
-  spec.add_dependency('zeitwerk', '~> 2.7')
 
   spec.extra_rdoc_files = Dir['README*', 'LICENSE*', 'examples*']
   spec.files = Dir['*.gemspec', 'lib/**/*', 'sig/**/*']

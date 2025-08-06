@@ -1,15 +1,17 @@
-# Generated from lib/typed_cache/store/instrumented.rb with RBS::Inline
+# Generated from lib/typed_cache/decorators/instrumented.rb with RBS::Inline
 
 module TypedCache
   # Decorator that adds instrumentation to any Store implementation
   # This decorator can wrap any store to add ActiveSupport::Notifications
   # @rbs generic V
-  class Store::Instrumented[V]
+  class Decorators::Instrumented[V]
     include Decorator[V]
 
     extend Forwardable
 
     attr_reader store: TypedCache::Store[V]
+
+    attr_reader instrumenter: Instrumenter
 
     # @rbs (Symbol, ?operation: String) ?{ (*untyped, **untyped) -> String } -> void
     private def self.instrument: (Symbol, ?operation: String) ?{ (*untyped, **untyped) -> String } -> void
@@ -19,11 +21,11 @@ module TypedCache
 
     # @rbs override
     # : -> String
-    def namespace: ...
+    def store_type: ...
 
     # @rbs override
-    # : -> String
-    def store_type: ...
+    # @rbs (key) -> CacheRef[V]
+    def ref: ...
 
     # Additional methods that might exist on the wrapped store
     def respond_to_missing?: (untyped method_name, ?untyped include_private) -> untyped

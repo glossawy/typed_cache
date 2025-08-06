@@ -98,6 +98,9 @@ module TypedCache
       end
     end
 
+    # @rbs () -> Instrumenter
+    def instrumenter = Instrumenters::Null.instance
+
     # Returns the namespace for this store (for instrumentation/debugging)
     # @rbs () -> Namespace
     def namespace

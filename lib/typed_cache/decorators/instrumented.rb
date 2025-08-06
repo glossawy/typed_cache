@@ -4,40 +4,42 @@ module TypedCache
   # Decorator that adds instrumentation to any Store implementation
   # This decorator can wrap any store to add ActiveSupport::Notifications
   # @rbs generic V
-  class Store::Instrumented # rubocop:disable Style/ClassAndModuleChildren
+  class Decorators::Instrumented # rubocop:disable Style/ClassAndModuleChildren
     include Decorator #[V]
 
     extend Forwardable
 
     attr_reader :store #: TypedCache::Store[V]
+    attr_reader :instrumenter #: Instrumenter
 
     class << self
       private
 
       # @rbs (Symbol, ?operation: String) ?{ (*untyped, **untyped) -> String } -> void
       def instrument(method_name, operation: method_name.to_s, &key_selector)
-        define_method(:"#{method_name}_with_instrumentation") do |*args, **kwargs, &block|
-          key = key_selector.call(*args, **kwargs) if key_selector # rubocop:disable Performance/RedundantBlockCall
+        key_selector ||= ->(*_args, **_kwargs, &_block) { 'n/a' }
+        alias_prefix = method_name.to_s.delete('?!')
 
-          Instrumentation.instrument(operation, namespace, key || 'n/a', store_type: store_type) do
-            send(:"#{method_name}_without_instrumentation", *args, **kwargs, &block)
+        define_method(:"#{alias_prefix}_instrumentation_key", &key_selector)
+
+        class_eval(<<~RUBY, __FILE__, __LINE__ + 1)
+          def #{alias_prefix}_with_instrumentation(...)
+            key = #{alias_prefix}_instrumentation_key(...)
+            instrumenter.instrument(:"#{operation}", key, store_type: store_type) do
+              #{alias_prefix}_without_instrumentation(...)
+            end
           end
-        end
+        RUBY
 
-        alias_method(:"#{method_name}_without_instrumentation", method_name)
-        alias_method(method_name, :"#{method_name}_with_instrumentation")
+        alias_method(:"#{alias_prefix}_without_instrumentation", method_name)
+        alias_method(method_name, :"#{alias_prefix}_with_instrumentation")
       end
     end
 
-    #: (TypedCache::Store[V]) -> void
-    def initialize(store)
+    #: (TypedCache::Store[V], instrumenter: Instrumenter) -> void
+    def initialize(store, instrumenter:)
       @store = store
-    end
-
-    # @rbs override
-    #: -> String
-    def namespace
-      store.namespace
+      @instrumenter = instrumenter
     end
 
     # @rbs override
@@ -48,7 +50,7 @@ module TypedCache
     end
 
     # @rbs override
-    #: (cache_key) -> either[Error, CacheRef[V]]
+    # @rbs (key) -> CacheRef[V]
     def ref(key)
       CacheRef.new(self, key)
     end
@@ -64,12 +66,6 @@ module TypedCache
       else
         super
       end
-    end
-
-    Store.instance_methods(false).each do |method_name|
-      next if instance_methods(false).include?(method_name)
-
-      def_delegator :store, method_name
     end
 
     # Instrument core operations with proper key extraction
