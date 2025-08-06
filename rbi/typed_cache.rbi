@@ -7,6 +7,9 @@ module TypedCache
         sig { returns(T::Boolean) }
         attr_accessor :enabled
 
+        sig { returns(String) }
+        attr_accessor :namespace
+
         sig { returns(Symbol) }
         attr_accessor :instrumenter
       end

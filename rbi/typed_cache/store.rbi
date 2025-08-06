@@ -2,6 +2,8 @@
 
 module TypedCache
   module Store
+    extend T::Generic
+
     abstract!
 
     V = type_member
