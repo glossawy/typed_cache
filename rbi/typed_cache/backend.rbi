@@ -4,6 +4,6 @@ module TypedCache
   module Backend
     extend T::Generic
     include ::TypedCache::Store
-    V = type_member
+    CachedType = type_member
   end
 end

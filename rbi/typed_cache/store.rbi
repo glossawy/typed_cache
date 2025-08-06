@@ -6,21 +6,21 @@ module TypedCache
 
     abstract!
 
-    V = type_member
+    CachedType = type_member
 
     Key = T.type_alias { T.any(String, ::TypedCache::CacheKey) }
     private_constant :Key
 
-    sig { params(key: Key).returns(::TypedCache::Either[Error, V]) }
+    sig { params(key: Key).returns(::TypedCache::Either[Error, CachedType]) }
     def get(key); end
 
-    sig { params(key: Key, value: V).returns(::TypedCache::Either[Error, ::TypedCache::Snapshot[V]]) }
+    sig { params(key: Key, value: CachedType).returns(::TypedCache::Either[Error, ::TypedCache::Snapshot[CachedType]]) }
     def set(key, value); end
 
-    sig { params(key: Key).returns(::TypedCache::Either[Error, ::TypedCache::Snapshot[V]]) }
+    sig { params(key: Key).returns(::TypedCache::Either[Error, ::TypedCache::Snapshot[CachedType]]) }
     def delete(key); end
 
-    sig { params(key: Key).returns(::TypedCache::CacheRef[V]) }
+    sig { params(key: Key).returns(::TypedCache::CacheRef[CachedType]) }
     def ref(key); end
 
     sig { void }
@@ -29,13 +29,13 @@ module TypedCache
     sig { params(key: Key).returns(T::Boolean) }
     def key?(key); end
 
-    sig { params(key: Key, block: T.proc.params(value: V).returns(V)).returns(::TypedCache::Either[Error, ::TypedCache::Snapshot[V]]) }
+    sig { params(key: Key, block: T.proc.params(value: CachedType).returns(CachedType)).returns(::TypedCache::Either[Error, ::TypedCache::Snapshot[CachedType]]) }
     def fetch(key, &block); end
 
     sig { returns(::TypedCache::Namespace) }
     def namespace; end
 
-    sig { params(namespace: ::TypedCache::Namespace).returns(::TypedCache::Store[V]) }
+    sig { params(namespace: ::TypedCache::Namespace).returns(::TypedCache::Store[CachedType]) }
     def with_namespace(namespace); end
 
     sig { returns(String) }

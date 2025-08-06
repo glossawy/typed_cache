@@ -6,18 +6,18 @@ module TypedCache
 
     sealed!
 
-    V = type_member
+    RefType = type_member
 
-    sig { returns(::TypedCache::Either[Error, ::TypedCache::Snapshot[V]]) }
+    sig { returns(::TypedCache::Either[Error, ::TypedCache::Snapshot[RefType]]) }
     def get; end
 
-    sig { params(value: V).returns(::TypedCache::Either[Error, ::TypedCache::Snapshot[V]]) }
+    sig { params(value: RefType).returns(::TypedCache::Either[Error, ::TypedCache::Snapshot[RefType]]) }
     def set(value); end
 
-    sig { returns(::TypedCache::Either[Error, ::TypedCache::Snapshot[V]]) }
+    sig { returns(::TypedCache::Either[Error, ::TypedCache::Snapshot[RefType]]) }
     def delete; end
 
-    sig { params(block: T.proc.params(value: V).returns(V)).returns(::TypedCache::Either[Error, ::TypedCache::Snapshot[V]]) }
+    sig { params(block: T.proc.params(value: RefType).returns(RefType)).returns(::TypedCache::Either[Error, ::TypedCache::Snapshot[RefType]]) }
     def fetch(&block); end
 
     sig { returns(T::Boolean) }
@@ -26,31 +26,31 @@ module TypedCache
     sig { returns(T::Boolean) }
     def empty?; end
 
-    sig { params(block: T.proc.params(value: V).returns(V)).returns(::TypedCache::Either[Error, ::TypedCache::Snapshot[V]]) }
+    sig { params(block: T.proc.params(value: RefType).returns(RefType)).returns(::TypedCache::Either[Error, ::TypedCache::Snapshot[RefType]]) }
     def update(&block); end
 
-    sig { params(default: V).returns(V) }
+    sig { params(default: RefType).returns(RefType) }
     def value_or(default); end
 
-    sig { returns(::TypedCache::Maybe[V]) }
+    sig { returns(::TypedCache::Maybe[RefType]) }
     def value_maybe; end
 
-    sig { params(block: T.proc.params(value: V).returns(V)).returns(::TypedCache::Either[Error, ::TypedCache::Snapshot[V]]) }
+    sig { params(block: T.proc.params(value: RefType).returns(RefType)).returns(::TypedCache::Either[Error, ::TypedCache::Snapshot[RefType]]) }
     def compute_if_absent(&block); end
 
-    sig { params(new_key: String).returns(::TypedCache::CacheRef[V]) }
+    sig { params(new_key: String).returns(::TypedCache::CacheRef[RefType]) }
     def with_key(new_key); end
 
-    sig { params(scope_key: String).returns(::TypedCache::CacheRef[V]) }
+    sig { params(scope_key: String).returns(::TypedCache::CacheRef[RefType]) }
     def scope(scope_key); end
 
-    sig { type_parameters(:T).params(left_fn: T.proc.params(value: Error).returns(T.type_parameter(:T)), right_fn: T.proc.params(value: ::TypedCache::Snapshot[V]).returns(T.type_parameter(:T))).returns(T.type_parameter(:T)) }
+    sig { type_parameters(:T).params(left_fn: T.proc.params(value: Error).returns(T.type_parameter(:T)), right_fn: T.proc.params(value: ::TypedCache::Snapshot[RefType]).returns(T.type_parameter(:T))).returns(T.type_parameter(:T)) }
     def fold(left_fn, right_fn); end
 
-    sig { type_parameters(:T).params(block: T.proc.params(value: ::TypedCache::Snapshot[V]).returns(T.type_parameter(:T))).returns(::TypedCache::Either[Error, T.type_parameter(:T)]) }
+    sig { type_parameters(:T).params(block: T.proc.params(value: ::TypedCache::Snapshot[RefType]).returns(T.type_parameter(:T))).returns(::TypedCache::Either[Error, T.type_parameter(:T)]) }
     def with_snapshot(&block); end
 
-    sig { type_parameters(:T).params(block: T.proc.params(value: V).returns(T.type_parameter(:T))).returns(::TypedCache::Either[Error, T.type_parameter(:T)]) }
+    sig { type_parameters(:T).params(block: T.proc.params(value: RefType).returns(T.type_parameter(:T))).returns(::TypedCache::Either[Error, T.type_parameter(:T)]) }
     def with(&block); end
   end
 end

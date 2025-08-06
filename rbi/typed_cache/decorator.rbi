@@ -8,30 +8,30 @@ module TypedCache
 
     abstract!
 
-    V = type_member
+    CachedType = type_member
 
-    sig { params(store: ::TypedCache::Store[V]).void }
+    sig { params(store: ::TypedCache::Store[CachedType]).void }
     def initialize(store); end
 
-    sig { overridable.returns(::TypedCache::Store[V]) }
+    sig { overridable.returns(::TypedCache::Store[CachedType]) }
     def store; end
 
-    sig(:final) { params(key: T.any(String, ::TypedCache::CacheKey)).returns(::TypedCache::CacheRef[V]) }
+    sig(:final) { params(key: T.any(String, ::TypedCache::CacheKey)).returns(::TypedCache::CacheRef[CachedType]) }
     def ref(key); end
 
-    sig { overridable.params(key: T.any(String, ::TypedCache::CacheKey)).returns(::TypedCache::Either[Error, ::TypedCache::Snapshot[V]]) }
+    sig { overridable.params(key: T.any(String, ::TypedCache::CacheKey)).returns(::TypedCache::Either[Error, ::TypedCache::Snapshot[CachedType]]) }
     def get(key); end
 
-    sig { overridable.params(key: T.any(String, ::TypedCache::CacheKey), value: V).returns(::TypedCache::Either[Error, ::TypedCache::Snapshot[V]]) }
+    sig { overridable.params(key: T.any(String, ::TypedCache::CacheKey), value: CachedType).returns(::TypedCache::Either[Error, ::TypedCache::Snapshot[CachedType]]) }
     def set(key, value); end
 
-    sig { overridable.params(key: T.any(String, ::TypedCache::CacheKey)).returns(::TypedCache::Either[Error, ::TypedCache::Snapshot[V]]) }
+    sig { overridable.params(key: T.any(String, ::TypedCache::CacheKey)).returns(::TypedCache::Either[Error, ::TypedCache::Snapshot[CachedType]]) }
     def delete(key); end
 
     sig { overridable.params(key: T.any(String, ::TypedCache::CacheKey)).returns(T::Boolean) }
     def key?(key); end
 
-    sig { overridable.params(key: T.any(String, ::TypedCache::CacheKey), block: T.proc.params(value: V).returns(V)).returns(::TypedCache::Either[Error, ::TypedCache::Snapshot[V]]) }
+    sig { overridable.params(key: T.any(String, ::TypedCache::CacheKey), block: T.proc.params(value: CachedType).returns(CachedType)).returns(::TypedCache::Either[Error, ::TypedCache::Snapshot[CachedType]]) }
     def fetch(key, &block); end
 
     sig { overridable.void }
@@ -40,7 +40,7 @@ module TypedCache
     sig(:final) { returns(::TypedCache::Namespace) }
     def namespace; end
 
-    sig(:final) { params(namespace: ::TypedCache::Namespace).returns(::TypedCache::Store[V]) }
+    sig(:final) { params(namespace: ::TypedCache::Namespace).returns(::TypedCache::Store[CachedType]) }
     def with_namespace(namespace); end
 
     sig { abstract.returns(String) }
