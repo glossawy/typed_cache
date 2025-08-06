@@ -39,5 +39,5 @@ Gem::Specification.new do |spec|
   spec.add_dependency('multi_json', '~> 1.17')
 
   spec.extra_rdoc_files = Dir['README*', 'LICENSE*', 'examples*']
-  spec.files = Dir['*.gemspec', 'lib/**/*', 'sig/**/*']
+  spec.files = Dir['*.gemspec', 'lib/**/*', 'sig/**/*', 'rbi/**/*']
 end
