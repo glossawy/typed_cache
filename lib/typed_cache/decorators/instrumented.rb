@@ -56,12 +56,6 @@ module TypedCache
       "instrumented(#{store.store_type})"
     end
 
-    # @rbs override
-    # @rbs (key) -> CacheRef[V]
-    def ref(key)
-      CacheRef.new(self, key)
-    end
-
     # Additional methods that might exist on the wrapped store
     def respond_to_missing?(method_name, include_private = false)
       store.respond_to?(method_name, include_private) || super

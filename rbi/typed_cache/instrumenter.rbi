@@ -39,7 +39,7 @@ module TypedCache
     sig(:final) { params(operation: String).returns(String) }
     def event_name(operation); end
 
-    sig(:final) { returns(Private::Configuration::Instrumentation) }
+    sig(:final) { returns(::TypedCache::Private::Configuration::Instrumentation) }
     def config; end
   end
 end
