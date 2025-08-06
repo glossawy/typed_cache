@@ -4,10 +4,11 @@ module TypedCache
   module Instrumenters
     module Mixins
       module NamespacedSingleton
+        # @rbs () -> Array[Class[Instrumenter & NamespacedSingleton]]
+        def self.all: () -> Array[Class[Instrumenter & NamespacedSingleton]]
+
         # @rbs (Class[Instrumenter & NamespacedSingleton]) -> void
         def self.included: (Class[Instrumenter & NamespacedSingleton]) -> void
-
-        NAMESPACE_CACHE: Concurrent::Map[String, Class[Instrumenter & NamespacedSingleton]]
 
         # @rbs override
         # @rbs () -> String
@@ -22,6 +23,9 @@ module TypedCache
 
           # @rbs (String) -> maybe[class]
           def get: (String) -> maybe[class]
+
+          # @rbs () -> Concurrent::Map[String, Class[Instrumenter & NamespacedSingleton]]
+          def namespace_cache: () -> Concurrent::Map[String, Class[Instrumenter & NamespacedSingleton]]
         end
       end
     end

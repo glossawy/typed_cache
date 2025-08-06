@@ -7,6 +7,12 @@ module TypedCache
     # @rbs (String, Hash[Symbol, Class[T]]) -> void
     def initialize: (String, Hash[Symbol, Class[T]]) -> void
 
+    # @rbs (Registry[T]) -> Registry[T]
+    def initialize_copy: (Registry[T]) -> Registry[T]
+
+    # @rbs () -> void
+    def clear: () -> void
+
     # @rbs (Symbol, *untyped, **untyped) -> either[Error, T]
     def resolve: (Symbol, *untyped, **untyped) -> either[Error, T]
 
@@ -21,5 +27,7 @@ module TypedCache
 
     # @rbs (Symbol) -> bool
     def registered?: (Symbol) -> bool
+
+    attr_reader registry: Hash[Symbol, Class[T]]
   end
 end
