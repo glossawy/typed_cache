@@ -25,5 +25,13 @@ module TypedCache
     def ref(key)
       CacheRef.new(self, key)
     end
+
+    # @rbs override
+    #: (self) -> void
+    def initialize_copy(other)
+      super
+
+      @store = other.store.clone
+    end
   end
 end

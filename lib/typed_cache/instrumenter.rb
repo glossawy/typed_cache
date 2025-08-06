@@ -6,7 +6,7 @@ module TypedCache
     # @rbs! type event = Dry::Events::Event | ActiveSupport::Notifications::Event
 
     # @rbs [R](String, String, **untyped) { -> R } -> R
-    def instrument(event_name, key, **payload)
+    def instrument(event_name, key, **payload, &)
       raise NotImplementedError, "#{self.class} must implement #instrument"
     end
 
@@ -20,20 +20,20 @@ module TypedCache
       config.namespace
     end
 
+    # @rbs () -> bool
+    def enabled? = config.enabled
+
+    private
+
     # @rbs (String, String, **untyped) -> Hash[Symbol, untyped]
     def build_payload(operation, key, **payload)
       { namespace:, key:, operation: }.merge(payload)
     end
 
-    # @rbs () -> bool
-    def enabled? = config.enabled
-
     # @rbs (String) -> String
     def event_name(operation)
       "#{namespace}.#{operation}"
     end
-
-    private
 
     # @rbs () -> TypedCache::_TypedCacheInstrumentationConfig
     def config

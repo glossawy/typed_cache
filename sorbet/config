@@ -1,0 +1,9 @@
+--dir
+.
+--ignore=sig/
+--ignore=lib/
+--ignore=tmp/
+--ignore=vendor/
+--ignore=spec/
+--enable-experimental-requires-ancestor
+--enable-experimental-rbs-comments

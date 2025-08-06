@@ -29,6 +29,9 @@ group :tools do
   gem 'rubocop-sorbet', '~>0.9.0', require: false
   gem 'rubocop-thread_safety', require: false
 
+  gem 'sorbet', require: false
+  gem 'tapioca', require: false
+
   gem 'rbs', require: false
   gem 'rbs-inline', require: false
 

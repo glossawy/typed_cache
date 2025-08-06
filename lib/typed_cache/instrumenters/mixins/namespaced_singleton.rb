@@ -43,6 +43,9 @@ module TypedCache
             namespace_cache.get(namespace.to_s)
           end
 
+          # @rbs () -> void
+          def clear_namespace_cache = namespace_cache.clear
+
           # @rbs () -> Concurrent::Map[String, Class[Instrumenter & NamespacedSingleton]]
           def namespace_cache = @namespace_cache ||= Concurrent::Map.new # rubocop:disable ThreadSafety
         end

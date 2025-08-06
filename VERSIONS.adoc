@@ -2,6 +2,10 @@
 
 == Unreleased
 
+* fix(rbs): Adjusted some erronous RBS comments.
+* feat(sorbet): Added public API for gem under rbi directory.
+* chore(sorbet): Initialized sorbet via tapioca.
+
 == 0.2.0
 
 * refactor(instrumentation): Reworked the `CacheBuilder`'s instrumentation API for clarity and flexibility. The `with_instrumentation` method now accepts `:rails`, `:dry`, `:default` (null), or a custom instrumenter instance directly.

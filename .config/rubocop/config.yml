@@ -18,7 +18,7 @@ plugins:
 AllCops:
   TargetRubyVersion: 3.2
   Exclude:
-    - bin/**/*.rb
+    - bin/**/*
     - sig/generated/**/*.rb
     - tmp/**/*.rb
     - vendor/**/*.rb
@@ -37,3 +37,11 @@ Style/SymbolProc:
 
 Layout/LeadingCommentSpace:
   AllowRBSInlineAnnotation: true
+
+Style/FrozenStringLiteralComment:
+  Exclude:
+    - rbi/**/*.rbi
+
+Lint/MissingSuper:
+  Exclude:
+    - rbi/**/*.rbi

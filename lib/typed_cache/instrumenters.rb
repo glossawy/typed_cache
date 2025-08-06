@@ -28,11 +28,12 @@ module TypedCache
       # @rbs () -> Registry[Symbol, Class[Instrumenter]]
       def registry = REGISTRY
 
+      # @rbs! def register: (Symbol, Class[Instrumenter]) -> void
       # @rbs! def resolve: (Symbol, **untyped) -> either[Error, Instrumenter]
       # @rbs! def available: () -> Array[Symbol]
       # @rbs! def registered?: (Symbol) -> Boolean
 
-      def_delegators :registry, :resolve, :available, :registered?
+      def_delegators :registry, :resolve, :available, :registered?, :register
     end
   end
 end

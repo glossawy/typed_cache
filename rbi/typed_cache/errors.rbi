@@ -1,0 +1,20 @@
+# typed: strict
+
+module TypedCache
+  class Error < StandardError; end
+
+  class StoreError < Error
+    sig { params(operation: Symbol, key: CacheKey, message: String, original_error: T.nilable(Error)).void }
+    def initialize(operation, key, message, original_error = nil); end
+  end
+
+  class TypeError < Error
+    sig { params(expected_type: String, actual_type: String, value: T.untyped, message: String).void }
+    def initialize(expected_type, actual_type, value, message); end
+  end
+
+  class CacheMissError < Error
+    sig { params(key: CacheKey).void }
+    def initialize(key); end
+  end
+end

@@ -139,7 +139,7 @@ module TypedCache
     end
 
     # Pattern matching support for Either[Error, Snapshot[V]] results
-    #: [R] () { (Error) -> R } () { (Snapshot[V]) -> R } -> R
+    #: [R] (^(Error) -> R, ^(Snapshot[V]) -> R) -> R
     def fold(left_fn, right_fn)
       get.fold(left_fn, right_fn)
     end

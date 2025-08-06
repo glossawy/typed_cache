@@ -43,6 +43,13 @@ module TypedCache
     end
 
     # @rbs override
+    #: (self) -> self
+    def initialize_copy(other)
+      super
+      @instrumenter = other.instrumenter
+    end
+
+    # @rbs override
     #: -> String
     def store_type
       # Use polymorphism - delegate to the wrapped store
