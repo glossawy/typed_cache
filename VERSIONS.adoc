@@ -1,5 +1,16 @@
 = Versions
 
+== Unreleased
+
+== 0.2.0
+
+* refactor(instrumentation): Reworked the `CacheBuilder`'s instrumentation API for clarity and flexibility. The `with_instrumentation` method now accepts `:rails`, `:dry`, `:default` (null), or a custom instrumenter instance directly.
+* fix(instrumentation): Corrected a bug where instrumenters would still publish events even when `config.instrumentation.enabled` was set to `false`.
+* fix(instrumentation): Allowed subscriptions to be registered on disabled instrumenters; they will simply not fire any events.
+* feat(docs): Overhauled the `README.md` and `examples.md` to be more comprehensive, featuring the `CacheRef` API more prominently and adding detailed examples for custom backends and instrumenters.
+* test(core): Added extensive test coverage for the `CacheBuilder` and instrumentation logic to ensure correctness and prevent regressions.
+* chore(tests): Refactored test suites to improve clarity and maintainability by adhering to a "one expectation per example" convention and using `let` blocks for setup.
+
 == 0.1.1
 
 * chore: update gemspec details
