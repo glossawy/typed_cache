@@ -72,3 +72,5 @@ module TypedCache
     def instrumenters = Instrumenters
   end
 end
+
+require 'typed_cache/railtie' if defined?(Rails::Railtie)

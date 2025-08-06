@@ -15,6 +15,7 @@ group :test do
   gem 'timecop', '~>0.9.10'
   gem 'rspec', '~> 3.13'
   gem 'activesupport', '~>7.1.0', require: 'active_support/all'
+  gem 'railties', '~>7.1.0'
 end
 
 group :tools do

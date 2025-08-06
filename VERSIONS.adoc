@@ -2,8 +2,11 @@
 
 == Unreleased
 
-* fix(rbs): Adjusted some erronous RBS comments.
+* feat(rails): Added a Railtie to automatically configure the gem when Rails is present.
 * feat(sorbet): Added public API for gem under rbi directory.
+
+* fix(rbs): Adjusted some erronous RBS comments.
+
 * chore(sorbet): Initialized sorbet via tapioca.
 
 == 0.2.0
