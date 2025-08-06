@@ -3,6 +3,9 @@
 module TypedCache
   module Maybe
     include Kernel
+    extend T::Generic
+
+    mixes_in_class_methods(T::Generic)
 
     sealed!
     interface!

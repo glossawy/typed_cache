@@ -2,6 +2,8 @@
 
 module TypedCache
   class CacheRef
+    extend T::Generic
+
     sealed!
 
     V = type_member

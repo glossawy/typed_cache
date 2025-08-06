@@ -2,6 +2,8 @@
 
 module TypedCache
   module Decorator
+    extend T::Generic
+
     include ::TypedCache::Store
 
     abstract!

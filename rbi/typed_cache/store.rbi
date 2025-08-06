@@ -1,7 +1,7 @@
 # typed: strict
 
 module TypedCache
-  module ::TypedCache::Store
+  module Store
     abstract!
 
     V = type_member

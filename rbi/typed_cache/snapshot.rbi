@@ -2,9 +2,11 @@
 
 module TypedCache
   class Snapshot
+    extend T::Generic
+
     sealed!
 
-    V = type_member
+    V = type_member(:out)
 
     sig { returns(V) }
     def value; end
