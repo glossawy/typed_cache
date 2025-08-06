@@ -41,4 +41,6 @@ module TypedCache
     sig { returns(T.class_of(::TypedCache::Instrumenters)) }
     def instrumenters; end
   end
+
+  private_constant :Backends, :Decorators, :Instrumenters
 end
