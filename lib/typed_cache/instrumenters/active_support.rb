@@ -12,6 +12,8 @@ module TypedCache
       # @rbs override
       #: [R] (String, String, Hash[Symbol, untyped]) { -> R } -> R
       def instrument(operation, key, **payload, &block)
+        return yield unless enabled?
+
         payload = build_payload(operation, key, **payload)
         ::ActiveSupport::Notifications.instrument(event_name(operation), **payload, &block)
       end

@@ -11,6 +11,8 @@ module TypedCache
       # @rbs override
       #: [R] (String, String, **untyped) { -> R } -> R
       def instrument(operation, key, **payload, &block)
+        return yield unless enabled?
+
         payload = build_payload(operation, key, **payload)
         Dry::Monitor::Notifications.instrument(event_name(operation), payload, &block)
       end

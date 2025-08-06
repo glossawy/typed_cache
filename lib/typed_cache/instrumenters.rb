@@ -9,6 +9,7 @@ module TypedCache
     autoload :Monitor, 'typed_cache/instrumenters/monitor'
     autoload :Null, 'typed_cache/instrumenters/null'
 
+    # @api private
     # Registry mapping symbols to instrumenter classes. We can't reuse the generic
     # Registry class directly because many instrumenters mix in `Singleton`,
     # making `.new` inaccessible. Instead we implement a thin facade that
@@ -23,6 +24,7 @@ module TypedCache
     class << self
       extend Forwardable
 
+      # @api private
       # @rbs () -> Registry[Symbol, Class[Instrumenter]]
       def registry = REGISTRY
 

@@ -40,6 +40,32 @@ module TypedCache
         end
         expect(events.size).to(eq(1))
       end
+
+      context 'when instrumentation is disabled' do
+        before do
+          TypedCache.configure do |config|
+            config.instrumentation.enabled = false
+          end
+        end
+
+        it 'does not emit an event' do
+          events = []
+          callback = ->(*payload) { events << payload }
+          ActiveSupport::Notifications.subscribed(callback, 'typed_cache.set') do
+            store.set('key', 'value')
+          end
+          expect(events).to(be_empty)
+        end
+
+        it 'allows subscribing but does not fire for the subscriber' do
+          event_fired = false
+          store.instrumenter.subscribe('set') do |_|
+            event_fired = true
+          end
+          store.set('key', 'value')
+          expect(event_fired).to(be(false))
+        end
+      end
     end
   end
 end

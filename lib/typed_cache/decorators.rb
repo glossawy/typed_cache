@@ -18,13 +18,12 @@ module TypedCache
   module Decorators
     autoload :Instrumented, 'typed_cache/decorators/instrumented'
 
+    # @api private
     # Default decorator set – starts with instrumentation only, but this registry
     # lets end-users register their own via `Decorators.register`.
     REGISTRY = Registry.new('decorator', {
       instrumented: Instrumented,
     }).freeze
-
-    private_constant :REGISTRY
 
     class << self
       extend Forwardable
@@ -32,6 +31,7 @@ module TypedCache
       # Delegate common registry helpers
       delegate [:resolve, :register, :available, :registered?] => :registry
 
+      # @api private
       # @rbs () -> Registry[Store[untyped]]
       def registry = REGISTRY
     end

@@ -46,5 +46,8 @@ RSpec.configure do |config|
   config.after do
     TypedCache.reset_config
     Timecop.return
+    TypedCache::Instrumenters::Mixins::NamespacedSingleton.all.each do |klass|
+      klass.namespace_cache.clear
+    end
   end
 end

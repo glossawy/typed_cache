@@ -41,26 +41,33 @@ If there are issues with unsigned gems, use `MediumSecurity` instead.
 ```ruby
 require "typed_cache"
 
-# Build an in-memory cache with ActiveSupport-style instrumentation
+# 1. Build a store
 store = TypedCache.builder
-            .with_backend(:memory, shared: true)
-            .with_instrumentation      # or .with_decorator(:instrumented)
-            .build                     # => Either[Error, Store]
-            .value
+  .with_backend(:memory, shared: true)
+  .with_instrumentation(:rails) # e.g. using ActiveSupport
+  .build
+  .value # unwrap Either for brevity
 
-users_key   = store.namespace.key("users")   # => CacheKey
-snapshot    = store.set(users_key, [1, 2, 3]) # => Either[Error, Snapshot]
-puts snapshot.value           # => [1, 2, 3]
+# 2. Get a reference to a key
+user_ref = store.ref("users:123") # => CacheRef
+
+# 3. Fetch and compute if absent
+user_snapshot = user_ref.fetch do
+  puts "Cache miss! Computing..."
+  { id: 123, name: "Jane" }
+end.value # => Snapshot
+
+puts "Found: #{user_snapshot.value} (from_cache?=#{user_snapshot.from_cache?})"
 ```
 
 ## Builder API
 
-| Step                          | Purpose                                                        |
-| ----------------------------- | -------------------------------------------------------------- |
-| `with_backend(:name, **opts)` | Mandatory. Configure the concrete **Backend** and its options. |
-| `with_decorator(:key)`        | Optional. Add a decorator by registry key.                     |
-| `with_instrumentation`        | Convenience alias for `with_decorator(:instrumented)`.         |
-| `build`                       | Returns `Either[Error, Store]`.                                |
+| Step                            | Purpose                                                        |
+| ------------------------------- | -------------------------------------------------------------- |
+| `with_backend(:name, **opts)`   | Mandatory. Configure the concrete **Backend** and its options. |
+| `with_decorator(:key)`          | Optional. Add a decorator by registry key.                     |
+| `with_instrumentation(:source)` | Optional. Add instrumentation, e.g. `:rails` or `:dry`.        |
+| `build`                         | Returns `Either[Error, Store]`.                                |
 
 ### Back-ends vs Decorators
 
@@ -118,16 +125,100 @@ result.fold(
 )
 ```
 
+## The `CacheRef` API
+
+While you can call `get`, `set`, and `fetch` directly on the `store`, the more powerful way to work with TypedCache is via the `CacheRef` object. It provides a rich, monadic API for a single cache key.
+
+You get a `CacheRef` by calling `store.ref(key)`:
+
+```ruby
+user_ref = store.ref("users:123") # => #<TypedCache::CacheRef ...>
+```
+
+Now you can operate on it:
+
+```ruby
+# Fetch a value, computing it if it's missing
+snapshot_either = user_ref.fetch do
+  { id: 123, name: "Jane Doe" }
+end
+
+# The result is always an Either[Error, Snapshot]
+snapshot_either.fold(
+  ->(err)      { warn "Something went wrong: #{err.message}" },
+  ->(snapshot) { puts "Got value: #{snapshot.value} (from cache: #{snapshot.from_cache?})" }
+)
+
+# You can also map over values
+name_either = user_ref.map { |user| user[:name] }
+puts "User name is: #{name_either.value.value}" # unwrap Either, then Snapshot
+```
+
+The `CacheRef` API encourages a functional style and makes composing cache operations safe and predictable.
+
 ## Instrumentation
 
-Decorators publish ActiveSupport notifications when
-`TypedCache.config.instrumentation.enabled = true`:
+TypedCache can publish events about cache operations using different instrumenters. To enable it, use the `with_instrumentation` method on the builder, specifying an instrumentation backend:
 
-```
-<operation>.<namespace>  # e.g. get.typed_cache
+```ruby
+# For ActiveSupport::Notifications (e.g. in Rails)
+store = TypedCache.builder
+  .with_backend(:memory)
+  .with_instrumentation(:rails)
+  .build.value
+
+# For Dry::Monitor
+store = TypedCache.builder
+  .with_backend(:memory)
+  .with_instrumentation(:dry)
+  .build.value
 ```
 
-Payload keys: `:namespace, :key, :duration, :cache_hit`, …
+Events are published to a topic like `typed_cache.<operation>` (e.g., `typed_cache.get`). The topic namespace can be configured.
+
+Payload keys include: `:namespace, :key, :operation, :duration`, and `cache_hit`.
+
+You can subscribe to these events like so:
+
+```ruby
+# Example for ActiveSupport
+ActiveSupport::Notifications.subscribe("typed_cache.get") do |name, start, finish, id, payload|
+
+# Or you can subscribe via the store object itself
+instrumenter = store.instrumenter
+instrumenter.subscribe("get") do |event|
+  payload = event.payload
+  puts "Cache GET for key #{payload[:key]} took #{payload[:duration]}ms. Hit? #{payload[:cache_hit]}"
+end
+```
+
+If you call `with_instrumentation` with no arguments, it uses a `Null` instrumenter, which has no overhead.
+
+### Custom Instrumenters
+
+Just like with back-ends and decorators, you can write and register your own instrumenters. An instrumenter must implement an `instrument` and a `subscribe` method.
+
+```ruby
+class MyCustomInstrumenter
+  include TypedCache::Instrumenter
+
+  def instrument(operation, key, **payload, &block)
+    # ... your logic ...
+  end
+
+  def subscribe(event_name, **filters, &block)
+    # ... your logic ...
+  end
+end
+
+# Register it
+TypedCache::Instrumenters.register(:custom, MyCustomInstrumenter)
+
+# Use it
+store = TypedCache.builder
+  .with_instrumentation(:custom)
+  # ...
+```
 
 ## Further examples
 

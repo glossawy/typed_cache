@@ -7,17 +7,17 @@ module TypedCache
     autoload :Memory, 'typed_cache/backends/memory'
     autoload :ActiveSupport, 'typed_cache/backends/active_support'
 
+    # @api private
     # Backend registry using composition
     REGISTRY = Registry.new('backend', {
       memory: Memory,
     }).freeze
 
-    private_constant :REGISTRY
-
     class << self
       extend Forwardable
       delegate [:resolve, :register, :available, :registered?] => :registry
 
+      # @api private
       #: -> Registry
       def registry = REGISTRY
 

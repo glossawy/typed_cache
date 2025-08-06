@@ -71,8 +71,8 @@ module TypedCache
     # @rbs (Namespace) -> either[Error, Store[V]]
     def validate_and_build(namespace)
       create_store(namespace).bind do |store|
-        apply_instrumentation(store).bind do |instrumented_store|
-          apply_decorators(instrumented_store)
+        apply_decorators(store).bind do |decorated_store|
+          apply_instrumentation(decorated_store)
         end
       end
     end

@@ -10,6 +10,17 @@ module TypedCache
       @registry = defaults.dup
     end
 
+    # @rbs (Registry[T]) -> Registry[T]
+    def initialize_copy(other)
+      super
+      @registry = other.registry.dup
+    end
+
+    # @rbs () -> void
+    def clear
+      @registry.clear
+    end
+
     # @rbs (Symbol, *untyped, **untyped) -> either[Error, T]
     def resolve(key, *, **, &)
       klass = @registry[key]
@@ -51,5 +62,9 @@ module TypedCache
     def registered?(key)
       @registry.key?(key)
     end
+
+    protected
+
+    attr_reader :registry #: Hash[Symbol, Class[T]]
   end
 end

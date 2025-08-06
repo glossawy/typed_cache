@@ -5,6 +5,9 @@ module TypedCache
     module Mixins
       module NamespacedSingleton
         class << self
+          # @rbs () -> Array[Class[Instrumenter & NamespacedSingleton]]
+          def all = @all ||= [] # rubocop:disable ThreadSafety
+
           # @rbs (Class[Instrumenter & NamespacedSingleton]) -> void
           def included(base)
             base.singleton_class.class_eval do
@@ -13,10 +16,10 @@ module TypedCache
             end
 
             base.extend(ClassMethods)
+
+            all << base
           end
         end
-
-        NAMESPACE_CACHE = Concurrent::Map.new #: Concurrent::Map[String, Class[Instrumenter & NamespacedSingleton]]
 
         # @rbs override
         # @rbs () -> String
@@ -32,13 +35,16 @@ module TypedCache
         module ClassMethods
           # @rbs (String | Namespace) -> class
           def new(namespace: TypedCache.config.instrumentation.namespace)
-            NAMESPACE_CACHE.compute_if_absent(namespace.to_s) { private_new(namespace) }
+            namespace_cache.compute_if_absent(namespace.to_s) { private_new(namespace) }
           end
 
           # @rbs (String) -> maybe[class]
           def get(namespace)
-            NAMESPACE_CACHE.get(namespace.to_s)
+            namespace_cache.get(namespace.to_s)
           end
+
+          # @rbs () -> Concurrent::Map[String, Class[Instrumenter & NamespacedSingleton]]
+          def namespace_cache = @namespace_cache ||= Concurrent::Map.new # rubocop:disable ThreadSafety
         end
       end
     end
