@@ -4,7 +4,7 @@ module TypedCache
   class Error < StandardError; end
 
   class StoreError < Error
-    sig { params(operation: Symbol, key: CacheKey, message: String, original_error: T.nilable(Error)).void }
+    sig { params(operation: Symbol, key: ::TypedCache::CacheKey, message: String, original_error: T.nilable(Error)).void }
     def initialize(operation, key, message, original_error = nil); end
   end
 
@@ -14,7 +14,7 @@ module TypedCache
   end
 
   class CacheMissError < Error
-    sig { params(key: CacheKey).void }
+    sig { params(key: ::TypedCache::CacheKey).void }
     def initialize(key); end
   end
 end

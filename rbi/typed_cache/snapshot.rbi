@@ -27,19 +27,19 @@ module TypedCache
     sig { returns(T::Boolean) }
     def updated?; end
 
-    sig { type_parameters(:T).params(block: T.proc.params(value: V).returns(T.type_parameter(:T))).returns(Snapshot[T.type_parameter(:T)]) }
+    sig { type_parameters(:T).params(block: T.proc.params(value: V).returns(T.type_parameter(:T))).returns(::TypedCache::Snapshot[T.type_parameter(:T)]) }
     def map(&block); end
 
-    sig { type_parameters(:T).params(block: T.proc.params(value: V).returns(Either[Error, T.type_parameter(:T)])).returns(Either[Error, Snapshot[T.type_parameter(:T)]]) }
+    sig { type_parameters(:T).params(block: T.proc.params(value: V).returns(::TypedCache::Either[Error, T.type_parameter(:T)])).returns(::TypedCache::Either[Error, ::TypedCache::Snapshot[T.type_parameter(:T)]]) }
     def bind(&block); end
 
     alias flat_map bind
 
     class << self
-      sig { type_parameters(:T).params(value: T.type_parameter(:T)).returns(Snapshot[T.type_parameter(:T)]) }
+      sig { type_parameters(:T).params(value: T.type_parameter(:T)).returns(::TypedCache::Snapshot[T.type_parameter(:T)]) }
       def computed(value); end
 
-      sig { type_parameters(:T).params(value: T.type_parameter(:T)).returns(Snapshot[T.type_parameter(:T)]) }
+      sig { type_parameters(:T).params(value: T.type_parameter(:T)).returns(::TypedCache::Snapshot[T.type_parameter(:T)]) }
       def updated(value); end
     end
   end

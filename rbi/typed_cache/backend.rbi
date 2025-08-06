@@ -2,7 +2,7 @@
 
 module TypedCache
   module Backend
-    include Store
+    include ::TypedCache::Store
     V = type_member
   end
 end

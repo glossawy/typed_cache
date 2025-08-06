@@ -15,10 +15,10 @@ module TypedCache
     sig { abstract.returns(T::Boolean) }
     def nothing?; end
 
-    sig { abstract.type_parameters(:T).params(block: T.proc.params(value: V).returns(T.type_parameter(:T))).returns(Maybe[T.type_parameter(:T)]) }
+    sig { abstract.type_parameters(:T).params(block: T.proc.params(value: V).returns(T.type_parameter(:T))).returns(::TypedCache::Maybe[T.type_parameter(:T)]) }
     def map(&block); end
 
-    sig { abstract.type_parameters(:T).params(block: T.proc.params(value: V).returns(Maybe[T.type_parameter(:T)])).returns(Maybe[T.type_parameter(:T)]) }
+    sig { abstract.type_parameters(:T).params(block: T.proc.params(value: V).returns(::TypedCache::Maybe[T.type_parameter(:T)])).returns(::TypedCache::Maybe[T.type_parameter(:T)]) }
     def bind(&block); end
 
     alias flat_map bind
@@ -42,7 +42,7 @@ module TypedCache
     class Some
       sealed!
 
-      include Maybe
+      include ::TypedCache::Maybe
 
       V = type_member(:out)
 
@@ -55,14 +55,14 @@ module TypedCache
       sig { override.type_parameters(:T).params(block: T.proc.params(value: V).returns(T.type_parameter(:T))).returns(Some[T.type_parameter(:T)]) }
       def map(&block); end
 
-      sig { override.type_parameters(:T).params(block: T.proc.params(value: V).returns(Maybe[T.type_parameter(:T)])).returns(Maybe[T.type_parameter(:T)]) }
+      sig { override.type_parameters(:T).params(block: T.proc.params(value: V).returns(::TypedCache::Maybe[T.type_parameter(:T)])).returns(::TypedCache::Maybe[T.type_parameter(:T)]) }
       def bind(&block); end
     end
 
     class Nothing
       sealed!
 
-      include Maybe
+      include ::TypedCache::Maybe
 
       V = type_member(:out) { { fixed: T.noreturn } }
 
@@ -75,7 +75,7 @@ module TypedCache
       sig { override.type_parameters(:T).params(block: T.proc.params(value: V).returns(T.type_parameter(:T))).returns(T.self_type) }
       def map(&block); end
 
-      sig { override.type_parameters(:T).params(block: T.proc.params(value: V).returns(Maybe[T.type_parameter(:T)])).returns(T.self_type) }
+      sig { override.type_parameters(:T).params(block: T.proc.params(value: V).returns(::TypedCache::Maybe[T.type_parameter(:T)])).returns(T.self_type) }
       def bind(&block); end
     end
   end

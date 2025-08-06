@@ -4,7 +4,7 @@ module TypedCache
   class CacheKey
     sealed!
 
-    sig { returns(Namespace) }
+    sig { returns(::TypedCache::Namespace) }
     attr_reader :namespace
 
     sig { returns(String) }

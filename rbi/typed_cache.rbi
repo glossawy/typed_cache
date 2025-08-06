@@ -14,28 +14,28 @@ module TypedCache
       sig { returns(String) }
       attr_accessor :namespace
 
-      sig { returns(Configuration::Instrumentation) }
+      sig { returns(::TypedCache::Private::Configuration::Instrumentation) }
       def instrumentation; end
     end
   end
 
   class << self
-    sig { params(block: T.proc.params(config: Private::Configuration).void).void }
+    sig { params(block: T.proc.params(config: ::TypedCache::Private::Configuration).void).void }
     def configure(&block); end
 
-    sig { returns(Private::Configuration) }
+    sig { returns(::TypedCache::Private::Configuration) }
     def config; end
 
-    sig { returns(CacheBuilder) }
+    sig { returns(::TypedCache::CacheBuilder) }
     def builder; end
 
-    sig { returns(T.class_of(Backends)) }
+    sig { returns(T.class_of(::TypedCache::Backends)) }
     def backends; end
 
-    sig { returns(T.class_of(Decorators)) }
+    sig { returns(T.class_of(::TypedCache::Decorators)) }
     def decorators; end
 
-    sig { returns(T.class_of(Instrumenters)) }
+    sig { returns(T.class_of(::TypedCache::Instrumenters)) }
     def instrumenters; end
   end
 end

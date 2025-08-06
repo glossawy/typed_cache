@@ -2,10 +2,12 @@
 
 module TypedCache
   class CacheBuilder
-    Config = T.type_alias { TypedCache::Private::Configuration }
-    InstrumenterSource = T.type_alias { T.any(Symbol, Instrumenter) }
+    Config = T.type_alias { ::TypedCache::Private::Configuration }
+    InstrumenterSource = T.type_alias { T.any(Symbol, ::TypedCache::Instrumenter) }
 
-    sig { params(namespace: Namespace).returns(Store[T.anything]) }
+    private_constant :Config, :InstrumenterSource
+
+    sig { params(namespace: ::TypedCache::Namespace).returns(::TypedCache::Store[T.anything]) }
     def build(namespace); end
 
     sig { params(name: Symbol, args: T.untyped, options: T::Hash[Symbol, T.anything]).returns(T.self_type) }

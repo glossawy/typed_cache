@@ -44,7 +44,7 @@ module TypedCache
     class Left
       sealed!
 
-      include Either
+      include ::TypedCache::Either
 
       L = type_member(:out)
       R = type_member(:out) { { fixed: T.noreturn } }
@@ -61,7 +61,7 @@ module TypedCache
       sig { override.type_parameters(:T).params(block: T.proc.params(value: L).returns(T.type_parameter(:T))).returns(Left[T.type_parameter(:T)]) }
       def map_left(&block); end
 
-      sig { override.type_parameters(:E, :R2).params(block: T.proc.params(value: R).returns(Either[T.type_parameter(:E), T.type_parameter(:R2)])).returns(T.self_type) }
+      sig { override.type_parameters(:E, :R2).params(block: T.proc.params(value: R).returns(::TypedCache::Either[T.type_parameter(:E), T.type_parameter(:R2)])).returns(T.self_type) }
       def bind(&block); end
 
       sig { override.type_parameters(:T).params(left_block: T.proc.params(value: L).returns(T.type_parameter(:T)), right_block: T.proc.params(value: R).returns(T.type_parameter(:T))).returns(T.type_parameter(:T)) }
@@ -71,7 +71,7 @@ module TypedCache
     class Right
       sealed!
 
-      include Either
+      include ::TypedCache::Either
 
       L = type_member(:out) { { fixed: T.noreturn } }
       R = type_member(:out)
@@ -88,7 +88,7 @@ module TypedCache
       sig { override.type_parameters(:T).params(block: T.proc.params(value: L).returns(T.type_parameter(:T))).returns(T.self_type) }
       def map_left(&block); end
 
-      sig { override.type_parameters(:E, :R2).params(block: T.proc.params(value: R).returns(Either[T.type_parameter(:E), T.type_parameter(:R2)])).returns(Either[T.type_parameter(:E), T.type_parameter(:R2)]) }
+      sig { override.type_parameters(:E, :R2).params(block: T.proc.params(value: R).returns(::TypedCache::Either[T.type_parameter(:E), T.type_parameter(:R2)])).returns(::TypedCache::Either[T.type_parameter(:E), T.type_parameter(:R2)]) }
       def bind(&block); end
 
       sig { override.type_parameters(:T).params(left_block: T.proc.params(value: L).returns(T.type_parameter(:T)), right_block: T.proc.params(value: R).returns(T.type_parameter(:T))).returns(T.type_parameter(:T)) }
