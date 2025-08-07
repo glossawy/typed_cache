@@ -70,9 +70,26 @@ posts_store    = base_builder.build(TypedCache::Namespace.at("posts")).value
 comments_store = base_builder.build(TypedCache::Namespace.at("comments")).value
 ```
 
-## CacheRef API
+## Advanced Namespacing
 
-The `CacheRef` is the most powerful way to interact with a cache key.
+You can create nested namespaces using variadic arguments to `Namespace.at` or by chaining `join`.
+
+```ruby
+# These are equivalent
+ns1 = TypedCache::Namespace.at("app", "v1", "users")
+ns2 = TypedCache::Namespace.at("app").join("v1").join("users")
+
+puts ns1.to_s # => "app:v1:users"
+puts ns2.to_s # => "app:v1:users"
+
+# You can then build a store with this complex namespace
+user_store = base_builder.build(ns1).value
+user_store.ref("123").set({ name: "Deeply Nested" })
+```
+
+## CacheRef and Store APIs
+
+The `CacheRef` is the most powerful way to interact with a single cache key, while the `Store` provides batch operations.
 
 ```ruby
 ref = store.ref("some-key") # => CacheRef
@@ -88,6 +105,23 @@ result.fold(
   ->(error)    { puts "Cache miss or error: #{error.message}" },
   ->(snapshot) { puts "Found: #{snapshot.value} (from cache: #{snapshot.from_cache?})" }
 )
+```
+
+### Fetch all (get or compute)
+
+The `fetch_all` method on the `store` is used for bulk-retrieving items. It gets all existing values from the cache and for the ones that are missing, it runs the block, stores the result, and returns it.
+
+```ruby
+results = store.fetch_all("user:1", "user:2") do |missing_key|
+  # logic to compute the value for a missing key
+  "computed-#{missing_key}"
+end
+
+results.each do |key, snapshot_either|
+   snapshot_either.map do |snapshot|
+      puts "#{key} -> #{snapshot.value} (from_cache?=#{snapshot.from_cache?})"
+   end
+end
 ```
 
 ### Fetch (get or compute)

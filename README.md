@@ -9,7 +9,7 @@
 TypedCache is a lightweight, type-safe façade around your favourite Ruby cache
 stores. It adds three things on top of the raw back-end implementation:
 
-1. **Namespacing** – hierarchical `Namespace` helpers prevent key collisions.
+1. **Namespacing** – hierarchical `Namespace` helpers prevent key collisions. You can create nested namespaces easily, like `Namespace.at("users", "profiles", "avatars")`.
 2. **Stronger types** – RBS signatures as well as monadic types like `Either`, `Maybe`, and `Snapshot` wrap cache results so you always know whether you have a value, an error, or a cache-miss.
 3. **Composable decorators** – behaviours like instrumentation can be layered
    on without touching the underlying store.
@@ -125,9 +125,9 @@ result.fold(
 )
 ```
 
-## The `CacheRef` API
+## The `CacheRef` and `Store` APIs
 
-While you can call `get`, `set`, and `fetch` directly on the `store`, the more powerful way to work with TypedCache is via the `CacheRef` object. It provides a rich, monadic API for a single cache key.
+While you can call `get`, `set`, and `fetch` directly on the `store`, the more powerful way to work with TypedCache is via the `CacheRef` object. It provides a rich, monadic API for a single cache key. The `Store` also provides `fetch_all` for batch operations.
 
 You get a `CacheRef` by calling `store.ref(key)`:
 
@@ -152,6 +152,28 @@ snapshot_either.fold(
 # You can also map over values
 name_either = user_ref.map { |user| user[:name] }
 puts "User name is: #{name_either.value.value}" # unwrap Either, then Snapshot
+```
+
+### Batch Operations with `fetch_all`
+
+For retrieving multiple keys at once, the `Store` provides a `fetch_all` method. This is more efficient than fetching keys one by one, especially with remote back-ends like Redis.
+
+It takes a list of keys and a block to compute the values for any missing keys.
+
+```ruby
+user_refs = store.fetch_all("users:123", "users:456") do |missing_key|
+  # This block is called for each cache miss
+  user_id = missing_key.split(":").last
+  puts "Cache miss for #{missing_key}! Computing..."
+  { id: user_id, name: "Fetched User #{user_id}" }
+end
+
+user_refs.each do |key, snapshot_either|
+  snapshot_either.fold(
+    ->(err)      { warn "Error for #{key}: #{err.message}" },
+    ->(snapshot) { puts "Got value for #{key}: #{snapshot.value}" }
+  )
+end
 ```
 
 The `CacheRef` API encourages a functional style and makes composing cache operations safe and predictable.
