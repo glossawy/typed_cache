@@ -8,12 +8,15 @@ module TypedCache
       sig { returns(T.attached_class) }
       def root; end
 
-      sig { params(namespace: String).returns(T.attached_class) }
-      def at(namespace); end
+      sig { params(namespace: String, namespaces: String).returns(T.attached_class) }
+      def at(namespace, *namespaces); end
     end
 
     sig { params(namespace: String, key_factory: T.nilable(T.proc.params(namespace: ::TypedCache::Namespace, key: String).returns(::TypedCache::CacheKey))).returns(::TypedCache::Namespace) }
     def nested(namespace, &key_factory); end
+
+    sig { params(namespaces: String, key_factory: T.nilable(T.proc.params(namespace: ::TypedCache::Namespace, key: String).returns(::TypedCache::CacheKey))).returns(::TypedCache::Namespace) }
+    def join(*namespaces, &key_factory); end
 
     sig { returns(::TypedCache::Namespace) }
     def parent_namespace; end

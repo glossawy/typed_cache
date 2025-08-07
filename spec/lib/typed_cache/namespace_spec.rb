@@ -17,6 +17,23 @@ module TypedCache
         ns = described_class.at('users')
         expect(ns.to_s).to(eq('test:users'))
       end
+
+      it 'accepts multiple segments' do
+        ns = described_class.at('users', 'sessions')
+        expect(ns.to_s).to(eq('test:users:sessions'))
+      end
+    end
+
+    describe '#join' do
+      it 'joins two namespaces' do
+        joined = described_class.at('foo').join('a', 'b')
+        expect(joined.to_s).to(eq('test:foo:a:b'))
+      end
+
+      it 'accepts a custom key factory' do
+        joined = described_class.at('foo').join('a', 'b') { |ns, key| "#{ns}-#{key}" }
+        expect(joined.key('c').to_s).to(eq('test:foo:a:b-c'))
+      end
     end
 
     describe '#nested' do

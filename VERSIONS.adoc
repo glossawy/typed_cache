@@ -6,10 +6,14 @@
 * feat: Instrumented `fetch_all` method, without instrumenting nested cache calls.
 * feat(rails): Added a Railtie to automatically configure the gem when Rails is present.
 * feat(sorbet): Added public API for gem under rbi directory.
+* feat(namespaces): `.at` now accepts multiple arguments, automatically chaining with the appropriate delimiter.
+* feat(namespaces): Added `#join` method to `Namespace` to explicitly join multiple namespaces, with or without custom key factories.
 
-* fix(rbs): Adjusted some erronous RBS comments.
+* fix(rbs): Adjusted some erroneous RBS comments.
 
 * chore(sorbet): Initialized sorbet via tapioca.
+
+* internal: Added a `cached` factory method to `Snapshot`.
 
 == 0.2.0
 

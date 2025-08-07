@@ -7,7 +7,21 @@ module TypedCache
     describe '.computed' do
       it 'sets source to computed' do
         snap = described_class.computed(1)
-        expect(snap.computed?).to(be(true))
+        expect(snap).to(be_computed)
+      end
+    end
+
+    describe '.updated' do
+      it 'sets source to updated' do
+        snap = described_class.updated(1)
+        expect(snap).to(be_updated)
+      end
+    end
+
+    describe '.cached' do
+      it 'sets source to cache' do
+        snap = described_class.cached(1)
+        expect(snap).to(be_from_cache)
       end
     end
 

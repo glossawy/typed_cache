@@ -20,16 +20,17 @@ module TypedCache
       # Returns a new Namespace instance rooted at the given namespace string.
       #
       # @param namespace [String] the root namespace
+      # @param namespaces [Array<String>] additional namespaces to join
       # @return [Namespace] a new Namespace instance at the given root
       #
       # Example:
-      #   TypedCache::Namespace.at("users") # => #<TypedCache::Namespace namespace=users>
+      #   TypedCache::Namespace.at("users", "sessions") # => #<TypedCache::Namespace namespace=users:sessions>
       #
       # The returned Namespace can be further nested or used to generate cache keys.
       #
-      # @rbs (String) -> Namespace
-      def at(namespace)
-        root.nested(namespace)
+      # @rbs (String, *String) -> Namespace
+      def at(namespace, *namespaces)
+        root.join(namespace, *namespaces)
       end
 
       # Returns the root Namespace instance (with an empty namespace).
@@ -80,6 +81,25 @@ module TypedCache
       key_factory ||= @key_factory
 
       self.class.new("#{@namespace}:#{namespace}", &key_factory)
+    end
+
+    # Creates a new namespace by joining the current namespace with the given namespaces.
+    #
+    # @param namespaces [Array<String>] the namespaces to join
+    # @param key_factory [Proc, nil] optional custom key factory for the joined namespace
+    # @return [Namespace] a new Namespace instance with the combined namespace
+    #
+    # Example:
+    #   ns = Namespace.at("users")
+    #   ns.join("sessions", "admin") # => #<TypedCache::Namespace namespace=users:sessions:admin>
+    #
+    # If no key_factory is provided, the parent's key factory is inherited.
+    #
+    # @rbs (*String) ?{ (Namespace, String) -> CacheKey } -> Namespace
+    def join(*namespaces, &key_factory)
+      key_factory ||= @key_factory
+
+      self.class.new("#{@namespace}:#{namespaces.join(":")}", &key_factory)
     end
 
     # Returns the parent namespace by removing the last namespace segment.
