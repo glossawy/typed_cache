@@ -66,6 +66,30 @@ module TypedCache
           expect(event_fired).to(be(false))
         end
       end
+
+      describe '#fetch_all' do
+        it 'emits a single event for the whole operation' do
+          events = []
+          callback = ->(*payload) { events << payload }
+
+          ActiveSupport::Notifications.subscribed(callback, 'typed_cache.fetch_all') do
+            store.fetch_all(['k1', 'k2']) { |k| "v_#{k}" }
+          end
+
+          expect(events.size).to(eq(1))
+        end
+
+        it 'does not emit events for the nested fetch calls' do
+          events = []
+          callback = ->(*payload) { events << payload }
+
+          ActiveSupport::Notifications.subscribed(callback, 'typed_cache.fetch') do
+            store.fetch_all(['k1', 'k2']) { |k| "v_#{k}" }
+          end
+
+          expect(events).to(be_empty)
+        end
+      end
     end
   end
 end
