@@ -56,6 +56,12 @@ module TypedCache
     alias flat_map bind
 
     class << self
+      # Creates a snapshot for a cached value
+      #: [V] (V) -> Snapshot[V]
+      def cached(value)
+        new(value, source: :cache)
+      end
+
       # Creates a snapshot for a computed value
       #: [V] (V) -> Snapshot[V]
       def computed(value)
