@@ -7,8 +7,8 @@ module TypedCache
 
     private_constant :Config, :InstrumenterSource
 
-    sig { params(namespace: ::TypedCache::Namespace).returns(::TypedCache::Store[T.anything]) }
-    def build(namespace); end
+    sig { params(namespace: ::TypedCache::Namespace).returns(::TypedCache::Either[Error, ::TypedCache::Store[T.anything]]) }
+    def build(namespace = T.unsafe(nil)); end
 
     sig { params(name: Symbol, args: T.untyped, options: T::Hash[Symbol, T.anything]).returns(T.self_type) }
     def with_backend(name, *args, **options); end
