@@ -46,6 +46,9 @@ module TypedCache
     def initialize(store, instrumenter:)
       @store = store
       @instrumenter = instrumenter
+
+      # Avoid instrumenting the cache calls themselves, fetch_all may call fetch for example
+      @in_instrumentation = false
     end
 
     # @rbs override
@@ -80,6 +83,7 @@ module TypedCache
     instrument(:set)    { |key, *_| key }
     instrument(:delete) { |key, *_| key }
     instrument(:fetch)  { |key, *_| key }
+    instrument(:fetch_all) { |keys, *_| keys.map(&:to_s).join(';') }
     instrument(:key?)   { |key, *_| key }
     instrument(:clear)  { 'all' }
   end
