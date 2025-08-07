@@ -61,6 +61,31 @@ module TypedCache
       end
 
       # @rbs override
+      #: (Array[cache_key]) { (cache_key) -> V } -> either[Error, Array[Snapshot[V]]]
+      def fetch_all(keys, &block)
+        computed_keys = Set.new #: Set[String]
+        results = cache_store.fetch_multi(*keys.map { |key| namespaced_key(key).to_s }, default_options) do |key|
+          computed_keys << key
+          yield(key)
+        end
+
+        snapshots = [] #: Array[Snapshot[V]]
+
+        results.each do |key, value|
+          snapshots <<
+            if computed_keys.include?(key)
+              Snapshot.computed(value)
+            else
+              Snapshot.cached(value)
+            end
+        end
+
+        Either.right(snapshots)
+      rescue StandardError => e
+        Either.left(StoreError.new(:fetch_all, keys, "Failed to fetch from cache: #{e.message}", e))
+      end
+
+      # @rbs override
       #: (cache_key) -> bool
       def key?(key)
         cache_store.exist?(namespaced_key(key).to_s, default_options)

@@ -2,6 +2,8 @@
 
 == Unreleased
 
+* feat: Added `fetch_all` method to `Store` interface.
+* feat: Instrumented `fetch_all` method, without instrumenting nested cache calls.
 * feat(rails): Added a Railtie to automatically configure the gem when Rails is present.
 * feat(sorbet): Added public API for gem under rbi directory.
 

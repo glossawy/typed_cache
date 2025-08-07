@@ -24,9 +24,15 @@ module TypedCache
 
         class_eval(<<~RUBY, __FILE__, __LINE__ + 1)
           def #{alias_prefix}_with_instrumentation(...)
+            return #{alias_prefix}_without_instrumentation(...) if @in_instrumentation
+
             key = #{alias_prefix}_instrumentation_key(...)
             instrumenter.instrument(:"#{operation}", key, store_type: store_type) do
+              @in_instrumentation = true
+
               #{alias_prefix}_without_instrumentation(...)
+            ensure
+              @in_instrumentation = false
             end
           end
         RUBY

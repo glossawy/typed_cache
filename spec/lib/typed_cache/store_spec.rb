@@ -63,6 +63,29 @@ module TypedCache
       end
     end
 
+    describe '#fetch_all' do
+      it 'fetches multiple keys, computing if necessary' do
+        store.set('key1', 'cached1')
+        results = store.fetch_all(['key1', 'key2']) do |key|
+          "computed_#{key.split("key").last}"
+        end.value
+
+        expect(results.map(&:value)).to(contain_exactly('cached1', 'computed_2'))
+      end
+
+      it 'returns snapshots with correct sources' do
+        store.set('key1', 'cached1')
+        results = store.fetch_all(['key1', 'key2']) do |key|
+          "computed_#{key.split("key").last}"
+        end.value
+
+        cached_snapshot = results.find { |s| s.value == 'cached1' }
+        computed_snapshot = results.find { |s| s.value == 'computed_2' }
+
+        expect([cached_snapshot.source, computed_snapshot.source]).to(eq([:cache, :computed]))
+      end
+    end
+
     describe '#with_namespace' do
       context 'with a string' do
         it 'returns a new store with a nested namespace' do

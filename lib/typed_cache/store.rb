@@ -98,6 +98,15 @@ module TypedCache
       end
     end
 
+    # @rbs (Array[cache_key]) { (cache_key) -> V } -> either[Error, Array[Snapshot[V]]]
+    def fetch_all(keys, &block)
+      keys.reduce(Either.right([])) do |acc, key|
+        acc.bind do |values|
+          fetch(key) { yield(key) }.map { |value| values + [value] }
+        end
+      end
+    end
+
     # @rbs () -> Instrumenter
     def instrumenter = Instrumenters::Null.instance
 

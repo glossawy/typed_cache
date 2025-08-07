@@ -105,6 +105,19 @@ module TypedCache
         end
       end
 
+      describe '#fetch_all' do
+        it 'fetches multiple keys, computing if necessary' do
+          store.set('key1', 'cached1')
+
+          results = store.fetch_all(['key1', 'key2']) do |key|
+            "computed_#{key.split("key").last}"
+          end.value
+
+          values = results.map(&:value)
+          expect(values).to(contain_exactly('cached1', 'computed_2'))
+        end
+      end
+
       context 'with default TTL' do
         let(:store) { described_class.new(namespace) }
 
