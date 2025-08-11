@@ -27,16 +27,16 @@ module TypedCache
     alias flat_map bind
 
     class << self
-      sig { type_parameters(:T).params(value: T.type_parameter(:T)).returns(Some[T.type_parameter(:T)]) }
+      sig { type_parameters(:T).params(value: T.type_parameter(:T)).returns(::TypedCache::Some[T.type_parameter(:T)]) }
       def some(value); end
 
       sig { returns(Nothing) }
       def none; end
 
       sig { params(value: NilClass).returns(Nothing) }
-      sig { params(value: Nothing).returns(Nothing) }
-      sig { type_parameters(:T).params(value: Some[T.type_parameter(:T)]).returns(Some[T.type_parameter(:T)]) }
-      sig { type_parameters(:T).params(value: T.type_parameter(:T)).returns(Some[T.type_parameter(:T)]) }
+      sig { params(value: ::TypedCache::Nothing).returns(::TypedCache::Nothing) }
+      sig { type_parameters(:T).params(value: ::TypedCache::Some[T.type_parameter(:T)]).returns(::TypedCache::Some[T.type_parameter(:T)]) }
+      sig { type_parameters(:T).params(value: T.type_parameter(:T)).returns(::TypedCache::Some[T.type_parameter(:T)]) }
       def wrap(value); end
 
       alias [] some
