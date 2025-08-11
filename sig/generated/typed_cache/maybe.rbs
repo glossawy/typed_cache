@@ -27,6 +27,10 @@ module TypedCache
 
     def bind: [T] () { (V) -> maybe[T] } -> maybe[T]
 
+    def value_or: [T] (T) -> T
+
+    def value_or_raise!: () -> V
+
     alias flat_map bind
   end
 
@@ -55,6 +59,14 @@ module TypedCache
     # : [T] () { (V) -> maybe[T] } -> maybe[T]
     def bind: ...
 
+    # @rbs override
+    # : [T] (T) -> T
+    def value_or: ...
+
+    # @rbs override
+    # : -> V
+    def value_or_raise!: ...
+
     alias flat_map bind
 
     # : (Array[top]) -> ({ value: V })
@@ -81,5 +93,13 @@ module TypedCache
     def bind: ...
 
     alias flat_map bind
+
+    # @rbs override
+    # : [T] (T) -> T
+    def value_or: ...
+
+    # @rbs override
+    # : -> V
+    def value_or_raise!: ...
   end
 end

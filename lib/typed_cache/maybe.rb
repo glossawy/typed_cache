@@ -33,6 +33,8 @@ module TypedCache
   #     def nothing?: -> bool
   #     def map: [T] () { (V) -> T } -> maybe[T]
   #     def bind: [T] () { (V) -> maybe[T] } -> maybe[T]
+  #     def value_or: [T] (T) -> T
+  #     def value_or_raise!: -> V
   #     alias flat_map bind
   #   end
 
@@ -62,6 +64,14 @@ module TypedCache
     #: [T] () { (V) -> maybe[T] } -> maybe[T]
     def bind(&) = yield(value)
 
+    # @rbs override
+    #: [T] (T) -> T
+    def value_or(default) = value
+
+    # @rbs override
+    #: -> V
+    def value_or_raise! = value
+
     alias flat_map bind
 
     #: (Array[top]) -> ({ value: V })
@@ -88,5 +98,13 @@ module TypedCache
     #: [T] () { (V) -> maybe[T] } -> maybe[T]
     def bind(&) = self
     alias flat_map bind
+
+    # @rbs override
+    #: [T] (T) -> T
+    def value_or(default) = default
+
+    # @rbs override
+    #: -> V
+    def value_or_raise! = raise TypedCache::TypeError, 'Nothing has no value'
   end
 end

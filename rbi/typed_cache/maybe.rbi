@@ -26,6 +26,12 @@ module TypedCache
 
     alias flat_map bind
 
+    sig { abstract.type_parameters(:T).params(value: T.type_parameter(:T)).returns(T.type_parameter(:T)) }
+    def value_or(value); end
+
+    sig { abstract.returns(V) }
+    def value_or_raise!; end
+
     class << self
       sig { type_parameters(:T).params(value: T.type_parameter(:T)).returns(::TypedCache::Some[T.type_parameter(:T)]) }
       def some(value); end
@@ -62,6 +68,12 @@ module TypedCache
 
     sig { override.type_parameters(:T).params(block: T.proc.params(value: V).returns(::TypedCache::Maybe[T.type_parameter(:T)])).returns(::TypedCache::Maybe[T.type_parameter(:T)]) }
     def bind(&block); end
+
+    sig { override.type_parameters(:T).params(value: T.type_parameter(:T)).returns(V) }
+    def value_or(value); end
+
+    sig { override.returns(V) }
+    def value_or_raise!; end
   end
 
   class Nothing
@@ -83,5 +95,11 @@ module TypedCache
 
     sig { override.type_parameters(:T).params(block: T.proc.params(value: V).returns(::TypedCache::Maybe[T.type_parameter(:T)])).returns(T.self_type) }
     def bind(&block); end
+
+    sig { override.type_parameters(:T).params(value: T.type_parameter(:T)).returns(T.type_parameter(:T)) }
+    def value_or(value); end
+
+    sig { override.returns(T.noreturn) }
+    def value_or_raise!; end
   end
 end
