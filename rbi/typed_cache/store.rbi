@@ -8,8 +8,9 @@ module TypedCache
 
     CachedType = type_member
 
+    Error = T.type_alias { TypedCache::Error }
     Key = T.type_alias { T.any(String, ::TypedCache::CacheKey) }
-    private_constant :Key
+    private_constant :Error, :Key
 
     sig { params(key: Key).returns(::TypedCache::Either[Error, CachedType]) }
     def get(key); end

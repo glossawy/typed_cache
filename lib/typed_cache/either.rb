@@ -39,6 +39,8 @@ module TypedCache
 
     attr_reader :error #: E
 
+    alias value error
+
     #: (E) -> void
     def initialize(error)
       @error = error
@@ -81,6 +83,8 @@ module TypedCache
     # @rbs! include _Either[bot, R]
 
     attr_reader :value #: R
+
+    alias result value
 
     #: (R) -> void
     def initialize(value)

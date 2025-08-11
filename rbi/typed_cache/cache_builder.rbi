@@ -2,10 +2,11 @@
 
 module TypedCache
   class CacheBuilder
+    Error = T.type_alias { TypedCache::Error }
     Config = T.type_alias { ::TypedCache::Private::Configuration }
     InstrumenterSource = T.type_alias { T.any(Symbol, ::TypedCache::Instrumenter) }
 
-    private_constant :Config, :InstrumenterSource
+    private_constant :Config, :Error, :InstrumenterSource
 
     sig { params(namespace: ::TypedCache::Namespace).returns(::TypedCache::Either[Error, ::TypedCache::Store[T.anything]]) }
     def build(namespace = T.unsafe(nil)); end

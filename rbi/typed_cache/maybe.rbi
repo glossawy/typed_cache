@@ -41,45 +41,47 @@ module TypedCache
 
       alias [] some
     end
+  end
 
-    class Some
-      sealed!
+  class Some
+    sealed!
 
-      include ::TypedCache::Maybe
+    include ::TypedCache::Maybe
+    extend T::Generic
 
-      V = type_member(:out)
+    V = type_member(:out)
 
-      sig { override.returns(TrueClass) }
-      def some?; end
+    sig { override.returns(TrueClass) }
+    def some?; end
 
-      sig { override.returns(FalseClass) }
-      def nothing?; end
+    sig { override.returns(FalseClass) }
+    def nothing?; end
 
-      sig { override.type_parameters(:T).params(block: T.proc.params(value: V).returns(T.type_parameter(:T))).returns(Some[T.type_parameter(:T)]) }
-      def map(&block); end
+    sig { override.type_parameters(:T).params(block: T.proc.params(value: V).returns(T.type_parameter(:T))).returns(Some[T.type_parameter(:T)]) }
+    def map(&block); end
 
-      sig { override.type_parameters(:T).params(block: T.proc.params(value: V).returns(::TypedCache::Maybe[T.type_parameter(:T)])).returns(::TypedCache::Maybe[T.type_parameter(:T)]) }
-      def bind(&block); end
-    end
+    sig { override.type_parameters(:T).params(block: T.proc.params(value: V).returns(::TypedCache::Maybe[T.type_parameter(:T)])).returns(::TypedCache::Maybe[T.type_parameter(:T)]) }
+    def bind(&block); end
+  end
 
-    class Nothing
-      sealed!
+  class Nothing
+    sealed!
 
-      include ::TypedCache::Maybe
+    include ::TypedCache::Maybe
+    extend T::Generic
 
-      V = type_member(:out) { { fixed: T.noreturn } }
+    V = type_member(:out) { { fixed: T.noreturn } }
 
-      sig { override.returns(FalseClass) }
-      def some?; end
+    sig { override.returns(FalseClass) }
+    def some?; end
 
-      sig { override.returns(TrueClass) }
-      def nothing?; end
+    sig { override.returns(TrueClass) }
+    def nothing?; end
 
-      sig { override.type_parameters(:T).params(block: T.proc.params(value: V).returns(T.type_parameter(:T))).returns(T.self_type) }
-      def map(&block); end
+    sig { override.type_parameters(:T).params(block: T.proc.params(value: V).returns(T.type_parameter(:T))).returns(T.self_type) }
+    def map(&block); end
 
-      sig { override.type_parameters(:T).params(block: T.proc.params(value: V).returns(::TypedCache::Maybe[T.type_parameter(:T)])).returns(T.self_type) }
-      def bind(&block); end
-    end
+    sig { override.type_parameters(:T).params(block: T.proc.params(value: V).returns(::TypedCache::Maybe[T.type_parameter(:T)])).returns(T.self_type) }
+    def bind(&block); end
   end
 end

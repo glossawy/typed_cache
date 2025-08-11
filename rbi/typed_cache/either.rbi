@@ -32,59 +32,69 @@ module TypedCache
 
     sig { abstract.type_parameters(:T).params(left_block: T.proc.params(value: L).returns(T.type_parameter(:T)), right_block: T.proc.params(value: R).returns(T.type_parameter(:T))).returns(T.type_parameter(:T)) }
     def fold(left_block, right_block); end
+  end
 
-    class Left
-      sealed!
+  class Left
+    sealed!
 
-      include ::TypedCache::Either
+    include ::TypedCache::Either
+    extend T::Generic
 
-      L = type_member(:out)
-      R = type_member(:out) { { fixed: T.noreturn } }
+    L = type_member(:out)
+    R = type_member(:out) { { fixed: T.noreturn } }
 
-      sig { override.returns(TrueClass) }
-      def left?; end
+    sig { override.returns(TrueClass) }
+    def left?; end
 
-      sig { override.returns(FalseClass) }
-      def right?; end
+    sig { override.returns(FalseClass) }
+    def right?; end
 
-      sig { override.type_parameters(:T).params(block: T.proc.params(value: R).returns(T.type_parameter(:T))).returns(T.self_type) }
-      def map(&block); end
+    sig { override.type_parameters(:T).params(block: T.proc.params(value: R).returns(T.type_parameter(:T))).returns(T.self_type) }
+    def map(&block); end
 
-      sig { override.type_parameters(:T).params(block: T.proc.params(value: L).returns(T.type_parameter(:T))).returns(Left[T.type_parameter(:T)]) }
-      def map_left(&block); end
+    sig { override.type_parameters(:T).params(block: T.proc.params(value: L).returns(T.type_parameter(:T))).returns(Left[T.type_parameter(:T)]) }
+    def map_left(&block); end
 
-      sig { override.type_parameters(:E, :R2).params(block: T.proc.params(value: R).returns(::TypedCache::Either[T.type_parameter(:E), T.type_parameter(:R2)])).returns(T.self_type) }
-      def bind(&block); end
+    sig { override.type_parameters(:E, :R2).params(block: T.proc.params(value: R).returns(::TypedCache::Either[T.type_parameter(:E), T.type_parameter(:R2)])).returns(T.self_type) }
+    def bind(&block); end
 
-      sig { override.type_parameters(:T).params(left_block: T.proc.params(value: L).returns(T.type_parameter(:T)), right_block: T.proc.params(value: R).returns(T.type_parameter(:T))).returns(T.type_parameter(:T)) }
-      def fold(left_block, right_block); end
-    end
+    sig { override.type_parameters(:T).params(left_block: T.proc.params(value: L).returns(T.type_parameter(:T)), right_block: T.proc.params(value: R).returns(T.type_parameter(:T))).returns(T.type_parameter(:T)) }
+    def fold(left_block, right_block); end
 
-    class Right
-      sealed!
+    sig { returns(L) }
+    def value; end
+    alias error value
+  end
 
-      include ::TypedCache::Either
+  class Right
+    sealed!
 
-      L = type_member(:out) { { fixed: T.noreturn } }
-      R = type_member(:out)
+    include ::TypedCache::Either
+    extend T::Generic
 
-      sig { override.returns(FalseClass) }
-      def left?; end
+    L = type_member(:out) { { fixed: T.noreturn } }
+    R = type_member(:out)
 
-      sig { override.returns(TrueClass) }
-      def right?; end
+    sig { override.returns(FalseClass) }
+    def left?; end
 
-      sig { override.type_parameters(:T).params(block: T.proc.params(value: R).returns(T.type_parameter(:T))).returns(Right[T.type_parameter(:T)]) }
-      def map(&block); end
+    sig { override.returns(TrueClass) }
+    def right?; end
 
-      sig { override.type_parameters(:T).params(block: T.proc.params(value: L).returns(T.type_parameter(:T))).returns(T.self_type) }
-      def map_left(&block); end
+    sig { override.type_parameters(:T).params(block: T.proc.params(value: R).returns(T.type_parameter(:T))).returns(Right[T.type_parameter(:T)]) }
+    def map(&block); end
 
-      sig { override.type_parameters(:E, :R2).params(block: T.proc.params(value: R).returns(::TypedCache::Either[T.type_parameter(:E), T.type_parameter(:R2)])).returns(::TypedCache::Either[T.type_parameter(:E), T.type_parameter(:R2)]) }
-      def bind(&block); end
+    sig { override.type_parameters(:T).params(block: T.proc.params(value: L).returns(T.type_parameter(:T))).returns(T.self_type) }
+    def map_left(&block); end
 
-      sig { override.type_parameters(:T).params(left_block: T.proc.params(value: L).returns(T.type_parameter(:T)), right_block: T.proc.params(value: R).returns(T.type_parameter(:T))).returns(T.type_parameter(:T)) }
-      def fold(left_block, right_block); end
-    end
+    sig { override.type_parameters(:E, :R2).params(block: T.proc.params(value: R).returns(::TypedCache::Either[T.type_parameter(:E), T.type_parameter(:R2)])).returns(::TypedCache::Either[T.type_parameter(:E), T.type_parameter(:R2)]) }
+    def bind(&block); end
+
+    sig { override.type_parameters(:T).params(left_block: T.proc.params(value: L).returns(T.type_parameter(:T)), right_block: T.proc.params(value: R).returns(T.type_parameter(:T))).returns(T.type_parameter(:T)) }
+    def fold(left_block, right_block); end
+
+    sig { returns(R) }
+    def value; end
+    alias result value
   end
 end
