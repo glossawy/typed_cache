@@ -63,7 +63,9 @@ module TypedCache
 
     sig { returns(L) }
     def value; end
-    alias error value
+
+    sig { returns(L) }
+    def error; end
   end
 
   class Right
@@ -95,6 +97,8 @@ module TypedCache
 
     sig { returns(R) }
     def value; end
-    alias result value
+
+    sig { returns(R) }
+    def result; end
   end
 end
