@@ -118,7 +118,7 @@ module TypedCache
 
     # Accepts a String segment or a fully-formed Namespace and returns a cloned
     # store scoped to that namespace.
-    # @rbs (Namespace | String) -> Store[V]
+    #: (Namespace | String) -> Store[V]
     def with_namespace(ns)
       new_namespace =
         case ns

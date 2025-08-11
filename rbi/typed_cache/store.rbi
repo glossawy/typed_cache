@@ -36,8 +36,8 @@ module TypedCache
     sig { returns(::TypedCache::Namespace) }
     def namespace; end
 
-    sig { params(namespace: ::TypedCache::Namespace).returns(::TypedCache::Store[CachedType]) }
-    def with_namespace(namespace); end
+    sig { params(ns: T.any(::TypedCache::Namespace, String)).returns(::TypedCache::Store[CachedType]) }
+    def with_namespace(ns); end
 
     sig { returns(String) }
     def store_type; end
