@@ -15,7 +15,8 @@
 
 * chore(sorbet): Initialized sorbet via tapioca.
 
-* internal: Added a `cached` factory method to `Snapshot`.
+* refactor: Added a `cached` factory method to `Snapshot`.
+* refactor: fetch_all now accepts a block that receives the CacheKey, not the raw string key.
 
 == 0.2.0
 

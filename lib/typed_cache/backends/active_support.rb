@@ -77,12 +77,15 @@ module TypedCache
       end
 
       # @rbs override
-      #: (Array[cache_key]) { (cache_key) -> V } -> either[Error, Array[Snapshot[V]]]
+      #: (Array[cache_key]) { (CacheKey) -> V } -> either[Error, Array[Snapshot[V]]]
       def fetch_all(keys, &block)
+        cache_keys = keys.map { |key| namespaced_key(key) }
+        key_map = cache_keys.index_by(&:to_s)
+
         computed_keys = Set.new #: Set[String]
-        results = cache_store.fetch_multi(*keys.map { |key| namespaced_key(key).to_s }, default_options) do |key|
+        results = cache_store.fetch_multi(*key_map.keys, default_options) do |key|
           computed_keys << key
-          yield(key)
+          yield(key_map[key])
         end
 
         snapshots = [] #: Array[Snapshot[V]]

@@ -110,7 +110,7 @@ module TypedCache
           store.set('key1', 'cached1')
 
           results = store.fetch_all(['key1', 'key2']) do |key|
-            "computed_#{key.split("key").last}"
+            "computed_#{key.key.last}"
           end.value
 
           values = results.map(&:value)

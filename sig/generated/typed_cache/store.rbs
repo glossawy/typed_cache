@@ -84,8 +84,8 @@ module TypedCache
     # @rbs (cache_key) { () -> V } -> either[Error, Snapshot[V]]
     def fetch: (cache_key) { () -> V } -> either[Error, Snapshot[V]]
 
-    # @rbs (Array[cache_key]) { (cache_key) -> V } -> either[Error, Array[Snapshot[V]]]
-    def fetch_all: (Array[cache_key]) { (cache_key) -> V } -> either[Error, Array[Snapshot[V]]]
+    # @rbs (Array[cache_key]) { (CacheKey) -> V } -> either[Error, Array[Snapshot[V]]]
+    def fetch_all: (Array[cache_key]) { (CacheKey) -> V } -> either[Error, Array[Snapshot[V]]]
 
     # @rbs () -> Instrumenter
     def instrumenter: () -> Instrumenter

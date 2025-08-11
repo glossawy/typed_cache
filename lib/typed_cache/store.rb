@@ -119,8 +119,9 @@ module TypedCache
       end
     end
 
-    # @rbs (Array[cache_key]) { (cache_key) -> V } -> either[Error, Array[Snapshot[V]]]
+    # @rbs (Array[cache_key]) { (CacheKey) -> V } -> either[Error, Array[Snapshot[V]]]
     def fetch_all(keys, &block)
+      keys = keys.map { |key| namespaced_key(key) }
       keys.reduce(Either.right([])) do |acc, key|
         acc.bind do |values|
           fetch(key) { yield(key) }.map { |value| values + [value] }
