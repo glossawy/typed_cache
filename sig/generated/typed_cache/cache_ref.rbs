@@ -77,8 +77,8 @@ module TypedCache
     def scope: [R] (String) -> CacheRef[R]
 
     # Pattern matching support for Either[Error, Snapshot[V]] results
-    # : [R] () { (Error) -> R } () { (Snapshot[V]) -> R } -> R
-    def fold: (untyped left_fn, untyped right_fn) -> untyped
+    # : [R] (^(Error) -> R, ^(Snapshot[V]) -> R) -> R
+    def fold: [R] (^(Error) -> R, ^(Snapshot[V]) -> R) -> R
 
     # Convenience method to work with the snapshot directly
     # : [R] () { (Snapshot[V]) -> R } -> either[Error, R]

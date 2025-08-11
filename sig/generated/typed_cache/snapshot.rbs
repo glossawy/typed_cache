@@ -4,14 +4,16 @@ module TypedCache
   # Immutable snapshot of a cached value with metadata about its source and age
   # @rbs generic V
   class Snapshot[V]
+    attr_reader key: CacheKey
+
     attr_reader value: V
 
     attr_reader retrieved_at: Time
 
     attr_reader source: Symbol
 
-    # : (V, source: Symbol, retrieved_at: Time) -> void
-    def initialize: (V, source: Symbol, retrieved_at: Time) -> void
+    # : (CacheKey, V, source: Symbol, retrieved_at: Time) -> void
+    def initialize: (CacheKey, V, source: Symbol, retrieved_at: Time) -> void
 
     # Age of the snapshot in seconds
     # : -> Float
@@ -39,12 +41,16 @@ module TypedCache
 
     alias flat_map bind
 
+    # Creates a snapshot for a cached value
+    # : [V] (CacheKey, V) -> Snapshot[V]
+    def self.cached: [V] (CacheKey, V) -> Snapshot[V]
+
     # Creates a snapshot for a computed value
-    # : [V] (V) -> Snapshot[V]
-    def self.computed: [V] (V) -> Snapshot[V]
+    # : [V] (CacheKey, V) -> Snapshot[V]
+    def self.computed: [V] (CacheKey, V) -> Snapshot[V]
 
     # Creates a snapshot for an updated value
-    # : [V] (V) -> Snapshot[V]
-    def self.updated: [V] (V) -> Snapshot[V]
+    # : [V] (CacheKey, V) -> Snapshot[V]
+    def self.updated: [V] (CacheKey, V) -> Snapshot[V]
   end
 end

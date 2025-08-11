@@ -20,12 +20,12 @@ module TypedCache
     def initialize: (TypedCache::Store[V], instrumenter: Instrumenter) -> void
 
     # @rbs override
-    # : -> String
-    def store_type: ...
+    # : (self) -> self
+    def initialize_copy: ...
 
     # @rbs override
-    # @rbs (key) -> CacheRef[V]
-    def ref: ...
+    # : -> String
+    def store_type: ...
 
     # Additional methods that might exist on the wrapped store
     def respond_to_missing?: (untyped method_name, ?untyped include_private) -> untyped

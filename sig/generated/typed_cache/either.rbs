@@ -36,6 +36,8 @@ module TypedCache
 
     attr_reader error: E
 
+    alias value error
+
     # : (E) -> void
     def initialize: (E) -> void
 
@@ -72,6 +74,8 @@ module TypedCache
     include _Either[bot, R]
 
     attr_reader value: R
+
+    alias result value
 
     # : (R) -> void
     def initialize: (R) -> void

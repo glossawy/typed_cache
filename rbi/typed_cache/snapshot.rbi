@@ -8,6 +8,9 @@ module TypedCache
 
     ValueType = type_member(:out)
 
+    sig { returns(::TypedCache::CacheKey) }
+    def key; end
+
     sig { returns(ValueType) }
     def value; end
 
@@ -38,11 +41,14 @@ module TypedCache
     alias flat_map bind
 
     class << self
-      sig { type_parameters(:T).params(value: T.type_parameter(:T)).returns(::TypedCache::Snapshot[T.type_parameter(:T)]) }
-      def computed(value); end
+      sig { type_parameters(:T).params(key: ::TypedCache::CacheKey, value: T.type_parameter(:T)).returns(::TypedCache::Snapshot[T.type_parameter(:T)]) }
+      def cached(key, value); end
 
-      sig { type_parameters(:T).params(value: T.type_parameter(:T)).returns(::TypedCache::Snapshot[T.type_parameter(:T)]) }
-      def updated(value); end
+      sig { type_parameters(:T).params(key: ::TypedCache::CacheKey, value: T.type_parameter(:T)).returns(::TypedCache::Snapshot[T.type_parameter(:T)]) }
+      def computed(key, value); end
+
+      sig { type_parameters(:T).params(key: ::TypedCache::CacheKey, value: T.type_parameter(:T)).returns(::TypedCache::Snapshot[T.type_parameter(:T)]) }
+      def updated(key, value); end
     end
   end
 end

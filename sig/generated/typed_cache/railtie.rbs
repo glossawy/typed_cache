@@ -1,0 +1,6 @@
+# Generated from lib/typed_cache/railtie.rb with RBS::Inline
+
+module TypedCache
+  class Railtie < ::Rails::Railtie
+  end
+end

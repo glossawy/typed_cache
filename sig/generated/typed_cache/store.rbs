@@ -15,9 +15,13 @@ module TypedCache
     interface _Store[V]
       def get: (cache_key) -> either[Error, Snapshot[V]]
 
+      def get_all: (Array[cache_key]) -> either[Error, Hash[cache_key, Snapshot[V]]]
+
       def ref: (cache_key) -> CacheRef[V]
 
       def set: (cache_key, V) -> either[Error, Snapshot[V]]
+
+      def set_all: (Hash[cache_key, V]) -> either[Error, Hash[cache_key, Snapshot[V]]]
 
       def delete: (cache_key) -> either[Error, Snapshot[V]]
 
@@ -26,6 +30,8 @@ module TypedCache
       def clear: () -> maybe[Error]
 
       def fetch: (cache_key) { () -> V } -> either[Error, Snapshot[V]]
+
+      def fetch_all: (Array[cache_key]) { (cache_key) -> V } -> either[Error, Array[Snapshot[V]]]
 
       def namespace: () -> Namespace
 
@@ -47,6 +53,9 @@ module TypedCache
     # @rbs (cache_key) -> either[Error, Snapshot[V]]
     def get: (cache_key) -> either[Error, Snapshot[V]]
 
+    # @rbs (Array[cache_key]) -> either[Error, Hash[cache_key, Snapshot[V]]]
+    def get_all: (Array[cache_key]) -> either[Error, Hash[cache_key, Snapshot[V]]]
+
     # Retrieves a cache reference for a key
     # @rbs (cache_key) -> CacheRef[V]
     def ref: (cache_key) -> CacheRef[V]
@@ -54,6 +63,9 @@ module TypedCache
     # Stores a value in the cache
     # @rbs (cache_key, V) -> either[Error, Snapshot[V]]
     def set: (cache_key, V) -> either[Error, Snapshot[V]]
+
+    # @rbs (Hash[cache_key, V]) -> either[Error, Hash[cache_key, Snapshot[V]]]
+    def set_all: (Hash[cache_key, V]) -> either[Error, Hash[cache_key, Snapshot[V]]]
 
     # Removes a value from the cache, returning the removed value
     # @rbs (cache_key) -> either[Error, Snapshot[V]]
@@ -72,6 +84,9 @@ module TypedCache
     # @rbs (cache_key) { () -> V } -> either[Error, Snapshot[V]]
     def fetch: (cache_key) { () -> V } -> either[Error, Snapshot[V]]
 
+    # @rbs (Array[cache_key]) { (cache_key) -> V } -> either[Error, Array[Snapshot[V]]]
+    def fetch_all: (Array[cache_key]) { (cache_key) -> V } -> either[Error, Array[Snapshot[V]]]
+
     # @rbs () -> Instrumenter
     def instrumenter: () -> Instrumenter
 
@@ -81,7 +96,7 @@ module TypedCache
 
     # Accepts a String segment or a fully-formed Namespace and returns a cloned
     # store scoped to that namespace.
-    # @rbs (Namespace | String) -> Store[V]
+    # : (Namespace | String) -> Store[V]
     def with_namespace: (Namespace | String) -> Store[V]
 
     # Returns the store type identifier for instrumentation/debugging

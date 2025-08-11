@@ -24,6 +24,9 @@ module TypedCache
           # @rbs (String) -> maybe[class]
           def get: (String) -> maybe[class]
 
+          # @rbs () -> void
+          def clear_namespace_cache: () -> void
+
           # @rbs () -> Concurrent::Map[String, Class[Instrumenter & NamespacedSingleton]]
           def namespace_cache: () -> Concurrent::Map[String, Class[Instrumenter & NamespacedSingleton]]
         end

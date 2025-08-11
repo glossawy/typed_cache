@@ -19,7 +19,7 @@ module TypedCache
         def get(key)
           namespaced_key = namespaced_key(key)
           if @data.key?(namespaced_key)
-            Either.right(Snapshot.new(@data[namespaced_key], source: :cache))
+            Either.right(Snapshot.cached(namespaced_key, @data[namespaced_key]))
           else
             Either.left(CacheMissError.new(namespaced_key))
           end
@@ -28,7 +28,7 @@ module TypedCache
         def set(key, value)
           namespaced_key = namespaced_key(key)
           @data[namespaced_key] = value
-          Either.right(Snapshot.new(value, source: :cache))
+          Either.right(Snapshot.cached(namespaced_key, value))
         end
       end
     end

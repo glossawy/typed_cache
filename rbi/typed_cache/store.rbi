@@ -15,8 +15,14 @@ module TypedCache
     sig { params(key: Key).returns(::TypedCache::Either[Error, CachedType]) }
     def get(key); end
 
+    sig { params(keys: T::Array[Key]).returns(::TypedCache::Either[Error, T::Hash[Key, ::TypedCache::Snapshot[CachedType]]]) }
+    def get_all(keys); end
+
     sig { params(key: Key, value: CachedType).returns(::TypedCache::Either[Error, ::TypedCache::Snapshot[CachedType]]) }
     def set(key, value); end
+
+    sig { params(values: T::Hash[Key, CachedType]).returns(::TypedCache::Either[Error, T::Hash[Key, ::TypedCache::Snapshot[CachedType]]]) }
+    def set_all(values); end
 
     sig { params(key: Key).returns(::TypedCache::Either[Error, ::TypedCache::Snapshot[CachedType]]) }
     def delete(key); end
@@ -32,6 +38,9 @@ module TypedCache
 
     sig { params(key: Key, block: T.proc.params(value: CachedType).returns(CachedType)).returns(::TypedCache::Either[Error, ::TypedCache::Snapshot[CachedType]]) }
     def fetch(key, &block); end
+
+    sig { params(keys: T::Array[Key], block: T.proc.params(key: Key).returns(CachedType)).returns(::TypedCache::Either[Error, T::Array[::TypedCache::Snapshot[CachedType]]]) }
+    def fetch_all(keys, &block); end
 
     sig { returns(::TypedCache::Namespace) }
     def namespace; end

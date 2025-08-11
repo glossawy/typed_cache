@@ -25,7 +25,7 @@ module TypedCache
         raw_value = cache_store.read(cache_key_str, default_options)
         return Either.left(CacheMissError.new(key)) if raw_value.nil?
 
-        Either.right(Snapshot.new(raw_value, source: :cache))
+        Either.right(Snapshot.cached(key, raw_value))
       rescue => e
         Either.left(StoreError.new(:get, key, "Failed to read from cache: #{e.message}", e))
       end
@@ -37,12 +37,21 @@ module TypedCache
         success = cache_store.write(cache_key_str, value, default_options)
 
         if success
-          Either.right(Snapshot.new(value, source: :cache))
+          Either.right(Snapshot.cached(key, value))
         else
           Either.left(StoreError.new(:set, key, 'Failed to write to cache', nil))
         end
       rescue => e
         Either.left(StoreError.new(:set, key, "Failed to write to cache: #{e.message}", e))
+      end
+
+      # @rbs override
+      #: (Hash[cache_key, V]) -> either[Error, Hash[cache_key, Snapshot[V]]]
+      def set_all(values)
+        results = cache_store.write_multi(values.map { |key, value| [namespaced_key(key).to_s, value] }.to_h, default_options)
+        Either.right(results.map { |key, value| [key, Snapshot.cached(key, value)] }.to_h)
+      rescue => e
+        Either.left(StoreError.new(:set_all, values, "Failed to write to cache: #{e.message}", e))
       end
 
       # @rbs override
@@ -61,6 +70,13 @@ module TypedCache
       end
 
       # @rbs override
+      #: (Array[cache_key]) -> either[Error, Hash[cache_key, Snapshot[V]]]
+      def get_all(keys)
+        results = cache_store.read_multi(*keys.map { |key| namespaced_key(key).to_s }, default_options)
+        Either.right(results.map { |key, value| [key, Snapshot.cached(key, value)] }.to_h)
+      end
+
+      # @rbs override
       #: (Array[cache_key]) { (cache_key) -> V } -> either[Error, Array[Snapshot[V]]]
       def fetch_all(keys, &block)
         computed_keys = Set.new #: Set[String]
@@ -74,9 +90,9 @@ module TypedCache
         results.each do |key, value|
           snapshots <<
             if computed_keys.include?(key)
-              Snapshot.computed(value)
+              Snapshot.computed(key, value)
             else
-              Snapshot.cached(value)
+              Snapshot.cached(key, value)
             end
         end
 

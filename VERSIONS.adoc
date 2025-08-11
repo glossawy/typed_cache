@@ -3,6 +3,8 @@
 == Unreleased
 
 * feat: Added `fetch_all` method to `Store` interface.
+* feat: Added `get_all`/`set_all` methods to `Store` interface.
+* feat: Added `key` attribute to `Snapshot` to provide access to the key that was used to retrieve the value.
 * feat: Instrumented `fetch_all` method, without instrumenting nested cache calls.
 * feat(rails): Added a Railtie to automatically configure the gem when Rails is present.
 * feat(sorbet): Added public API for gem under rbi directory.

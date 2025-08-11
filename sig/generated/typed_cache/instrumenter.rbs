@@ -14,16 +14,16 @@ module TypedCache
     # : -> String
     def namespace: () -> String
 
-    # @rbs (String, String, **untyped) -> Hash[Symbol, untyped]
-    def build_payload: (String, String, **untyped) -> Hash[Symbol, untyped]
-
     # @rbs () -> bool
     def enabled?: () -> bool
 
+    private
+
+    # @rbs (String, String, **untyped) -> Hash[Symbol, untyped]
+    def build_payload: (String, String, **untyped) -> Hash[Symbol, untyped]
+
     # @rbs (String) -> String
     def event_name: (String) -> String
-
-    private
 
     # @rbs () -> TypedCache::_TypedCacheInstrumentationConfig
     def config: () -> TypedCache::_TypedCacheInstrumentationConfig

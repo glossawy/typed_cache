@@ -18,12 +18,15 @@ module TypedCache
     # @rbs!
     #   interface _Store[V]
     #     def get: (cache_key) -> either[Error, Snapshot[V]]
+    #     def get_all: (Array[cache_key]) -> either[Error, Hash[cache_key, Snapshot[V]]]
     #     def ref: (cache_key) -> CacheRef[V]
     #     def set: (cache_key, V) -> either[Error, Snapshot[V]]
+    #     def set_all: (Hash[cache_key, V]) -> either[Error, Hash[cache_key, Snapshot[V]]]
     #     def delete: (cache_key) -> either[Error, Snapshot[V]]
     #     def key?: (cache_key) -> bool
     #     def clear: () -> maybe[Error]
     #     def fetch: (cache_key) { () -> V } -> either[Error, Snapshot[V]]
+    #     def fetch_all: (Array[cache_key]) { (cache_key) -> V } -> either[Error, Array[Snapshot[V]]]
     #     def namespace: () -> Namespace
     #     def with_namespace: (Namespace) -> Store[V]
     #     def store_type: () -> String
@@ -47,6 +50,15 @@ module TypedCache
       Either.left(NotImplementedError.new("#{self.class} must implement #get"))
     end
 
+    # @rbs (Array[cache_key]) -> either[Error, Hash[cache_key, Snapshot[V]]]
+    def get_all(keys)
+      keys.map { |key| get(key) }.reduce(Either.right({})) do |acc, result|
+        acc.bind do |values|
+          result.map { |value| values.merge(value.key => value) }
+        end
+      end
+    end
+
     # Retrieves a cache reference for a key
     # @rbs (cache_key) -> CacheRef[V]
     def ref(key)
@@ -57,6 +69,15 @@ module TypedCache
     # @rbs (cache_key, V) -> either[Error, Snapshot[V]]
     def set(key, value)
       Either.left(NotImplementedError.new("#{self.class} must implement #set"))
+    end
+
+    # @rbs (Hash[cache_key, V]) -> either[Error, Hash[cache_key, Snapshot[V]]]
+    def set_all(values)
+      values.map { |key, value| set(key, value) }.reduce(Either.right({})) do |acc, result|
+        acc.bind do |values|
+          result.map { |value| values.merge(value.key => value) }
+        end
+      end
     end
 
     # Removes a value from the cache, returning the removed value
@@ -92,7 +113,7 @@ module TypedCache
       begin
         computed_value = yield
         set(key, computed_value)
-        Either.right(Snapshot.computed(computed_value))
+        Either.right(Snapshot.computed(key, computed_value))
       rescue => e
         Either.left(StoreError.new(:fetch, key, "Failed to compute value for key '#{key}': #{e.message}", e))
       end

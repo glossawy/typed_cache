@@ -18,5 +18,9 @@ module TypedCache
     # @rbs override
     # : (cache_key) -> either[Error, CacheRef[V]]
     def ref: ...
+
+    # @rbs override
+    # : (self) -> void
+    def initialize_copy: ...
   end
 end

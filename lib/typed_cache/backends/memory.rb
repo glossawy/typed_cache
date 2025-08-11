@@ -80,7 +80,7 @@ module TypedCache
           return Either.left(CacheMissError.new(key))
         end
 
-        Either.right(Snapshot.new(entry.value, source: :cache))
+        Either.right(Snapshot.cached(key, entry.value))
       end
 
       # @rbs override
@@ -90,7 +90,7 @@ module TypedCache
         expires_at = Clock.now + @ttl
         entry = Entry.new(value: value, expires_at: expires_at)
         backing_store[key] = entry
-        Either.right(Snapshot.new(value, source: :cache))
+        Either.right(Snapshot.cached(key, value))
       rescue => e
         Either.left(StoreError.new(
           :set,
@@ -108,7 +108,7 @@ module TypedCache
         if entry.nil?
           Either.left(CacheMissError.new(key))
         else
-          Either.right(Snapshot.new(entry.value, source: :cache))
+          Either.right(Snapshot.cached(key, entry.value))
         end
       end
 

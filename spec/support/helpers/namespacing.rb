@@ -22,7 +22,7 @@ module Namespacing
     def get(key)
       key = namespaced_key(key)
       if @backing_store.key?(key)
-        TypedCache::Either.right(TypedCache::Snapshot.new(@backing_store[key], source: :cache))
+        TypedCache::Either.right(TypedCache::Snapshot.new(key, @backing_store[key], source: :cache))
       else
         TypedCache::Either.left(TypedCache::CacheMissError.new(key))
       end
@@ -33,13 +33,13 @@ module Namespacing
     end
 
     def set(key, value)
-      TypedCache::Either.right(TypedCache::Snapshot.new(@backing_store[namespaced_key(key)] = value, source: :update))
+      TypedCache::Either.right(TypedCache::Snapshot.new(namespaced_key(key), @backing_store[namespaced_key(key)] = value, source: :update))
     end
 
     def delete(key)
       key = namespaced_key(key)
       if @backing_store.key?(key)
-        TypedCache::Either.right(TypedCache::Snapshot.new(@backing_store.delete(key), source: :cache))
+        TypedCache::Either.right(TypedCache::Snapshot.new(key, @backing_store.delete(key), source: :cache))
       else
         TypedCache::Either.left(TypedCache::CacheMissError.new(key))
       end
