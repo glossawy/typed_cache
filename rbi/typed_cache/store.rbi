@@ -36,7 +36,7 @@ module TypedCache
     sig { params(key: Key).returns(T::Boolean) }
     def key?(key); end
 
-    sig { params(key: Key, block: T.proc.returns(T.nilable(CachedType))).returns(::TypedCache::Either[Error, ::TypedCache::Snapshot[CachedType]]) }
+    sig { params(key: Key, block: T.proc.returns(T.nilable(CachedType))).returns(::TypedCache::Either[Error, ::TypedCache::Snapshot[::TypedCache::Maybe[CachedType]]]) }
     def fetch(key, &block); end
 
     sig { params(keys: T::Array[Key], block: T.proc.params(key: ::TypedCache::CacheKey).returns(T.nilable(CachedType))).returns(::TypedCache::Either[Error, T::Array[::TypedCache::Snapshot[CachedType]]]) }
