@@ -46,10 +46,10 @@ module TypedCache
       end
 
       # @rbs override
-      #: (Hash[cache_key, V]) -> either[Error, Hash[cache_key, Snapshot[V]]]
+      #: (Hash[cache_key, V]) -> either[Error, Array[Snapshot[V]]]
       def set_all(values)
         results = cache_store.write_multi(values.map { |key, value| [namespaced_key(key).to_s, value] }.to_h, default_options)
-        Either.right(results.map { |key, value| [key, Snapshot.cached(key, value)] }.to_h)
+        Either.right(results.map { |key, value| Snapshot.cached(key, value) })
       rescue => e
         Either.left(StoreError.new(:set_all, values, "Failed to write to cache: #{e.message}", e))
       end
@@ -70,14 +70,14 @@ module TypedCache
       end
 
       # @rbs override
-      #: (Array[cache_key]) -> either[Error, Hash[cache_key, Snapshot[V]]]
+      #: (Array[cache_key]) -> either[Error, Array[Snapshot[V]]]
       def get_all(keys)
         results = cache_store.read_multi(*keys.map { |key| namespaced_key(key).to_s }, default_options)
         Either.right(results.map { |key, value| [key, Snapshot.cached(key, value)] }.to_h)
       end
 
       # @rbs override
-      #: (Array[cache_key]) { (CacheKey) -> V } -> either[Error, Array[Snapshot[V]]]
+      #: (Array[cache_key]) { (CacheKey) -> V? } -> either[Error, Array[Snapshot[V]]]
       def fetch_all(keys, &block)
         cache_keys = keys.map { |key| namespaced_key(key) }
         key_map = cache_keys.index_by(&:to_s)
@@ -91,11 +91,12 @@ module TypedCache
         snapshots = [] #: Array[Snapshot[V]]
 
         results.each do |key, value|
+          maybe_value = Maybe.wrap(value)
           snapshots <<
             if computed_keys.include?(key)
-              Snapshot.computed(key, value)
+              Snapshot.computed(key, maybe_value)
             else
-              Snapshot.cached(key, value)
+              Snapshot.cached(key, maybe_value)
             end
         end
 

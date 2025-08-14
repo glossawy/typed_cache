@@ -33,7 +33,7 @@ module TypedCache
           results = store.fetch_all(['key1', 'key2']) do |key|
             "computed_#{key}"
           end.value
-          expect(results.map(&:value)).to(contain_exactly('cached1', 'computed_typed_cache:backend_as:key2'))
+          expect(results.map(&:value).map(&:value)).to(contain_exactly('cached1', 'computed_typed_cache:backend_as:key2'))
         end
       end
 

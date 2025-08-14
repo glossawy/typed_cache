@@ -18,15 +18,15 @@ module TypedCache
     # @rbs!
     #   interface _Store[V]
     #     def get: (cache_key) -> either[Error, Snapshot[V]]
-    #     def get_all: (Array[cache_key]) -> either[Error, Hash[cache_key, Snapshot[V]]]
+    #     def get_all: (Array[cache_key]) -> either[Error, Array[Snapshot[V]]]
     #     def ref: (cache_key) -> CacheRef[V]
     #     def set: (cache_key, V) -> either[Error, Snapshot[V]]
-    #     def set_all: (Hash[cache_key, V]) -> either[Error, Hash[cache_key, Snapshot[V]]]
+    #     def set_all: (Hash[cache_key, V]) -> either[Error, Array[Snapshot[V]]]
     #     def delete: (cache_key) -> either[Error, Snapshot[V]]
     #     def key?: (cache_key) -> bool
     #     def clear: () -> maybe[Error]
-    #     def fetch: (cache_key) { () -> V } -> either[Error, Snapshot[V]]
-    #     def fetch_all: (Array[cache_key]) { (cache_key) -> V } -> either[Error, Array[Snapshot[V]]]
+    #     def fetch: (cache_key) { () -> V? } -> either[Error, Snapshot[maybe[V]]]
+    #     def fetch_all: (Array[cache_key]) { (CacheKey) -> V? } -> either[Error, Array[Snapshot[V]]]
     #     def namespace: () -> Namespace
     #     def with_namespace: (Namespace) -> Store[V]
     #     def store_type: () -> String

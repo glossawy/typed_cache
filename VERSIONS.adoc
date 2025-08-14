@@ -18,6 +18,9 @@
 
 * chore(sorbet): Initialized sorbet via tapioca.
 
+* refactor: fetch method blocks may return nil.
+* refactor: fetch/fetch_all methods now return a `Snapshot` with a `maybe[V]` value.
+* refactor: Store methods return arrays of snapshots, not hashes.
 * refactor: Added a `cached` factory method to `Snapshot`.
 * refactor: fetch_all now accepts a block that receives the CacheKey, not the raw string key.
 
