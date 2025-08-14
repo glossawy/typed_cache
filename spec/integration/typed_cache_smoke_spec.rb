@@ -47,4 +47,21 @@ RSpec.describe('TypedCache integration smoke test') do
     expect(events).not_to(be_empty)
     expect(events.size).to(eq(2))
   end
+
+  context 'with a custom cache delimiter' do
+    before do
+      TypedCache.configure do |config|
+        config.cache_delimiter = '|'
+      end
+    end
+
+    it 'uses the custom delimiter' do
+      store = builder.build(namespace).value
+      ref = store.ref('greet')
+
+      expect(store.namespace.to_s).to(eq(namespace.to_s))
+      expect(ref.key.to_s).to(eq("#{namespace}|greet"))
+      expect(ref.key.namespace.to_s).to(eq(namespace.to_s))
+    end
+  end
 end

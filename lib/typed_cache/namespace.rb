@@ -80,7 +80,7 @@ module TypedCache
     def nested(namespace, &key_factory)
       key_factory ||= @key_factory
 
-      self.class.new([@namespace, namespace].join(':'), &key_factory)
+      self.class.new([@namespace, namespace].join(delimiter), &key_factory)
     end
 
     # Creates a new namespace by joining the current namespace with the given namespaces.

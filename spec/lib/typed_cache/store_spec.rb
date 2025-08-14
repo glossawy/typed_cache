@@ -102,6 +102,13 @@ module TypedCache
         end
       end
 
+      context 'with an array of strings' do
+        it 'returns a new store with a nested namespace' do
+          new_store = store.with_namespace(['nested', 'other'])
+          expect(new_store.namespace.to_s).to(eq("#{namespace}:nested:other"))
+        end
+      end
+
       it 'does not modify the original store' do
         store.with_namespace('nested')
         expect(store.namespace).to(eq(namespace))

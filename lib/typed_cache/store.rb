@@ -140,11 +140,12 @@ module TypedCache
 
     # Accepts a String segment or a fully-formed Namespace and returns a cloned
     # store scoped to that namespace.
-    #: (Namespace | String) -> Store[V]
+    #: (Namespace | String | Array[String]) -> Store[V]
     def with_namespace(ns)
       new_namespace =
         case ns
         when Namespace then ns
+        when Array then namespace.join(*ns)
         else
           # treat as nested segment under the current namespace
           namespace.nested(ns.to_s)

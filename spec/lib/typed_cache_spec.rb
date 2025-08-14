@@ -25,6 +25,13 @@ RSpec.describe(TypedCache) do
       expect(described_class.config.default_namespace).to(eq('test_namespace'))
     end
 
+    it 'allows setting cache_delimiter' do
+      described_class.configure do |config|
+        config.cache_delimiter = '|'
+      end
+      expect(described_class.config.cache_delimiter).to(eq('|'))
+    end
+
     it 'allows settings instrumentation config' do
       described_class.configure do |config|
         config.instrumentation.enabled = true

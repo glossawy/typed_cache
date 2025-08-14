@@ -23,7 +23,7 @@ module TypedCache
 
     # @rbs () -> String
     def to_s
-      [@namespace, @key].join(delimiter)
+      [@namespace.to_s, @key].join(delimiter)
     end
 
     alias cache_key to_s

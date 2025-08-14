@@ -23,7 +23,7 @@ module TypedCache
     # @rbs override
     #: (cache_key) -> either[Error, CacheRef[V]]
     def ref(key)
-      CacheRef.new(self, key)
+      CacheRef.new(self, namespaced_key(key))
     end
 
     # @rbs override
