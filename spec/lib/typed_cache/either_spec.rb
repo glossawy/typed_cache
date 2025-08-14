@@ -59,5 +59,28 @@ module TypedCache
         expect(result).to(eq('x'))
       end
     end
+
+    describe '#right_or_else' do
+      it 'yields Right branch' do
+        result = described_class.right(10).right_or_else { |v| v * 2 }
+        expect(result).to(eq(10))
+      end
+
+      it 'yields Left branch' do
+        result = described_class.left('x').right_or_else { |v| v * 2 }
+        expect(result).to(eq('xx'))
+      end
+    end
+
+    describe '#right_or_raise!' do
+      it 'returns Right value' do
+        result = described_class.right(10).right_or_raise!
+        expect(result).to(eq(10))
+      end
+
+      it 'raises Left error' do
+        expect { described_class.left(RuntimeError.new('x')).right_or_raise! }.to(raise_error('x'))
+      end
+    end
   end
 end

@@ -32,6 +32,12 @@ module TypedCache
 
     sig { abstract.type_parameters(:T).params(left_block: T.proc.params(value: L).returns(T.type_parameter(:T)), right_block: T.proc.params(value: R).returns(T.type_parameter(:T))).returns(T.type_parameter(:T)) }
     def fold(left_block, right_block); end
+
+    sig { abstract.params(block: T.proc.params(value: L).void).returns(R) }
+    def right_or_else(&block); end
+
+    sig { abstract.returns(R) }
+    def right_or_raise!; end
   end
 
   class Left
@@ -66,6 +72,12 @@ module TypedCache
 
     sig { returns(L) }
     def error; end
+
+    sig { params(block: T.proc.params(value: L).void).returns(R) }
+    def right_or_else(&block); end
+
+    sig { returns(T.noreturn) }
+    def right_or_raise!; end
   end
 
   class Right
@@ -100,5 +112,11 @@ module TypedCache
 
     sig { returns(R) }
     def result; end
+
+    sig { params(block: T.proc.params(value: T.anything).void).returns(R) }
+    def right_or_else(&block); end
+
+    sig { returns(R) }
+    def right_or_raise!; end
   end
 end

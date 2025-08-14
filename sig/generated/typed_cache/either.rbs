@@ -21,6 +21,10 @@ module TypedCache
 
     def right?: () -> bool
 
+    def right_or_else: (^(E) -> void) -> R
+
+    def right_or_raise!: () -> R
+
     def map: [T] () { (R) -> T } -> either[E, T]
 
     def bind: [E2, R2] () { (R) -> either[E2, R2] } -> either[E | E2, R2]
@@ -48,6 +52,14 @@ module TypedCache
     # @rbs override
     # : -> false
     def right?: ...
+
+    # @rbs override
+    # : (^(E) -> void) -> bot
+    def right_or_else: ...
+
+    # @rbs override
+    # : -> bot
+    def right_or_raise!: ...
 
     # @rbs override
     # : [T] () { (R) -> T } -> either[E, T]
@@ -87,6 +99,14 @@ module TypedCache
     # @rbs override
     # : -> true
     def right?: ...
+
+    # @rbs override
+    # : (^(E) -> void) -> R
+    def right_or_else: ...
+
+    # @rbs override
+    # : -> R
+    def right_or_raise!: ...
 
     # @rbs override
     # : [T] () { (R) -> T } -> either[E, T]

@@ -12,6 +12,7 @@
 * feat(namespaces): `.at` now accepts multiple arguments, automatically chaining with the appropriate delimiter.
 * feat(namespaces): Added `#join` method to `Namespace` to explicitly join multiple namespaces, with or without custom key factories.
 * feat: Support for custom cache delimiters besides '.' or ':'.
+* feat: Added `right_or_else` and `right_or_raise!` methods to `Either` class.
 
 * fix(namespaces): Fixed a bug where instrumenters would not properly resolve namespaces.
 * fix(rbs): Adjusted some erroneous RBS comments.=
