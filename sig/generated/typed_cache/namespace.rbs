@@ -142,5 +142,10 @@ module TypedCache
     def ==: (Object) -> bool
 
     alias eql? ==
+
+    private
+
+    # @rbs (String) -> String
+    def delimiter: (String) -> String
   end
 end

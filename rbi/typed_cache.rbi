@@ -17,6 +17,9 @@ module TypedCache
       sig { returns(String) }
       attr_accessor :namespace
 
+      sig { returns(String) }
+      attr_accessor :cache_delimiter
+
       sig { returns(::TypedCache::Private::Configuration::Instrumentation) }
       def instrumentation; end
     end

@@ -12,6 +12,8 @@ module TypedCache
   interface _TypedCacheConfig
     def default_namespace: () -> String
 
+    def cache_delimiter: () -> String
+
     def instrumentation: () -> _TypedCacheInstrumentationConfig
   end
 

@@ -23,7 +23,7 @@ module TypedCache
 
     # @rbs () -> String
     def to_s
-      "#{@namespace}:#{@key}"
+      [@namespace, @key].join(delimiter)
     end
 
     alias cache_key to_s
@@ -44,5 +44,12 @@ module TypedCache
     end
 
     alias eql? ==
+
+    private
+
+    # @rbs (String) -> String
+    def delimiter
+      TypedCache.config.cache_delimiter
+    end
   end
 end

@@ -18,6 +18,6 @@ module TypedCache
     def with_decorator(name, **options); end
 
     sig { params(source: InstrumenterSource).returns(T.self_type) }
-    def with_instrumentation(source); end
+    def with_instrumentation(source = T.unsafe(nil)); end
   end
 end

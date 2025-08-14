@@ -39,6 +39,7 @@ module TypedCache
   # @rbs!
   #   interface _TypedCacheConfig
   #     def default_namespace: -> String
+  #     def cache_delimiter: -> String
   #     def instrumentation: -> _TypedCacheInstrumentationConfig
   #   end
 
@@ -46,6 +47,7 @@ module TypedCache
 
   # Configuration
   setting :default_namespace, default: 'typed_cache'
+  setting :cache_delimiter, default: ':'
 
   setting :instrumentation do
     setting :enabled, default: false

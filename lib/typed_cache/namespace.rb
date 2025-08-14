@@ -80,7 +80,7 @@ module TypedCache
     def nested(namespace, &key_factory)
       key_factory ||= @key_factory
 
-      self.class.new("#{@namespace}:#{namespace}", &key_factory)
+      self.class.new([@namespace, namespace].join(':'), &key_factory)
     end
 
     # Creates a new namespace by joining the current namespace with the given namespaces.
@@ -99,7 +99,7 @@ module TypedCache
     def join(*namespaces, &key_factory)
       key_factory ||= @key_factory
 
-      self.class.new("#{@namespace}:#{namespaces.join(":")}", &key_factory)
+      self.class.new([@namespace, *namespaces].join(delimiter), &key_factory)
     end
 
     # Returns the parent namespace by removing the last namespace segment.
@@ -116,7 +116,7 @@ module TypedCache
     def parent_namespace
       return self if @namespace.empty?
 
-      case pathsep_idx = @namespace.rindex(':')
+      case pathsep_idx = @namespace.rindex(delimiter)
       when nil
         self.class.root
       else
@@ -178,5 +178,12 @@ module TypedCache
     end
 
     alias eql? ==
+
+    private
+
+    # @rbs (String) -> String
+    def delimiter
+      TypedCache.config.cache_delimiter
+    end
   end
 end
