@@ -2,6 +2,10 @@
 
 == Unreleased
 
+== 0.3.0
+
+* BREAKING: Renamed get/set methods to read/write
+
 * feat: Added `fetch_all` method to `Store` interface.
 * feat: Added `get_all`/`set_all` methods to `Store` interface.
 * feat: Added `key` attribute to `Snapshot` to provide access to the key that was used to retrieve the value.
