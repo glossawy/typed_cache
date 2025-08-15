@@ -26,7 +26,10 @@ module TypedCache
 
     alias flat_map bind
 
-    sig { abstract.type_parameters(:T).params(value: T.type_parameter(:T)).returns(T.type_parameter(:T)) }
+    sig { abstract.type_parameters(:T).params(block: T.proc.returns(T.type_parameter(:T))).returns(T.any(T.type_parameter(:T), V)) }
+    def value_or_else(&block); end
+
+    sig { abstract.type_parameters(:T).params(value: T.type_parameter(:T)).returns(T.any(T.type_parameter(:T), V)) }
     def value_or(value); end
 
     sig { abstract.returns(V) }
