@@ -59,7 +59,7 @@ module TypedCache
               @store = store
             end
 
-            def get(key)
+            def read(key)
               super.map { |snapshot| snapshot.map { |v| "decorated_#{v}" } }
             end
           end
@@ -69,8 +69,8 @@ module TypedCache
         before { Decorators.register(:custom, decorator_class) }
 
         it 'applies the decorator' do
-          store.set('k', 'v')
-          result = store.get('k')
+          store.write('k', 'v')
+          result = store.read('k')
           expect(result).to(be_cached_value('decorated_v'))
         end
       end

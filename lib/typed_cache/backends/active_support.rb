@@ -20,7 +20,7 @@ module TypedCache
 
       # @rbs override
       #: (cache_key) -> either[Error, Snapshot[V]]
-      def get(key)
+      def read(key)
         cache_key_str = namespaced_key(key).to_s
         raw_value = cache_store.read(cache_key_str, default_options)
         return Either.left(CacheMissError.new(key)) if raw_value.nil?
@@ -32,7 +32,7 @@ module TypedCache
 
       # @rbs override
       #: (cache_key, V) -> either[Error, Snapshot[V]]
-      def set(key, value)
+      def write(key, value)
         cache_key_str = namespaced_key(key).to_s
         success = cache_store.write(cache_key_str, value, default_options)
 
@@ -47,7 +47,7 @@ module TypedCache
 
       # @rbs override
       #: (Hash[cache_key, V]) -> either[Error, Array[Snapshot[V]]]
-      def set_all(values)
+      def write_all(values)
         results = cache_store.write_multi(values.map { |key, value| [namespaced_key(key).to_s, value] }.to_h, default_options)
         Either.right(results.map { |key, value| Snapshot.cached(key, value) })
       rescue => e
@@ -57,7 +57,7 @@ module TypedCache
       # @rbs override
       #: (cache_key) -> either[Error, Snapshot[V]]
       def delete(key)
-        get(key).fold(
+        read(key).fold(
           ->(error) { Either.left(error) },
           ->(snapshot) {
             cache_key_str = namespaced_key(key).to_s
@@ -71,7 +71,7 @@ module TypedCache
 
       # @rbs override
       #: (Array[cache_key]) -> either[Error, Array[Snapshot[V]]]
-      def get_all(keys)
+      def read_all(keys)
         results = cache_store.read_multi(*keys.map { |key| namespaced_key(key).to_s }, default_options)
         Either.right(results.map { |key, value| [key, Snapshot.cached(key, value)] }.to_h)
       end

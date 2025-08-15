@@ -22,14 +22,14 @@ module TypedCache
 
     # Gets a value from the cache as a snapshot
     #: -> either[Error, Snapshot[V]]
-    def get
-      store.get(key)
+    def read
+      store.read(key)
     end
 
     # Sets a value in the cache and returns it as an updated snapshot
     #: (V) -> either[Error, Snapshot[V]]
-    def set(value)
-      store.set(key, value)
+    def write(value)
+      store.write(key, value)
     end
 
     # Deletes the value from the cache and returns the deleted value as a snapshot
@@ -48,25 +48,25 @@ module TypedCache
     # Checks if the cache contains a value for this key
     #: -> bool
     def present?
-      store.get(key).right?
+      store.read(key).right?
     end
 
     # Checks if the cache is empty for this key
     #: -> bool
     def empty?
-      store.get(key).left?
+      store.read(key).left?
     end
 
     # Maps over the cached value if it exists, preserving snapshot metadata
     #: [R] () { (V) -> R } -> either[Error, Snapshot[R]]
     def map(&block)
-      get.map { |snapshot| snapshot.map(&block) }
+      read.map { |snapshot| snapshot.map(&block) }
     end
 
     # Binds over the cached value, allowing for monadic composition with snapshots
     #: [R] () { (V) -> either[Error, R] } -> either[Error, Snapshot[R]]
     def bind(&block)
-      get.bind { |snapshot| snapshot.bind(&block) }
+      read.bind { |snapshot| snapshot.bind(&block) }
     end
 
     alias flat_map bind
@@ -75,9 +75,9 @@ module TypedCache
     # Returns the updated value as a snapshot with source=:updated
     #: () { (V) -> V } -> either[Error, Snapshot[V]]
     def update(&block)
-      get.bind do |snapshot|
+      read.bind do |snapshot|
         new_value = yield(snapshot.value)
-        set(new_value)
+        write(new_value)
       rescue => e
         Either.left(StoreError.new(
           :update,
@@ -91,7 +91,7 @@ module TypedCache
     # Returns the cached value or a default if the cache is empty/errored
     #: (V) -> V
     def value_or(default)
-      get.fold(
+      read.fold(
         ->(_error) { default },
         ->(snapshot) { snapshot.value },
       )
@@ -101,7 +101,7 @@ module TypedCache
     # This provides a more functional approach than value_or
     #: -> maybe[V]
     def value_maybe
-      get.fold(
+      read.fold(
         ->(_error) { Maybe.none },
         ->(snapshot) { Maybe.some(snapshot.value) },
       )
@@ -141,19 +141,19 @@ module TypedCache
     # Pattern matching support for Either[Error, Snapshot[V]] results
     #: [R] (^(Error) -> R, ^(Snapshot[V]) -> R) -> R
     def fold(left_fn, right_fn)
-      get.fold(left_fn, right_fn)
+      read.fold(left_fn, right_fn)
     end
 
     # Convenience method to work with the snapshot directly
     #: [R] () { (Snapshot[V]) -> R } -> either[Error, R]
     def with_snapshot(&block)
-      get.map(&block)
+      read.map(&block)
     end
 
     # Convenience method to work with just the value (losing snapshot context)
     #: [R] () { (V) -> R } -> either[Error, R]
     def with(&block)
-      get.map { |snapshot| yield(snapshot.value) }
+      read.map { |snapshot| yield(snapshot.value) }
     end
   end
 end

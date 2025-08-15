@@ -20,10 +20,10 @@ module TypedCache
     def ref(key); end
 
     sig { overridable.params(key: T.any(String, ::TypedCache::CacheKey)).returns(::TypedCache::Either[Error, ::TypedCache::Snapshot[CachedType]]) }
-    def get(key); end
+    def read(key); end
 
     sig { overridable.params(key: T.any(String, ::TypedCache::CacheKey), value: CachedType).returns(::TypedCache::Either[Error, ::TypedCache::Snapshot[CachedType]]) }
-    def set(key, value); end
+    def write(key, value); end
 
     sig { overridable.params(key: T.any(String, ::TypedCache::CacheKey)).returns(::TypedCache::Either[Error, ::TypedCache::Snapshot[CachedType]]) }
     def delete(key); end
@@ -33,6 +33,15 @@ module TypedCache
 
     sig { overridable.params(key: T.any(String, ::TypedCache::CacheKey), block: T.proc.params(value: CachedType).returns(CachedType)).returns(::TypedCache::Either[Error, ::TypedCache::Snapshot[CachedType]]) }
     def fetch(key, &block); end
+
+    sig { overridable.params(keys: T::Array[T.any(String, ::TypedCache::CacheKey)]).returns(::TypedCache::Either[Error, T::Array[::TypedCache::Snapshot[CachedType]]]) }
+    def read_all(keys); end
+
+    sig { overridable.params(keys: T::Array[T.any(String, ::TypedCache::CacheKey)], block: T.proc.params(key: T.any(String, ::TypedCache::CacheKey)).returns(CachedType)).returns(::TypedCache::Either[Error, T::Array[::TypedCache::Snapshot[CachedType]]]) }
+    def fetch_all(keys, &block); end
+
+    sig { overridable.params(values: T::Hash[T.any(String, ::TypedCache::CacheKey), CachedType]).returns(::TypedCache::Either[Error, T::Array[::TypedCache::Snapshot[CachedType]]]) }
+    def write_all(values); end
 
     sig { overridable.void }
     def clear; end

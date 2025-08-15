@@ -19,7 +19,7 @@ module Namespacing
       @backing_store = {}
     end
 
-    def get(key)
+    def read(key)
       key = namespaced_key(key)
       if @backing_store.key?(key)
         TypedCache::Either.right(TypedCache::Snapshot.new(key, @backing_store[key], source: :cache))
@@ -32,7 +32,7 @@ module Namespacing
       TypedCache::CacheRef.new(self, namespaced_key(key))
     end
 
-    def set(key, value)
+    def write(key, value)
       TypedCache::Either.right(TypedCache::Snapshot.new(namespaced_key(key), @backing_store[namespaced_key(key)] = value, source: :update))
     end
 

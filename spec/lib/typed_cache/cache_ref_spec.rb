@@ -11,31 +11,31 @@ module TypedCache
 
     subject(:ref) { store.ref('test_key') }
 
-    describe '#get' do
+    describe '#read' do
       it 'retrieves a cached value' do
-        store.set('test_key', 'cached')
-        expect(ref.get).to(be_cached_value('cached'))
+        store.write('test_key', 'cached')
+        expect(ref.read).to(be_cached_value('cached'))
       end
 
       it 'returns a cache miss error if key not found' do
-        expect(ref.get).to(be_left.with(an_instance_of(CacheMissError)))
+        expect(ref.read).to(be_left.with(an_instance_of(CacheMissError)))
       end
     end
 
-    describe '#set' do
+    describe '#write' do
       it 'stores a value in the underlying store' do
-        ref.set('new_value')
-        expect(store.get('test_key')).to(be_cached_value('new_value'))
+        ref.write('new_value')
+        expect(store.read('test_key')).to(be_cached_value('new_value'))
       end
 
       it 'returns a snapshot of the set value' do
-        result = ref.set('new_value')
+        result = ref.write('new_value')
         expect(result).to(be_cached_value('new_value'))
       end
     end
 
     describe '#delete' do
-      before { store.set('test_key', 'to_be_deleted') }
+      before { store.write('test_key', 'to_be_deleted') }
 
       it 'removes a value from the store' do
         ref.delete
@@ -57,12 +57,12 @@ module TypedCache
 
         it 'stores the value in the cache' do
           ref.fetch { 'computed' }
-          expect(store.get('test_key')).to(be_cached_value('computed'))
+          expect(store.read('test_key')).to(be_cached_value('computed'))
         end
       end
 
       context 'when value is present' do
-        before { store.set('test_key', 'cached') }
+        before { store.write('test_key', 'cached') }
 
         it 'returns a snapshot of the cached value' do
           result = ref.fetch { 'fail' }
@@ -82,13 +82,13 @@ module TypedCache
 
     describe '#map' do
       it 'transforms the cached value' do
-        store.set('test_key', 'value')
+        store.write('test_key', 'value')
         result = ref.map { |v| "#{v}!" }
         expect(result).to(be_cached_value('value!'))
       end
 
       it 'preserves the snapshot source' do
-        store.set('test_key', 'value')
+        store.write('test_key', 'value')
         result = ref.map { |v| "#{v}!" }
         expect(result.value.source).to(eq(:cache))
       end
@@ -96,18 +96,18 @@ module TypedCache
 
     describe '#bind' do
       it 'chains operations on the cached value' do
-        store.set('test_key', 'value')
+        store.write('test_key', 'value')
         result = ref.bind { |v| Either.right("#{v}!") }
         expect(result).to(be_cached_value('value!'))
       end
     end
 
     describe '#update' do
-      before { store.set('test_key', 'original') }
+      before { store.write('test_key', 'original') }
 
       it 'updates the value in place' do
         ref.update { |v| "#{v}_updated" }
-        expect(store.get('test_key')).to(be_cached_value('original_updated'))
+        expect(store.read('test_key')).to(be_cached_value('original_updated'))
       end
 
       it 'returns a snapshot of the updated value' do
@@ -120,7 +120,7 @@ module TypedCache
       context 'when value is absent' do
         it 'computes and stores the value' do
           ref.compute_if_absent { 'computed' }
-          expect(store.get('test_key')).to(be_cached_value('computed'))
+          expect(store.read('test_key')).to(be_cached_value('computed'))
         end
 
         it 'returns a snapshot of the computed value' do
@@ -130,11 +130,11 @@ module TypedCache
       end
 
       context 'when value is present' do
-        before { store.set('test_key', 'present') }
+        before { store.write('test_key', 'present') }
 
         it 'does not compute a new value' do
           ref.compute_if_absent { 'fail' }
-          expect(store.get('test_key')).to(be_cached_value('present'))
+          expect(store.read('test_key')).to(be_cached_value('present'))
         end
 
         it 'returns a snapshot of the existing value' do
@@ -173,7 +173,7 @@ module TypedCache
 
     describe '#value_maybe' do
       context 'when value is cached' do
-        before { store.set('test_key', 'cached') }
+        before { store.write('test_key', 'cached') }
 
         it 'returns Some' do
           maybe = ref.value_maybe

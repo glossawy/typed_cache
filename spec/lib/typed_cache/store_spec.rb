@@ -16,7 +16,7 @@ module TypedCache
           @data = {}
         end
 
-        def get(key)
+        def read(key)
           namespaced_key = namespaced_key(key)
           if @data.key?(namespaced_key)
             Either.right(Snapshot.cached(namespaced_key, @data[namespaced_key]))
@@ -25,7 +25,7 @@ module TypedCache
           end
         end
 
-        def set(key, value)
+        def write(key, value)
           namespaced_key = namespaced_key(key)
           @data[namespaced_key] = value
           Either.right(Snapshot.cached(namespaced_key, value))
@@ -45,12 +45,12 @@ module TypedCache
 
         it 'sets the computed value in the store' do
           store.fetch('my_key') { 'computed' }
-          expect(store.get('my_key')).to(be_right.with(snapshot_of('computed')))
+          expect(store.read('my_key')).to(be_right.with(snapshot_of('computed')))
         end
       end
 
       context 'when value is present' do
-        before { store.set('my_key', 'cached') }
+        before { store.write('my_key', 'cached') }
 
         it 'returns the cached value' do
           result = store.fetch('my_key') { 'fail' }
@@ -65,7 +65,7 @@ module TypedCache
 
     describe '#fetch_all' do
       it 'fetches multiple keys, computing if necessary' do
-        store.set('key1', 'cached1')
+        store.write('key1', 'cached1')
         results = store.fetch_all(['key1', 'key2']) do |key|
           "computed_#{key.key.last}"
         end.value
@@ -74,7 +74,7 @@ module TypedCache
       end
 
       it 'returns snapshots with correct sources' do
-        store.set('key1', 'cached1')
+        store.write('key1', 'cached1')
         results = store.fetch_all(['key1', 'key2']) do |key|
           "computed_#{key.key.last}"
         end.value

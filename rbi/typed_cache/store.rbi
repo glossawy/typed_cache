@@ -13,16 +13,16 @@ module TypedCache
     private_constant :Error, :Key
 
     sig { params(key: Key).returns(::TypedCache::Either[Error, CachedType]) }
-    def get(key); end
+    def read(key); end
 
     sig { params(keys: T::Array[Key]).returns(::TypedCache::Either[Error, T::Array[::TypedCache::Snapshot[CachedType]]]) }
-    def get_all(keys); end
+    def read_all(keys); end
 
     sig { params(key: Key, value: CachedType).returns(::TypedCache::Either[Error, ::TypedCache::Snapshot[CachedType]]) }
-    def set(key, value); end
+    def write(key, value); end
 
     sig { params(values: T::Hash[Key, CachedType]).returns(::TypedCache::Either[Error, T::Array[::TypedCache::Snapshot[CachedType]]]) }
-    def set_all(values); end
+    def write_all(values); end
 
     sig { params(key: Key).returns(::TypedCache::Either[Error, ::TypedCache::Snapshot[CachedType]]) }
     def delete(key); end

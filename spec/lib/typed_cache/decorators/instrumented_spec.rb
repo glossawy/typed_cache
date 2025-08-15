@@ -26,7 +26,7 @@ module TypedCache
 
     describe 'delegation' do
       it 'returns the underlying store result' do
-        result = store.set('key', 'value')
+        result = store.write('key', 'value')
         expect(result.right?).to(be(true))
       end
     end
@@ -35,8 +35,8 @@ module TypedCache
       it 'emits an ActiveSupport event' do
         events = []
         callback = ->(*payload) { events << payload }
-        ActiveSupport::Notifications.subscribed(callback, 'typed_cache.set') do
-          store.set('key', 'value')
+        ActiveSupport::Notifications.subscribed(callback, 'typed_cache.write') do
+          store.write('key', 'value')
         end
         expect(events.size).to(eq(1))
       end
@@ -51,18 +51,18 @@ module TypedCache
         it 'does not emit an event' do
           events = []
           callback = ->(*payload) { events << payload }
-          ActiveSupport::Notifications.subscribed(callback, 'typed_cache.set') do
-            store.set('key', 'value')
+          ActiveSupport::Notifications.subscribed(callback, 'typed_cache.write') do
+            store.write('key', 'value')
           end
           expect(events).to(be_empty)
         end
 
         it 'allows subscribing but does not fire for the subscriber' do
           event_fired = false
-          store.instrumenter.subscribe('set') do |_|
+          store.instrumenter.subscribe('write') do |_|
             event_fired = true
           end
-          store.set('key', 'value')
+          store.write('key', 'value')
           expect(event_fired).to(be(false))
         end
       end

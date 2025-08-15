@@ -16,11 +16,11 @@ module TypedCache
 
     # Gets a value from the cache as a snapshot
     # : -> either[Error, Snapshot[V]]
-    def get: () -> either[Error, Snapshot[V]]
+    def read: () -> either[Error, Snapshot[V]]
 
     # Sets a value in the cache and returns it as an updated snapshot
     # : (V) -> either[Error, Snapshot[V]]
-    def set: (V) -> either[Error, Snapshot[V]]
+    def write: (V) -> either[Error, Snapshot[V]]
 
     # Deletes the value from the cache and returns the deleted value as a snapshot
     # : -> either[Error, Snapshot[V]]

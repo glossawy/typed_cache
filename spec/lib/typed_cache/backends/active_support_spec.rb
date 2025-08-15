@@ -12,23 +12,23 @@ module TypedCache
       let(:cache_store) { ::ActiveSupport::Cache::MemoryStore.new }
       let(:store) { described_class.new(namespace, cache_store) }
 
-      describe '#set / #get' do
+      describe '#write / #read' do
         it 'round-trips a value' do
-          store.set('k', 'v')
-          expect(store.get('k').value.value).to(eq('v'))
+          store.write('k', 'v')
+          expect(store.read('k').value.value).to(eq('v'))
         end
       end
 
       describe '#key?' do
         it 'reflects existence' do
-          store.set('k', 1)
+          store.write('k', 1)
           expect(store.key?('k')).to(be(true))
         end
       end
 
       describe '#fetch_all' do
         it 'fetches multiple keys, computing if necessary' do
-          store.set('key1', 'cached1')
+          store.write('key1', 'cached1')
 
           results = store.fetch_all(['key1', 'key2']) do |key|
             "computed_#{key}"
@@ -39,7 +39,7 @@ module TypedCache
 
       describe '#clear' do
         it 'removes keys via delete_matched' do
-          store.set('k', 1)
+          store.write('k', 1)
           store.clear
           expect(store.key?('k')).to(be(false))
         end

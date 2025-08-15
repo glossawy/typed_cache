@@ -9,10 +9,10 @@ module TypedCache
     RefType = type_member
 
     sig { returns(::TypedCache::Either[Error, ::TypedCache::Snapshot[RefType]]) }
-    def get; end
+    def read; end
 
     sig { params(value: RefType).returns(::TypedCache::Either[Error, ::TypedCache::Snapshot[RefType]]) }
-    def set(value); end
+    def write(value); end
 
     sig { returns(::TypedCache::Either[Error, ::TypedCache::Snapshot[RefType]]) }
     def delete; end

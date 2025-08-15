@@ -18,15 +18,15 @@ module TypedCache
 
       # @rbs override
       # : (cache_key) -> either[Error, Snapshot[V]]
-      def get: ...
+      def read: ...
 
       # @rbs override
       # : (cache_key, V) -> either[Error, Snapshot[V]]
-      def set: ...
+      def write: ...
 
       # @rbs override
       # : (Hash[cache_key, V]) -> either[Error, Array[Snapshot[V]]]
-      def set_all: ...
+      def write_all: ...
 
       # @rbs override
       # : (cache_key) -> either[Error, Snapshot[V]]
@@ -34,7 +34,7 @@ module TypedCache
 
       # @rbs override
       # : (Array[cache_key]) -> either[Error, Array[Snapshot[V]]]
-      def get_all: ...
+      def read_all: ...
 
       # @rbs override
       # : (Array[cache_key]) { (CacheKey) -> V? } -> either[Error, Array[Snapshot[V]]]

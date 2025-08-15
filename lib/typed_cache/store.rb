@@ -17,11 +17,11 @@ module TypedCache
 
     # @rbs!
     #   interface _Store[V]
-    #     def get: (cache_key) -> either[Error, Snapshot[V]]
-    #     def get_all: (Array[cache_key]) -> either[Error, Array[Snapshot[V]]]
+    #     def read: (cache_key) -> either[Error, Snapshot[V]]
+    #     def read_all: (Array[cache_key]) -> either[Error, Array[Snapshot[V]]]
     #     def ref: (cache_key) -> CacheRef[V]
-    #     def set: (cache_key, V) -> either[Error, Snapshot[V]]
-    #     def set_all: (Hash[cache_key, V]) -> either[Error, Array[Snapshot[V]]]
+    #     def write: (cache_key, V) -> either[Error, Snapshot[V]]
+    #     def write_all: (Hash[cache_key, V]) -> either[Error, Array[Snapshot[V]]]
     #     def delete: (cache_key) -> either[Error, Snapshot[V]]
     #     def key?: (cache_key) -> bool
     #     def clear: () -> maybe[Error]
@@ -46,13 +46,13 @@ module TypedCache
 
     # Retrieves a value from the cache
     # @rbs (cache_key) -> either[Error, Snapshot[V]]
-    def get(key)
-      Either.left(NotImplementedError.new("#{self.class} must implement #get"))
+    def read(key)
+      Either.left(NotImplementedError.new("#{self.class} must implement #read"))
     end
 
     # @rbs (Array[cache_key]) -> either[Error, Hash[cache_key, Snapshot[V]]]
-    def get_all(keys)
-      keys.map { |key| get(key) }.reduce(Either.right({})) do |acc, result|
+    def read_all(keys)
+      keys.map { |key| read(key) }.reduce(Either.right({})) do |acc, result|
         acc.bind do |values|
           result.map { |value| values.merge(value.key => value) }
         end
@@ -67,13 +67,13 @@ module TypedCache
 
     # Stores a value in the cache
     # @rbs (cache_key, V) -> either[Error, Snapshot[V]]
-    def set(key, value)
-      Either.left(NotImplementedError.new("#{self.class} must implement #set"))
+    def write(key, value)
+      Either.left(NotImplementedError.new("#{self.class} must implement #write"))
     end
 
     # @rbs (Hash[cache_key, V]) -> either[Error, Hash[cache_key, Snapshot[V]]]
-    def set_all(values)
-      values.map { |key, value| set(key, value) }.reduce(Either.right({})) do |acc, result|
+    def write_all(values)
+      values.map { |key, value| write(key, value) }.reduce(Either.right({})) do |acc, result|
         acc.bind do |values|
           result.map { |value| values.merge(value.key => value) }
         end
@@ -99,20 +99,20 @@ module TypedCache
     end
 
     # Fetches a value from cache, computing and storing it if not found
-    # This is an atomic operation that combines get and set
+    # This is an atomic operation that combines read and write
     # @rbs (cache_key) { () -> V } -> either[Error, Snapshot[V]]
     def fetch(key, &block)
-      # Default implementation using get/set pattern
-      get_result = get(key)
-      return get_result if get_result.right?
+      # Default implementation using read/write pattern
+      read_result = read(key)
+      return read_result if read_result.right?
 
       # Only proceed if it's a cache miss
-      return get_result unless get_result.error.is_a?(CacheMissError)
+      return read_result unless read_result.error.is_a?(CacheMissError)
 
       # Compute and store new value
       begin
         computed_value = yield
-        set(key, computed_value)
+        write(key, computed_value)
         Either.right(Snapshot.computed(key, computed_value))
       rescue => e
         Either.left(StoreError.new(:fetch, key, "Failed to compute value for key '#{key}': #{e.message}", e))

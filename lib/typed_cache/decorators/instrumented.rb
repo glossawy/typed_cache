@@ -79,11 +79,13 @@ module TypedCache
     end
 
     # Instrument core operations with proper key extraction
-    instrument(:get)    { |key, *_| key }
-    instrument(:set)    { |key, *_| key }
+    instrument(:read) { |key, *_| key }
+    instrument(:read_all) { |keys, *_| keys.map(&:to_s).join('_') }
+    instrument(:write)    { |key, *_| key }
+    instrument(:write_all) { |values, *_| values.map { |key, _| key.to_s }.join('_') }
     instrument(:delete) { |key, *_| key }
     instrument(:fetch)  { |key, *_| key }
-    instrument(:fetch_all) { |keys, *_| keys.map(&:to_s).join(';') }
+    instrument(:fetch_all) { |keys, *_| keys.map(&:to_s).join('_') }
     instrument(:key?)   { |key, *_| key }
     instrument(:clear)  { 'all' }
   end
