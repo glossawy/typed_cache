@@ -17,15 +17,15 @@ module TypedCache
       def initialize: (Namespace, ::ActiveSupport::Cache::Store, ?Hash[Symbol, top]) -> void
 
       # @rbs override
-      # : (cache_key) -> either[Error, Snapshot[V]]
+      # : (cache_key, **top) -> either[Error, Snapshot[V]]
       def read: ...
 
       # @rbs override
-      # : (cache_key, V) -> either[Error, Snapshot[V]]
+      # : (cache_key, V, **top) -> either[Error, Snapshot[V]]
       def write: ...
 
       # @rbs override
-      # : (Hash[cache_key, V]) -> either[Error, Array[Snapshot[V]]]
+      # : (Hash[cache_key, V], **top) -> either[Error, Array[Snapshot[V]]]
       def write_all: ...
 
       # @rbs override
@@ -33,11 +33,11 @@ module TypedCache
       def delete: ...
 
       # @rbs override
-      # : (Array[cache_key]) -> either[Error, Array[Snapshot[V]]]
+      # : (Array[cache_key], **top) -> either[Error, Array[Snapshot[V]]]
       def read_all: ...
 
       # @rbs override
-      # : (Array[cache_key]) { (CacheKey) -> V? } -> either[Error, Array[Snapshot[V]]]
+      # : (Array[cache_key], **top) { (CacheKey) -> V? } -> either[Error, Array[Snapshot[V]]]
       def fetch_all: ...
 
       # @rbs override

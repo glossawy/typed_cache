@@ -50,22 +50,22 @@ module TypedCache
     def initialize_copy: (Store[V]) -> void
 
     # Retrieves a value from the cache
-    # @rbs (cache_key) -> either[Error, Snapshot[V]]
-    def read: (cache_key) -> either[Error, Snapshot[V]]
+    # @rbs (cache_key, **top) -> either[Error, Snapshot[V]]
+    def read: (cache_key, **top) -> either[Error, Snapshot[V]]
 
-    # @rbs (Array[cache_key]) -> either[Error, Hash[cache_key, Snapshot[V]]]
-    def read_all: (Array[cache_key]) -> either[Error, Hash[cache_key, Snapshot[V]]]
+    # @rbs (Array[cache_key], **top) -> either[Error, Hash[cache_key, Snapshot[V]]]
+    def read_all: (Array[cache_key], **top) -> either[Error, Hash[cache_key, Snapshot[V]]]
 
     # Retrieves a cache reference for a key
     # @rbs (cache_key) -> CacheRef[V]
     def ref: (cache_key) -> CacheRef[V]
 
     # Stores a value in the cache
-    # @rbs (cache_key, V) -> either[Error, Snapshot[V]]
-    def write: (cache_key, V) -> either[Error, Snapshot[V]]
+    # @rbs (cache_key, V, **top) -> either[Error, Snapshot[V]]
+    def write: (cache_key, V, **top) -> either[Error, Snapshot[V]]
 
-    # @rbs (Hash[cache_key, V]) -> either[Error, Hash[cache_key, Snapshot[V]]]
-    def write_all: (Hash[cache_key, V]) -> either[Error, Hash[cache_key, Snapshot[V]]]
+    # @rbs (Hash[cache_key, V], **top) -> either[Error, Hash[cache_key, Snapshot[V]]]
+    def write_all: (Hash[cache_key, V], **top) -> either[Error, Hash[cache_key, Snapshot[V]]]
 
     # Removes a value from the cache, returning the removed value
     # @rbs (cache_key) -> either[Error, Snapshot[V]]
@@ -81,11 +81,11 @@ module TypedCache
 
     # Fetches a value from cache, computing and storing it if not found
     # This is an atomic operation that combines read and write
-    # @rbs (cache_key) { () -> V } -> either[Error, Snapshot[V]]
-    def fetch: (cache_key) { () -> V } -> either[Error, Snapshot[V]]
+    # @rbs (cache_key, **top) { () -> V } -> either[Error, Snapshot[V]]
+    def fetch: (cache_key, **top) { () -> V } -> either[Error, Snapshot[V]]
 
-    # @rbs (Array[cache_key]) { (CacheKey) -> V } -> either[Error, Array[Snapshot[V]]]
-    def fetch_all: (Array[cache_key]) { (CacheKey) -> V } -> either[Error, Array[Snapshot[V]]]
+    # @rbs (Array[cache_key], **top) { (CacheKey) -> V } -> either[Error, Array[Snapshot[V]]]
+    def fetch_all: (Array[cache_key], **top) { (CacheKey) -> V } -> either[Error, Array[Snapshot[V]]]
 
     # @rbs () -> Instrumenter
     def instrumenter: () -> Instrumenter

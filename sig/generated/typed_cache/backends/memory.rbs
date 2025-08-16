@@ -54,11 +54,11 @@ module TypedCache
       def initialize: (Namespace, shared: bool, ttl: Integer) -> void
 
       # @rbs override
-      # : (cache_key) -> either[Error, Snapshot[V]]
+      # : (cache_key, **top) -> either[Error, Snapshot[V]]
       def read: ...
 
       # @rbs override
-      # : (cache_key, V) -> either[Error, Snapshot[V]]
+      # : (cache_key, V, expires_in: Integer, expires_at: Time, **top) -> either[Error, Snapshot[V]]
       def write: ...
 
       # @rbs override
