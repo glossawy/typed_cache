@@ -88,7 +88,7 @@ TypedCache::Decorators.available # => [:instrumented]
 ```ruby
 class RedisBackend
   include TypedCache::Backend
-  # … implement #get, #set, etc.
+  # … implement #read, #write, etc.
 end
 
 TypedCache::Backends.register(:redis, RedisBackend)
@@ -98,9 +98,9 @@ TypedCache::Backends.register(:redis, RedisBackend)
 class LogDecorator
   include TypedCache::Decorator
   def initialize(store) = @store = store
-  def set(key, value)
-    puts "[cache] SET #{key}"
-    @store.set(key, value)
+  def write(key, value)
+    puts "[cache] WRITE #{key}"
+    @store.write(key, value)
   end
   # delegate the rest …
 end
@@ -127,7 +127,7 @@ result.fold(
 
 ## The `CacheRef` and `Store` APIs
 
-While you can call `get`, `set`, and `fetch` directly on the `store`, the more powerful way to work with TypedCache is via the `CacheRef` object. It provides a rich, monadic API for a single cache key. The `Store` also provides `fetch_all` for batch operations.
+While you can call `read`, `write`, and `fetch` directly on the `store`, the more powerful way to work with TypedCache is via the `CacheRef` object. It provides a rich, monadic API for a single cache key. The `Store` also provides `fetch_all` for batch operations.
 
 You get a `CacheRef` by calling `store.ref(key)`:
 
@@ -196,7 +196,7 @@ store = TypedCache.builder
   .build.value
 ```
 
-Events are published to a topic like `typed_cache.<operation>` (e.g., `typed_cache.get`). The topic namespace can be configured.
+Events are published to a topic like `typed_cache.<operation>` (e.g., `typed_cache.write`). The topic namespace can be configured.
 
 Payload keys include: `:namespace, :key, :operation, :duration`, and `cache_hit`.
 
@@ -204,13 +204,13 @@ You can subscribe to these events like so:
 
 ```ruby
 # Example for ActiveSupport
-ActiveSupport::Notifications.subscribe("typed_cache.get") do |name, start, finish, id, payload|
+ActiveSupport::Notifications.subscribe("typed_cache.write") do |name, start, finish, id, payload|
 
 # Or you can subscribe via the store object itself
 instrumenter = store.instrumenter
-instrumenter.subscribe("get") do |event|
+instrumenter.subscribe("write") do |event|
   payload = event.payload
-  puts "Cache GET for key #{payload[:key]} took #{payload[:duration]}ms. Hit? #{payload[:cache_hit]}"
+  puts "Cache WRITE for key #{payload[:key]} took #{payload[:duration]}ms. Hit? #{payload[:cache_hit]}"
 end
 ```
 

@@ -19,7 +19,7 @@ users_store = builder.build(TypedCache::Namespace.at("users")).value
 user_ref = users_store.ref("123")
 
 # Set a value
-user_ref.set({ id: 123, name: "Jane" })
+user_ref.write({ id: 123, name: "Jane" })
 ```
 
 ## Rails Integration
@@ -51,7 +51,7 @@ result = TypedCache.builder
 
 case result
 in TypedCache::Either::Right(store)
-  store.set(store.namespace.key("greeting"), "Hello")
+  store.write(store.namespace.key("greeting"), "Hello")
 in TypedCache::Either::Left(error)
   warn "Failed to set up cache: #{error.message}"
 end
@@ -84,7 +84,7 @@ puts ns2.to_s # => "app:v1:users"
 
 # You can then build a store with this complex namespace
 user_store = base_builder.build(ns1).value
-user_store.ref("123").set({ name: "Deeply Nested" })
+user_store.ref("123").write({ name: "Deeply Nested" })
 ```
 
 ## CacheRef and Store APIs
@@ -95,12 +95,12 @@ The `CacheRef` is the most powerful way to interact with a single cache key, whi
 ref = store.ref("some-key") # => CacheRef
 ```
 
-### Get a value
+### Read a value
 
-The `get` method returns an `Either[Error, Snapshot]`.
+The `read` method returns an `Either[Error, Snapshot]`.
 
 ```ruby
-result = ref.get
+result = ref.read
 result.fold(
   ->(error)    { puts "Cache miss or error: #{error.message}" },
   ->(snapshot) { puts "Found: #{snapshot.value} (from cache: #{snapshot.from_cache?})" }
@@ -140,7 +140,7 @@ You can transform the value inside the cache reference without breaking the mona
 # user_ref holds { id: 1, name: "John" }
 name_ref = user_ref.map { |user| user[:name] }
 
-name_snapshot = name_ref.get.value # => Snapshot(value: "John", ...)
+name_snapshot = name_ref.read.value # => Snapshot(value: "John", ...)
 ```
 
 ### Chaining operations with `bind`
@@ -150,7 +150,7 @@ For more complex logic, you can use `bind` (or `flat_map`) to chain operations t
 ```ruby
 user_ref.bind do |user|
   if user.active?
-    posts_ref.set(user.posts)
+    posts_ref.write(user.posts)
   else
     TypedCache::Either.left(StandardError.new("User is not active"))
   end
@@ -178,12 +178,12 @@ class SimpleStore
     @data      = {}
   end
 
-  def get(key)
+  def read(key)
     value = @data[key]
     value ? TypedCache::Either.right(value) : TypedCache::Either.left(TypedCache::CacheMissError.new(key))
   end
 
-  def set(key, value)
+  def write(key, value)
     @data[key] = value
     TypedCache::Either.right(value)
   end
@@ -239,12 +239,12 @@ logging_cache = TypedCache.builder
   .build.value
 
 # Subscribe to an event
-logging_cache.instrumenter.subscribe("get")
+logging_cache.instrumenter.subscribe("write")
 
 # Operations will now be logged
-logging_cache.ref("test").set("hello")
-# => [CACHE] Starting: set for key test
-# => [CACHE] Finished: set for key test
+logging_cache.ref("test").write("hello")
+# => [CACHE] Starting: write for key test
+# => [CACHE] Finished: write for key test
 ```
 
 ## Thread Safety
@@ -257,7 +257,7 @@ shared_store = TypedCache.builder
   .build.value
 
 threads = 10.times.map do |i|
-  Thread.new { shared_store.set(shared_store.namespace.key(i.to_s), "data_") }
+  Thread.new { shared_store.write(shared_store.namespace.key(i.to_s), "data_") }
 end
 threads.each(&:join)
 ```
@@ -273,7 +273,7 @@ spec_store = TypedCache.builder
 
 RSpec.describe "cache" do
   it "stores data" do
-    result = spec_store.set(spec_store.namespace.key("id"), 1)
+    result = spec_store.write(spec_store.namespace.key("id"), 1)
     expect(result).to be_right
   end
 end
