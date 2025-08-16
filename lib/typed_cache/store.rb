@@ -124,7 +124,7 @@ module TypedCache
       keys = keys.map { |key| namespaced_key(key) }
       keys.reduce(Either.right([])) do |acc, key|
         acc.bind do |values|
-          fetch(key. **kwargs) { yield(key) }.map { |value| values + [value] }
+          fetch(key, **kwargs) { yield(key) }.map { |value| values + [value] }
         end
       end
     end

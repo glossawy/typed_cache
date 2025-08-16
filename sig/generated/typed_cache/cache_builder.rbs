@@ -1,23 +1,50 @@
 # Generated from lib/typed_cache/cache_builder.rb with RBS::Inline
 
 module TypedCache
-  class CacheBuilder
-    type config = TypedCache::typed_cache_config
+  class BackendConfig < Dry::Struct
+  end
+
+  class DecoratorConfig < Dry::Struct
+  end
+
+  class CacheDefinition
+    include _CacheDefinition
 
     type instrumenter_source = :default | :dry | :rails | Instrumenter
 
-    class BackendConfig < Dry::Struct
-    end
+    attr_reader backend_config: BackendConfig?
 
-    class DecoratorConfig < Dry::Struct
-    end
+    attr_reader decorator_configs: Array[DecoratorConfig]
 
-    # @rbs (config, Registry[backend[untyped]], Registry[decorator[untyped]]) -> void
-    def initialize: (config, Registry[backend[untyped]], Registry[decorator[untyped]]) -> void
+    attr_reader instrumenter_source: instrumenter_source
 
-    # Builds the cache - the only method that can fail
-    # @rbs (?Namespace) -> either[Error, Store[V]]
-    def build: (?Namespace) -> either[Error, Store[V]]
+    # @rbs (?BackendConfig?, ?Array[DecoratorConfig], ?instrumenter_source) -> void
+    def initialize: (?BackendConfig?, ?Array[DecoratorConfig], ?instrumenter_source) -> void
+
+    # @rbs override
+    # @rbs (Symbol, *untyped, **untyped) -> self
+    def with_backend: ...
+
+    # @rbs override
+    # @rbs (Symbol, **untyped) -> self
+    def with_decorator: ...
+
+    # @rbs override
+    # @rbs (instrumenter_source) -> self
+    def with_instrumentation: ...
+  end
+
+  class CacheBuilder
+    include _CacheBuilder
+
+    include _CacheDefinition
+
+    # @rbs (?_CacheDefinition, ?Registry[backend[untyped]], ?Registry[decorator[untyped]]) -> void
+    def initialize: (?_CacheDefinition, ?Registry[backend[untyped]], ?Registry[decorator[untyped]]) -> void
+
+    # Builds the cache using the given namespace, defaulting to the root namespace
+    # @rbs (?Namespace) -> either[Error, Store[untyped]]
+    def build: (?Namespace) -> either[Error, Store[untyped]]
 
     # Familiar Ruby fluent interface - always succeeds
     # Invalid configurations are caught during build()
@@ -37,12 +64,13 @@ module TypedCache
     # @rbs (Namespace) -> either[Error, Store[V]]
     def validate_and_build: (Namespace) -> either[Error, Store[V]]
 
-    # @rbs (Namespace) -> either[Error, Store[V]]
-    def create_store: (Namespace) -> either[Error, Store[V]]
+    # @rbs (Namespace) -> either[Error, Store[untyped]]
+    def create_store: (Namespace) -> either[Error, Store[untyped]]
 
-    # @rbs (Store[V]) -> either[Error, Store[V]]
-    def apply_decorators: (Store[V]) -> either[Error, Store[V]]
+    # @rbs (Store[untyped]) -> either[Error, Store[untyped]]
+    def apply_decorators: (Store[untyped]) -> either[Error, Store[untyped]]
 
-    def apply_instrumentation: (untyped store) -> untyped
+    # @rbs (Store[untyped]) -> either[Error, Store[untyped]]
+    def apply_instrumentation: (Store[untyped]) -> either[Error, Store[untyped]]
   end
 end

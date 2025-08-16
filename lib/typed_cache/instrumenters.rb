@@ -28,8 +28,12 @@ module TypedCache
       # @rbs () -> Registry[Symbol, Class[Instrumenter]]
       def registry = REGISTRY
 
+      # @rbs (Symbol, ?namespace: String, **untyped) -> either[Error, Instrumenter]
+      def resolve(name, namespace: TypedCache.config.instrumentation.namespace, **options)
+        registry.resolve(name, namespace: namespace, **options)
+      end
+
       # @rbs! def register: (Symbol, Class[Instrumenter]) -> void
-      # @rbs! def resolve: (Symbol, **untyped) -> either[Error, Instrumenter]
       # @rbs! def available: () -> Array[Symbol]
       # @rbs! def registered?: (Symbol) -> Boolean
 

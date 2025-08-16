@@ -7,6 +7,8 @@ module TypedCache
     def enabled: () -> bool
 
     def namespace: () -> String
+
+    def instrumenter: () -> Symbol
   end
 
   interface _TypedCacheConfig
@@ -19,9 +21,11 @@ module TypedCache
 
   type typed_cache_config = _TypedCacheConfig
 
+  type cache_definition = TypedCache::_CacheDefinition
+
   # Returns a CacheBuilder with the fluent interface
-  # @rbs [V] () -> CacheBuilder[V]
-  def self.builder: [V] () -> CacheBuilder[V]
+  # @rbs () -> cache_definition
+  def self.builder: () -> cache_definition
 
   def config: () -> _TypedCacheConfig
 

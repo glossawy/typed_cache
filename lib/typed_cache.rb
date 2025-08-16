@@ -34,6 +34,7 @@ module TypedCache
   #   interface _TypedCacheInstrumentationConfig
   #     def enabled: -> bool
   #     def namespace: -> String
+  #     def instrumenter: -> Symbol
   #   end
 
   # @rbs!
@@ -56,10 +57,12 @@ module TypedCache
   end
 
   class << self
+    # @rbs! type cache_definition = TypedCache::_CacheDefinition
+
     # Returns a CacheBuilder with the fluent interface
-    # @rbs [V] () -> CacheBuilder[V]
+    # @rbs () -> cache_definition
     def builder
-      CacheBuilder.new(config, Backends, Decorators)
+      CacheBuilder.new(CacheDefinition.new, Backends, Decorators)
     end
 
     # @rbs! def config: -> _TypedCacheConfig

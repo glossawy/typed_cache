@@ -15,9 +15,10 @@ module TypedCache
     # @rbs () -> Registry[Symbol, Class[Instrumenter]]
     def self.registry: () -> Registry[Symbol, Class[Instrumenter]]
 
-    def register: (Symbol, Class[Instrumenter]) -> void
+    # @rbs (Symbol, ?namespace: String, **untyped) -> either[Error, Instrumenter]
+    def self.resolve: (Symbol, ?namespace: String, **untyped) -> either[Error, Instrumenter]
 
-    def resolve: (Symbol, **untyped) -> either[Error, Instrumenter]
+    def register: (Symbol, Class[Instrumenter]) -> void
 
     def available: () -> Array[Symbol]
 

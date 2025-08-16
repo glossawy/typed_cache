@@ -32,7 +32,7 @@ module TypedCache
     sig { returns(::TypedCache::Private::Configuration) }
     def config; end
 
-    sig { returns(::TypedCache::CacheBuilder) }
+    sig { returns(::TypedCache::CacheDefinition) }
     def builder; end
 
     sig { returns(T.class_of(::TypedCache::Backends)) }

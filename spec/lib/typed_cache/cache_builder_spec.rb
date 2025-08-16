@@ -16,9 +16,9 @@ module TypedCache
     let(:builder) do
       builder = TypedCache.builder.with_backend(backend_name, *backend_args, **backend_options)
       decorator_configs.each do |config|
-        builder.with_decorator(config.name, **config.options)
+        builder = builder.with_decorator(config.name, **config.options)
       end
-      builder.with_instrumentation(instrumenter_source) if instrumenter_source
+      builder = builder.with_instrumentation(instrumenter_source) if instrumenter_source
       builder
     end
 
@@ -33,7 +33,7 @@ module TypedCache
     describe '#with_decorator' do
       let(:decorator_configs) do
         [
-          described_class::DecoratorConfig.new(name: :instrumented, options: {
+          ::TypedCache::DecoratorConfig.new(name: :instrumented, options: {
             instrumenter: Instrumenters::Null.new(namespace: 'test'),
           }),
         ]
@@ -64,7 +64,7 @@ module TypedCache
             end
           end
         end
-        let(:decorator_configs) { [described_class::DecoratorConfig.new(name: :custom, options: {})] }
+        let(:decorator_configs) { [::TypedCache::DecoratorConfig.new(name: :custom, options: {})] }
 
         before { Decorators.register(:custom, decorator_class) }
 

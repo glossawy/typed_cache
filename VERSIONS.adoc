@@ -2,6 +2,13 @@
 
 == Unreleased
 
+* feat: Cache building is now immutable, allowing for more flexible and composable cache definitions.
+
+* fix: Broken default methods on Store
+
+* refactor: CacheBuilder broken out into `CacheDefinition` and `CacheBuilder` interfaces.
+* refactor: Make return result of CacheBuilder#build an untyped store, so it can be easily cast to other types
+
 == 0.3.2
 
 * types: Include updated RBS signatures for 0.3.1
