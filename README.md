@@ -1,6 +1,6 @@
 # TypedCache
 
-![Gem Version](https://img.shields.io/gem/v/typed_cache?style=flat-square&logo=rubygems)
+[![Gem Version](https://img.shields.io/gem/v/typed_cache?style=flat-square&logo=rubygems)](https://rubygems.org/gems/typed_cache)
 ![GitHub Release Date](https://img.shields.io/github/release-date/glossawy/typed_cache?style=flat-square&label=released&logo=semanticrelease)
 ![GitHub last commit](https://img.shields.io/github/last-commit/glossawy/typed_cache?style=flat-square&logo=git)
 
