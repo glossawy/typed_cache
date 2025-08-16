@@ -68,8 +68,8 @@ module TypedCache
       end
 
       # @rbs override
-      #: (cache_key) -> either[Error, Snapshot[V]]
-      def read(key)
+      #: (cache_key, **top) -> either[Error, Snapshot[V]]
+      def read(key, **kwargs)
         key = namespaced_key(key)
         return Either.left(CacheMissError.new(key)) unless backing_store.key?(key)
 
@@ -84,10 +84,9 @@ module TypedCache
       end
 
       # @rbs override
-      #: (cache_key, V) -> either[Error, Snapshot[V]]
-      def write(key, value)
+      #: (cache_key, V, expires_in: Integer, expires_at: Time, **top) -> either[Error, Snapshot[V]]
+      def write(key, value, expires_in: @ttl, expires_at: Clock.now + expires_in, **kwargs)
         key = namespaced_key(key)
-        expires_at = Clock.now + @ttl
         entry = Entry.new(value: value, expires_at: expires_at)
         backing_store[key] = entry
         Either.right(Snapshot.cached(key, value))

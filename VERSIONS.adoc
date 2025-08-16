@@ -2,6 +2,10 @@
 
 == Unreleased
 
+== 0.3.1
+
+* feat: Added `**kwargs` to `Store` methods to allow passing options to the underlying cache store for `read`, `write`, `read_all`, `write_all`, `fetch`, and `fetch_all`.
+
 == 0.3.0
 
 * BREAKING: Renamed get/set methods to read/write

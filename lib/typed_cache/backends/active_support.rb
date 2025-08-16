@@ -19,10 +19,10 @@ module TypedCache
       end
 
       # @rbs override
-      #: (cache_key) -> either[Error, Snapshot[V]]
-      def read(key)
+      #: (cache_key, **top) -> either[Error, Snapshot[V]]
+      def read(key, **kwargs)
         cache_key_str = namespaced_key(key).to_s
-        raw_value = cache_store.read(cache_key_str, default_options)
+        raw_value = cache_store.read(cache_key_str, default_options.merge(**kwargs))
         return Either.left(CacheMissError.new(key)) if raw_value.nil?
 
         Either.right(Snapshot.cached(key, raw_value))
@@ -31,10 +31,10 @@ module TypedCache
       end
 
       # @rbs override
-      #: (cache_key, V) -> either[Error, Snapshot[V]]
-      def write(key, value)
+      #: (cache_key, V, **top) -> either[Error, Snapshot[V]]
+      def write(key, value, **kwargs)
         cache_key_str = namespaced_key(key).to_s
-        success = cache_store.write(cache_key_str, value, default_options)
+        success = cache_store.write(cache_key_str, value, default_options.merge(**kwargs))
 
         if success
           Either.right(Snapshot.cached(key, value))
@@ -46,9 +46,9 @@ module TypedCache
       end
 
       # @rbs override
-      #: (Hash[cache_key, V]) -> either[Error, Array[Snapshot[V]]]
-      def write_all(values)
-        results = cache_store.write_multi(values.map { |key, value| [namespaced_key(key).to_s, value] }.to_h, default_options)
+      #: (Hash[cache_key, V], **top) -> either[Error, Array[Snapshot[V]]]
+      def write_all(values, **kwargs)
+        results = cache_store.write_multi(values.map { |key, value| [namespaced_key(key).to_s, value] }.to_h, default_options.merge(**kwargs))
         Either.right(results.map { |key, value| Snapshot.cached(key, value) })
       rescue => e
         Either.left(StoreError.new(:set_all, values, "Failed to write to cache: #{e.message}", e))
@@ -70,20 +70,20 @@ module TypedCache
       end
 
       # @rbs override
-      #: (Array[cache_key]) -> either[Error, Array[Snapshot[V]]]
-      def read_all(keys)
-        results = cache_store.read_multi(*keys.map { |key| namespaced_key(key).to_s }, default_options)
+      #: (Array[cache_key], **top) -> either[Error, Array[Snapshot[V]]]
+      def read_all(keys, **kwargs)
+        results = cache_store.read_multi(*keys.map { |key| namespaced_key(key).to_s }, default_options.merge(**kwargs))
         Either.right(results.map { |key, value| [key, Snapshot.cached(key, value)] }.to_h)
       end
 
       # @rbs override
-      #: (Array[cache_key]) { (CacheKey) -> V? } -> either[Error, Array[Snapshot[V]]]
-      def fetch_all(keys, &block)
+      #: (Array[cache_key], **top) { (CacheKey) -> V? } -> either[Error, Array[Snapshot[V]]]
+      def fetch_all(keys, **kwargs, &block)
         cache_keys = keys.map { |key| namespaced_key(key) }
         key_map = cache_keys.index_by(&:to_s)
 
         computed_keys = Set.new #: Set[String]
-        results = cache_store.fetch_multi(*key_map.keys, default_options) do |key|
+        results = cache_store.fetch_multi(*key_map.keys, default_options.merge(**kwargs)) do |key|
           computed_keys << key
           yield(key_map[key])
         end

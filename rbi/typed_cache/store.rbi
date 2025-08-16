@@ -12,17 +12,17 @@ module TypedCache
     Key = T.type_alias { T.any(String, ::TypedCache::CacheKey) }
     private_constant :Error, :Key
 
-    sig { params(key: Key).returns(::TypedCache::Either[Error, CachedType]) }
-    def read(key); end
+    sig { params(key: Key, kwargs: T::Hash[Symbol, T.untyped]).returns(::TypedCache::Either[Error, CachedType]) }
+    def read(key, **kwargs); end
 
-    sig { params(keys: T::Array[Key]).returns(::TypedCache::Either[Error, T::Array[::TypedCache::Snapshot[CachedType]]]) }
-    def read_all(keys); end
+    sig { params(keys: T::Array[Key], kwargs: T::Hash[Symbol, T.untyped]).returns(::TypedCache::Either[Error, T::Array[::TypedCache::Snapshot[CachedType]]]) }
+    def read_all(keys, **kwargs); end
 
-    sig { params(key: Key, value: CachedType).returns(::TypedCache::Either[Error, ::TypedCache::Snapshot[CachedType]]) }
-    def write(key, value); end
+    sig { params(key: Key, value: CachedType, kwargs: T::Hash[Symbol, T.untyped]).returns(::TypedCache::Either[Error, ::TypedCache::Snapshot[CachedType]]) }
+    def write(key, value, **kwargs); end
 
-    sig { params(values: T::Hash[Key, CachedType]).returns(::TypedCache::Either[Error, T::Array[::TypedCache::Snapshot[CachedType]]]) }
-    def write_all(values); end
+    sig { params(values: T::Hash[Key, CachedType], kwargs: T::Hash[Symbol, T.untyped]).returns(::TypedCache::Either[Error, T::Array[::TypedCache::Snapshot[CachedType]]]) }
+    def write_all(values, **kwargs); end
 
     sig { params(key: Key).returns(::TypedCache::Either[Error, ::TypedCache::Snapshot[CachedType]]) }
     def delete(key); end
@@ -36,11 +36,11 @@ module TypedCache
     sig { params(key: Key).returns(T::Boolean) }
     def key?(key); end
 
-    sig { params(key: Key, block: T.proc.returns(T.nilable(CachedType))).returns(::TypedCache::Either[Error, ::TypedCache::Snapshot[::TypedCache::Maybe[CachedType]]]) }
-    def fetch(key, &block); end
+    sig { params(key: Key, kwargs: T::Hash[Symbol, T.untyped], block: T.proc.returns(T.nilable(CachedType))).returns(::TypedCache::Either[Error, ::TypedCache::Snapshot[::TypedCache::Maybe[CachedType]]]) }
+    def fetch(key, **kwargs, &block); end
 
-    sig { params(keys: T::Array[Key], block: T.proc.params(key: ::TypedCache::CacheKey).returns(T.nilable(CachedType))).returns(::TypedCache::Either[Error, T::Array[::TypedCache::Snapshot[CachedType]]]) }
-    def fetch_all(keys, &block); end
+    sig { params(keys: T::Array[Key], kwargs: T::Hash[Symbol, T.untyped], block: T.proc.params(key: ::TypedCache::CacheKey).returns(T.nilable(CachedType))).returns(::TypedCache::Either[Error, T::Array[::TypedCache::Snapshot[CachedType]]]) }
+    def fetch_all(keys, **kwargs, &block); end
 
     sig { returns(::TypedCache::Namespace) }
     def namespace; end
