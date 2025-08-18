@@ -18,7 +18,7 @@ module TypedCache
     #     def read_multi: (Array[cache_key], **top) -> Hash[cache_key, V]
     #     def write: (cache_key, V, **top) -> V
     #     def write_multi: (Hash[cache_key, V], **top) -> Hash[cache_key, V]
-    #     def delete: (cache_key) -> V?
+    #     def delete: (cache_key, **top) -> V?
     #     def key?: (cache_key) -> bool
     #     def clear: () -> void
     #     def fetch: (cache_key, **top) { () -> V? } -> V?
