@@ -7,7 +7,7 @@ module TypedCache
 
     InstrumenterSource = T.type_alias { T.any(Symbol, ::TypedCache::Instrumenter) }
 
-    interface!
+    abstract!
     sealed!
 
     sig { abstract.params(name: Symbol, args: T.untyped, options: T::Hash[Symbol, T.anything]).returns(T.all(CacheDefinition, CacheBuilder)) }
@@ -24,7 +24,7 @@ module TypedCache
     extend T::Sig
     extend T::Helpers
 
-    interface!
+    abstract!
     sealed!
 
     sig { abstract.params(namespace: ::TypedCache::Namespace).returns(::TypedCache::Either[::TypedCache::Error, ::TypedCache::Store[T.untyped]]) }

@@ -52,19 +52,19 @@ module TypedCache
     end
 
     # @rbs override
-    # @rbs (cache_key) -> V?
+    # @rbs (cache_key, **top) -> V?
     def delete(key, **opts)
       raise NotImplementedError, "#{self.class} must implement #delete"
     end
 
     # @rbs override
     # @rbs (cache_key) -> bool
-    def key?(key, **opts)
+    def key?(key)
       raise NotImplementedError, "#{self.class} must implement #key?"
     end
 
     # @rbs override
-    # @rbs () -> void
+    # @rbs (**top) -> void
     def clear(**opts)
       raise NotImplementedError, "#{self.class} must implement #clear"
     end
@@ -80,14 +80,6 @@ module TypedCache
     def fetch_multi(keys, **opts, &block)
       keys.to_h { |key| [key, fetch(key, **opts, &block)] }
     end
-
-    # @rbs override
-    # @rbs () -> String
-    def to_s = self.class.name
-
-    # @rbs override
-    # @rbs () -> String
-    def inspect = self.class.inspect
   end
 
   # @rbs! type backend[V] = Backend::_Backend[V]
