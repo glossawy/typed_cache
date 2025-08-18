@@ -57,6 +57,12 @@ module TypedCache
 
     alias flat_map bind
 
+    # @rbs () -> String
+    def to_s = "Snapshot(#{key} retrieved at #{retrieved_at} from #{source} with value #{value})"
+
+    # @rbs () -> String
+    def inspect = "Snapshot(#{key}, #{value.inspect}, #{source}, #{retrieved_at})"
+
     class << self
       # Creates a snapshot for a cached value
       #: [V] (CacheKey, V) -> Snapshot[V]

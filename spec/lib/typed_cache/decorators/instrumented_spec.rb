@@ -13,7 +13,7 @@ module TypedCache
         .with_backend(:memory)
         .with_instrumentation(:rails)
     end
-    let(:store) { builder.build(namespace).value }
+    let(:store) { builder.build!(namespace) }
 
     before do
       TypedCache.configure do |config|
@@ -72,7 +72,7 @@ module TypedCache
           events = []
           callback = ->(*payload) { events << payload }
 
-          ActiveSupport::Notifications.subscribed(callback, 'typed_cache.fetch_all') do
+          ActiveSupport::Notifications.subscribed(callback, 'typed_cache.fetch_multi') do
             store.fetch_all(['k1', 'k2']) { |k| "v_#{k}" }
           end
 

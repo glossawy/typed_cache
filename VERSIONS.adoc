@@ -2,12 +2,37 @@
 
 == Unreleased
 
+
 * feat: Cache building is now immutable, allowing for more flexible and composable cache definitions.
 
 * fix: Broken default methods on Store
 
 * refactor: CacheBuilder broken out into `CacheDefinition` and `CacheBuilder` interfaces.
 * refactor: Make return result of CacheBuilder#build an untyped store, so it can be easily cast to other types
+
+=== BREAKING
+
+* Backend simplified to represent a backend for the Store rather than being a store itself, Store is now a wrapper around a backend to provide additional functionality and a monadic interface. Decorators still wrap stores. Decorators are also now wrapping a backend instead of a store.
+
+Now if you just want a typed wrapper around an existing cache store, you can do:
+
+```ruby
+store = TypedCache.builder.with_backend(:active_support, Rails.cache)
+
+# Store provides helper methods and monadic results for safe cache operations,
+# but you can also retrieve the underlying backend and use it di
+user_store = store.cache_for(User)
+
+# Elsewhere in your code
+cache = store.cache_for(User).backend # => Backend[User]
+
+# 'cache' is now a typed backend, so you can use it as a lightweight wrapper
+# around Rails.cache, but with type safety. However, you lose the ability to use
+# CacheRef and the monadic interface. Decorators and instrumentation still work.
+cache.read('user') # => User?
+```
+
+Although backends do not use monadic results or CacheRef, this will likely change in the future as CacheRef is a core part of the library and needs more improvement while the monadic, snapshot-based results of Store may need to be simplified or reorganized. These planned changes will likely allow backends to use CacheRef as well as collections of CacheRefs and opt into monadic results.
 
 == 0.3.2
 

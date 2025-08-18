@@ -10,7 +10,85 @@ module TypedCache
   # that actually persist data.
   # @rbs generic V
   module Backend
-    include Store #[V]
-    # @rbs! include Store::_Store[V]
+    # @rbs! type cache_key = String | CacheKey
+
+    # @rbs!
+    #   interface _Backend[V]
+    #     def read: (cache_key, **top) -> V?
+    #     def read_multi: (Array[cache_key], **top) -> Hash[cache_key, V]
+    #     def write: (cache_key, V, **top) -> V
+    #     def write_multi: (Hash[cache_key, V], **top) -> Hash[cache_key, V]
+    #     def delete: (cache_key) -> V?
+    #     def key?: (cache_key) -> bool
+    #     def clear: () -> void
+    #     def fetch: (cache_key, **top) { () -> V? } -> V?
+    #     def fetch_multi: (Array[cache_key], **top) { (cache_key) -> V? } -> Hash[cache_key, V]
+    #   end
+
+    # @rbs! include _Backend[V]
+
+    # @rbs override
+    # @rbs (cache_key, **top) -> V?
+    def read(key, **opts)
+      raise NotImplementedError, "#{self.class} must implement #read"
+    end
+
+    # @rbs override
+    # @rbs (Array[cache_key], **top) -> Hash[cache_key, V]
+    def read_multi(keys, **opts)
+      keys.to_h { |key| [key, read(key, **opts)] }
+    end
+
+    # @rbs override
+    # @rbs (cache_key, V, **top) -> V
+    def write(key, value, **opts)
+      raise NotImplementedError, "#{self.class} must implement #write"
+    end
+
+    # @rbs override
+    # @rbs (Hash[cache_key, V], **top) -> Hash[cache_key, V]
+    def write_multi(values, **opts)
+      values.transform_values { |value| write(value, **opts) }
+    end
+
+    # @rbs override
+    # @rbs (cache_key) -> V?
+    def delete(key, **opts)
+      raise NotImplementedError, "#{self.class} must implement #delete"
+    end
+
+    # @rbs override
+    # @rbs (cache_key) -> bool
+    def key?(key, **opts)
+      raise NotImplementedError, "#{self.class} must implement #key?"
+    end
+
+    # @rbs override
+    # @rbs () -> void
+    def clear(**opts)
+      raise NotImplementedError, "#{self.class} must implement #clear"
+    end
+
+    # @rbs override
+    # @rbs (cache_key, **top) { () -> V? } -> V?
+    def fetch(key, **opts, &block)
+      raise NotImplementedError, "#{self.class} must implement #fetch"
+    end
+
+    # @rbs override
+    # @rbs (Array[cache_key], **top) { (cache_key) -> V? } -> Hash[cache_key, V]
+    def fetch_multi(keys, **opts, &block)
+      keys.to_h { |key| [key, fetch(key, **opts, &block)] }
+    end
+
+    # @rbs override
+    # @rbs () -> String
+    def to_s = self.class.name
+
+    # @rbs override
+    # @rbs () -> String
+    def inspect = self.class.inspect
   end
+
+  # @rbs! type backend[V] = Backend::_Backend[V]
 end

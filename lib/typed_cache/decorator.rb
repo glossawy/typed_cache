@@ -9,21 +9,21 @@ module TypedCache
   module Decorator
     extend Forwardable
 
-    include Store #[V]
-    # @rbs! include Store::_Store[V]
-    # @rbs! include Store::_Decorator[V]
-
     # @rbs!
-    #  def store: -> Store[V]
+    #   interface _Decorator[V]
+    #     def initialize: (Backend[V]) -> void
+    #   end
 
-    Store.instance_methods(false).each do |method_name|
-      def_delegator :store, method_name
-    end
+    include Backend #[V]
+    # @rbs! include Backend::_Backend[V]
+    # @rbs! include _Decorator[V]
 
     # @rbs override
-    #: (cache_key) -> either[Error, CacheRef[V]]
-    def ref(key)
-      CacheRef.new(self, namespaced_key(key))
+    # @rbs () -> Backend[V]
+    def backend = raise NotImplementedError, "#{self.class} must implement #backend"
+
+    Backend.instance_methods(false).each do |method_name|
+      def_delegator :backend, method_name
     end
 
     # @rbs override
@@ -31,7 +31,17 @@ module TypedCache
     def initialize_copy(other)
       super
 
-      @store = other.store.clone
+      @backend = other.backend.clone
     end
+
+    # @rbs override
+    # @rbs () -> String
+    def to_s = "#{self.class.name}(#{backend})"
+
+    # @rbs override
+    # @rbs () -> String
+    def inspect = "Decorator(#{self.class.name}, #{backend.inspect})"
   end
+
+  # @rbs! type decorator[V] = Decorator::_Decorator[V] & Backend[V]
 end

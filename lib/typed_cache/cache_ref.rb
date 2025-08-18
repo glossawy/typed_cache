@@ -21,7 +21,7 @@ module TypedCache
     end
 
     # Gets a value from the cache as a snapshot
-    #: -> either[Error, Snapshot[V]]
+    #: -> either[Error, Snapshot[maybe[V]]]
     def read
       store.read(key)
     end
@@ -33,14 +33,14 @@ module TypedCache
     end
 
     # Deletes the value from the cache and returns the deleted value as a snapshot
-    #: -> either[Error, Snapshot[V]]
+    #: -> either[Error, maybe[V]]
     def delete
       store.delete(key)
     end
 
     # Fetches a value from cache, computing and storing it if not found
     # The snapshot indicates whether the value came from cache or was computed
-    #: () { -> V } -> either[Error, Snapshot[V]]
+    #: () { -> V? } -> either[Error, Snapshot[maybe[V]]]
     def fetch(&block)
       store.fetch(key, &block)
     end
@@ -60,24 +60,26 @@ module TypedCache
     # Maps over the cached value if it exists, preserving snapshot metadata
     #: [R] () { (V) -> R } -> either[Error, Snapshot[R]]
     def map(&block)
-      read.map { |snapshot| snapshot.map(&block) }
+      read.map { |snapshot| snapshot.map { |mb| mb.map(&block) } }
     end
-
-    # Binds over the cached value, allowing for monadic composition with snapshots
-    #: [R] () { (V) -> either[Error, R] } -> either[Error, Snapshot[R]]
-    def bind(&block)
-      read.bind { |snapshot| snapshot.bind(&block) }
-    end
-
-    alias flat_map bind
 
     # Updates the cached value using the provided block
     # Returns the updated value as a snapshot with source=:updated
-    #: () { (V) -> V } -> either[Error, Snapshot[V]]
+    #: () { (V) -> V? } -> either[Error, Snapshot[maybe[V]]]
     def update(&block)
       read.bind do |snapshot|
-        new_value = yield(snapshot.value)
-        write(new_value)
+        new_value = snapshot.value.bind do |value|
+          new_value = yield(value)
+          Maybe.wrap(new_value)
+        end
+
+        if new_value.some?
+          write(new_value.value).map do |snapshot|
+            snapshot.map { new_value }
+          end
+        else
+          delete.map { snapshot }
+        end
       rescue => e
         Either.left(StoreError.new(
           :update,
@@ -88,28 +90,9 @@ module TypedCache
       end
     end
 
-    # Returns the cached value or a default if the cache is empty/errored
-    #: (V) -> V
-    def value_or(default)
-      read.fold(
-        ->(_error) { default },
-        ->(snapshot) { snapshot.value },
-      )
-    end
-
-    # Returns a Maybe containing the cached value, or None if not present
-    # This provides a more functional approach than value_or
-    #: -> maybe[V]
-    def value_maybe
-      read.fold(
-        ->(_error) { Maybe.none },
-        ->(snapshot) { Maybe.some(snapshot.value) },
-      )
-    end
-
     # Computes and caches a value if the cache is currently empty
     # Returns existing snapshot if present, computed snapshot if cache miss, error otherwise
-    #: () { -> V } -> either[Error, Snapshot[V]]
+    #: () { -> V? } -> either[Error, Snapshot[maybe[V]]]
     def compute_if_absent(&block)
       fetch(&block).fold(
         ->(error) {
@@ -124,26 +107,6 @@ module TypedCache
       )
     end
 
-    # Creates a new CacheRef with the same store but different key
-    #: [R] (String) -> CacheRef[R]
-    def with_key(new_key)
-      CacheRef.new(store, store.namespace.key(new_key))
-    end
-
-    # Creates a scoped CacheRef by appending to the current key path
-    #: [R] (String) -> CacheRef[R]
-    def scope(scope_key)
-      new_namespace = store.namespace.nested(key.key)
-      new_store = store.with_namespace(new_namespace)
-      CacheRef.new(new_store, new_namespace.key(scope_key))
-    end
-
-    # Pattern matching support for Either[Error, Snapshot[V]] results
-    #: [R] (^(Error) -> R, ^(Snapshot[V]) -> R) -> R
-    def fold(left_fn, right_fn)
-      read.fold(left_fn, right_fn)
-    end
-
     # Convenience method to work with the snapshot directly
     #: [R] () { (Snapshot[V]) -> R } -> either[Error, R]
     def with_snapshot(&block)
@@ -155,5 +118,11 @@ module TypedCache
     def with(&block)
       read.map { |snapshot| yield(snapshot.value) }
     end
+
+    # @rbs () -> String
+    def to_s = "CacheRef(#{key} from #{store.namespace})"
+
+    # @rbs () -> String
+    def inspect = "CacheRef(#{key}, #{store.inspect})"
   end
 end

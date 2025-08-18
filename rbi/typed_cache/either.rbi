@@ -78,6 +78,18 @@ module TypedCache
 
     sig { returns(T.noreturn) }
     def right_or_raise!; end
+
+    sig { returns(String) }
+    def to_s; end
+
+    sig { returns(String) }
+    def inspect; end
+
+    sig { params(other: Object).returns(T::Boolean) }
+    def ==(other); end
+
+    sig { returns(Integer) }
+    def hash; end
   end
 
   class Right
@@ -118,5 +130,17 @@ module TypedCache
 
     sig { returns(R) }
     def right_or_raise!; end
+
+    sig { returns(String) }
+    def to_s; end
+
+    sig { returns(String) }
+    def inspect; end
+
+    sig { params(other: Object).returns(T::Boolean) }
+    def ==(other); end
+
+    sig { returns(Integer) }
+    def hash; end
   end
 end

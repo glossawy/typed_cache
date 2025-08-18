@@ -11,7 +11,7 @@ module TypedCache
     # Backend registry using composition
     REGISTRY = Registry.new('backend', {
       memory: Memory,
-    }).freeze
+    }).freeze #: Registry[Backend]
 
     class << self
       extend Forwardable

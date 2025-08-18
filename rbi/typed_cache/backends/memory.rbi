@@ -7,7 +7,7 @@ module TypedCache
 
       include ::TypedCache::Backend
 
-      CachedType = type_member
+      BackendType = type_member
     end
   end
 end

@@ -9,23 +9,19 @@ module TypedCache
 
     extend Forwardable
 
-    attr_reader store: TypedCache::Store[V]
+    attr_reader backend: Backend[V]
 
     attr_reader instrumenter: Instrumenter
 
     # @rbs (Symbol, ?operation: String) ?{ (*untyped, **untyped) -> String } -> void
     private def self.instrument: (Symbol, ?operation: String) ?{ (*untyped, **untyped) -> String } -> void
 
-    # : (TypedCache::Store[V], instrumenter: Instrumenter) -> void
-    def initialize: (TypedCache::Store[V], instrumenter: Instrumenter) -> void
+    # : (Backend[V], instrumenter: Instrumenter) -> void
+    def initialize: (Backend[V], instrumenter: Instrumenter) -> void
 
     # @rbs override
     # : (self) -> self
     def initialize_copy: ...
-
-    # @rbs override
-    # : -> String
-    def store_type: ...
 
     # Additional methods that might exist on the wrapped store
     def respond_to_missing?: (untyped method_name, ?untyped include_private) -> untyped

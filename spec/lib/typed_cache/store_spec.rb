@@ -6,46 +6,19 @@ module TypedCache
   RSpec.describe(Store) do
     include Namespacing
 
-    let(:store_class) do
-      Class.new do
-        include Store
-        attr_accessor :namespace
-
-        def initialize(namespace)
-          @namespace = namespace
-          @data = {}
-        end
-
-        def read(key)
-          namespaced_key = namespaced_key(key)
-          if @data.key?(namespaced_key)
-            Either.right(Snapshot.cached(namespaced_key, @data[namespaced_key]))
-          else
-            Either.left(CacheMissError.new(namespaced_key))
-          end
-        end
-
-        def write(key, value)
-          namespaced_key = namespaced_key(key)
-          @data[namespaced_key] = value
-          Either.right(Snapshot.cached(namespaced_key, value))
-        end
-      end
-    end
-
     let(:namespace) { make_namespace('store_spec') }
-    let(:store) { store_class.new(namespace) }
+    let(:store) { create_store(namespace) }
 
     describe '#fetch' do
       context 'when value is not present' do
         it 'computes the value' do
           result = store.fetch('my_key') { 'computed' }
-          expect(result).to(be_right.with(snapshot_of('computed')))
+          expect(result).to(be_cached_value(some('computed')))
         end
 
         it 'sets the computed value in the store' do
           store.fetch('my_key') { 'computed' }
-          expect(store.read('my_key')).to(be_right.with(snapshot_of('computed')))
+          expect(store.read('my_key')).to(be_cached_value(some('computed')))
         end
       end
 
@@ -54,7 +27,7 @@ module TypedCache
 
         it 'returns the cached value' do
           result = store.fetch('my_key') { 'fail' }
-          expect(result).to(be_right.with(snapshot_of('cached')))
+          expect(result).to(be_cached_value(some('cached')))
         end
 
         it 'does not call the block' do
@@ -68,7 +41,7 @@ module TypedCache
         store.write('key1', 'cached1')
         results = store.fetch_all(['key1', 'key2']) do |key|
           "computed_#{key.key.last}"
-        end.value
+        end.right_or_raise!.values
 
         expect(results.map(&:value)).to(contain_exactly('cached1', 'computed_2'))
       end
@@ -77,7 +50,7 @@ module TypedCache
         store.write('key1', 'cached1')
         results = store.fetch_all(['key1', 'key2']) do |key|
           "computed_#{key.key.last}"
-        end.value
+        end.right_or_raise!.values
 
         cached_snapshot = results.find { |s| s.value == 'cached1' }
         computed_snapshot = results.find { |s| s.value == 'computed_2' }

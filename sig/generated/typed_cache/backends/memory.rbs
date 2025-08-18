@@ -1,15 +1,6 @@
 # Generated from lib/typed_cache/backends/memory.rb with RBS::Inline
 
 module TypedCache
-  class MemoryStoreRegistry
-    include Singleton
-
-    extend Forwardable
-
-    # : -> void
-    def initialize: () -> void
-  end
-
   module Backends
     # A type-safe memory store implementation with built-in namespacing
     # @rbs generic V
@@ -44,25 +35,23 @@ module TypedCache
         def expired?: () -> bool
       end
 
-      attr_reader namespace: Namespace
+      attr_reader ttl: Integer
 
-      attr_reader ttl: Namespace
+      attr_reader backing_store: hash_like[String, Entry[V]]
 
-      attr_reader backing_store: hash_like[CacheKey, Entry[V]]
-
-      # : (Namespace, shared: bool, ttl: Integer) -> void
-      def initialize: (Namespace, shared: bool, ttl: Integer) -> void
+      # : (ttl: Integer) -> void
+      def initialize: (ttl: Integer) -> void
 
       # @rbs override
-      # : (cache_key, **top) -> either[Error, Snapshot[V]]
+      # : (cache_key, **top) -> V?
       def read: ...
 
       # @rbs override
-      # : (cache_key, V, expires_in: Integer, expires_at: Time, **top) -> either[Error, Snapshot[V]]
+      # : (cache_key, V, expires_in: Integer, expires_at: Time, **top) -> V
       def write: ...
 
       # @rbs override
-      # : (cache_key) -> either[Error, Snapshot[V]]
+      # : (cache_key) -> V?
       def delete: ...
 
       # @rbs override
@@ -70,23 +59,14 @@ module TypedCache
       def key?: ...
 
       # @rbs override
-      # : -> maybe[Error]
+      # : -> void
       def clear: ...
 
       # @rbs override
-      # : -> String
-      def store_type: ...
-
-      # : -> Integer
-      def size: () -> Integer
-
-      # : -> Array[CacheKey]
-      def keys: () -> Array[CacheKey]
+      # : (cache_key, ttl: Integer, **top) { () -> V? } -> V?
+      def fetch: ...
 
       private
-
-      # : -> Hash[CacheKey, Entry[V]]
-      def namespaced_entries: () -> Hash[CacheKey, Entry[V]]
 
       # : -> void
       def purge_expired_keys: () -> void

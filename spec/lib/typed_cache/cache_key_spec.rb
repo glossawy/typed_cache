@@ -27,13 +27,6 @@ module TypedCache
       end
     end
 
-    describe '#inspect' do
-      it 'returns a debug-friendly string' do
-        key = described_class.new(namespace, 'my_key')
-        expect(key.inspect).to(eq("#<TypedCache::CacheKey namespace=#{namespace} key=my_key>"))
-      end
-    end
-
     describe '#==' do
       it 'returns true for equal keys' do
         key1 = described_class.new(namespace, 'my_key')

@@ -9,32 +9,32 @@ module TypedCache
       include Namespacing
 
       let(:namespace) { make_namespace('backend_memory') }
-      let(:store) { described_class.new(namespace) }
+      let(:store) { Store.new(namespace, described_class.new) }
 
       describe '#read' do
-        it 'returns Left on cache miss' do
-          expect(store.read('k').left?).to(be(true))
+        it 'returns Nothing on cache miss' do
+          expect(store.read('k')).to(be_cached_value(nothing))
         end
       end
 
       describe '#write' do
         it 'stores value and returns Right snapshot' do
           result = store.write('k', 'v')
-          expect(result.right?).to(be(true))
+          expect(result).to(be_right)
         end
       end
 
       describe 'round-trip' do
         it 'gets the previously set value' do
           store.write('k', 'v')
-          expect(store.read('k').value.value).to(eq('v'))
+          expect(store.read('k')).to(be_cached_value(some('v')))
         end
       end
 
       describe '#delete' do
         it 'removes key and returns snapshot' do
           store.write('k', 'v')
-          expect(store.delete('k').right?).to(be(true))
+          expect(store.delete('k')).to(be_right)
         end
       end
 
@@ -47,7 +47,7 @@ module TypedCache
       end
 
       context 'with TTL configured' do
-        let(:store) { described_class.new(namespace, ttl: 10) }
+        let(:store) { Store.new(namespace, described_class.new(ttl: 10)) }
 
         around do |example|
           Timecop.freeze('2024-01-01 12:00:00 UTC') do
@@ -57,13 +57,13 @@ module TypedCache
 
         it 'returns a cached value before the TTL' do
           store.write('k', 'v')
-          expect(store.read('k')).to(be_cached_value('v'))
+          expect(store.read('k')).to(be_cached_value(some('v')))
         end
 
         it 'returns a cache miss after the TTL' do
           store.write('k', 'v')
           Timecop.travel('2024-01-01 12:00:11 UTC')
-          expect(store.read('k')).to(be_left.with(an_instance_of(CacheMissError)))
+          expect(store.read('k')).to(be_cached_value(nothing))
         end
 
         it 'returns true for key? before expiry' do
@@ -77,31 +77,11 @@ module TypedCache
           expect(store.key?('k')).to(be(false))
         end
 
-        it 'has the correct size before expiry' do
-          store.write('k1', 'v1')
-          store.write('k2', 'v2')
-          expect(store.size).to(eq(2))
-        end
-
-        it 'has the correct size after expiry' do
-          store.write('k1', 'v1')
-          store.write('k2', 'v2')
-          Timecop.travel('2024-01-01 12:00:11 UTC')
-          expect(store.size).to(eq(0))
-        end
-
-        it 'has a key in the backing store before expiry' do
-          store.write('k', 'v')
-          namespaced_key = store.send(:namespaced_key, 'k')
-          expect(store.send(:backing_store)).to(have_key(namespaced_key))
-        end
-
         it 'removes an expired key from the backing store on get' do
           store.write('k', 'v')
-          namespaced_key = store.send(:namespaced_key, 'k')
           Timecop.travel('2024-01-01 12:00:11 UTC')
           store.read('k') # Trigger the passive eviction
-          expect(store.send(:backing_store)).not_to(have_key(namespaced_key))
+          expect(store.key?('k')).to(be(false))
         end
       end
 
@@ -111,15 +91,19 @@ module TypedCache
 
           results = store.fetch_all(['key1', 'key2']) do |key|
             "computed_#{key.key.last}"
-          end.value
+          end.right_or_raise!.values
 
-          values = results.map(&:value)
-          expect(values).to(contain_exactly('cached1', 'computed_2'))
+          expect(results).to(
+            contain_exactly(
+              snapshot_of('cached1'),
+              snapshot_of('computed_2'),
+            ),
+          )
         end
       end
 
       context 'with default TTL' do
-        let(:store) { described_class.new(namespace) }
+        let(:store) { Store.new(namespace, described_class.new) }
 
         around do |example|
           Timecop.freeze('2024-01-01 12:00:00 UTC') do
@@ -129,13 +113,13 @@ module TypedCache
 
         it 'returns a cached value before the default TTL' do
           store.write('k', 'v')
-          expect(store.read('k')).to(be_cached_value('v'))
+          expect(store.read('k')).to(be_cached_value(some('v')))
         end
 
         it 'returns a cache miss after the default TTL' do
           store.write('k', 'v')
           Timecop.travel('2024-01-01 12:10:01 UTC') # 601 seconds later
-          expect(store.read('k')).to(be_left.with(an_instance_of(CacheMissError)))
+          expect(store.read('k')).to(be_cached_value(nothing))
         end
       end
     end

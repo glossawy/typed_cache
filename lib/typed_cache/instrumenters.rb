@@ -19,7 +19,7 @@ module TypedCache
       rails: ActiveSupport,
       default: Null,
       null: Null,
-    }) #: Registry[Symbol, Class[Instrumenter]]
+    }) #: Registry[Instrumenter]
 
     class << self
       extend Forwardable

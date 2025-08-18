@@ -89,6 +89,11 @@ module TypedCache
       validate_and_build(namespace)
     end
 
+    # @rbs (Namespace) -> Store[untyped]
+    def build!(namespace = Namespace.root)
+      build(namespace).right_or_raise!
+    end
+
     # Familiar Ruby fluent interface - always succeeds
     # Invalid configurations are caught during build()
     # @rbs (Symbol, *untyped, **untyped) -> self
@@ -124,28 +129,30 @@ module TypedCache
 
     # @rbs (Namespace) -> either[Error, Store[V]]
     def validate_and_build(namespace)
-      create_store(namespace).bind do |store|
-        apply_decorators(store).bind do |decorated_store|
-          apply_instrumentation(decorated_store)
+      create_backend.bind do |backend|
+        apply_decorators(backend).bind do |decorated_backend|
+          apply_instrumentation(decorated_backend).bind do |instrumented_backend|
+            Either.right(Store.new(namespace, instrumented_backend))
+          end
         end
       end
     end
 
-    # @rbs (Namespace) -> either[Error, Store[untyped]]
-    def create_store(namespace)
+    # @rbs (Namespace) -> either[Error, Backend[untyped]]
+    def create_backend
       backend_config = @cache_definition.backend_config
 
       return Either.left(ArgumentError.new('Backend not configured')) unless backend_config
 
       # Prepend namespace to the arguments for the backend constructor
-      @backend_registry.resolve(backend_config.name, namespace, *backend_config.args, **backend_config.options)
+      @backend_registry.resolve(backend_config.name, *backend_config.args, **backend_config.options)
     end
 
-    # @rbs (Store[untyped]) -> either[Error, Store[untyped]]
-    def apply_decorators(store)
+    # @rbs (Backend[untyped]) -> either[Error, Decorator[untyped]]
+    def apply_decorators(backend)
       decorator_configs = @cache_definition.decorator_configs
 
-      return Either.right(store) if decorator_configs.empty?
+      return Either.right(backend) if decorator_configs.empty?
 
       names = decorator_configs.map(&:name)
 
@@ -153,20 +160,20 @@ module TypedCache
       duplicates = name_counts.keys.select { |name| name_counts[name] > 1 }
       return Either.left(ArgumentError.new("Duplicate decorator: #{duplicates.join(", ")}")) if duplicates.any?
 
-      decorator_configs.reduce(Either.right(store)) do |result, decorator_config|
-        result.bind do |current_store|
-          @decorator_registry.resolve(decorator_config.name, current_store, **decorator_config.options)
+      decorator_configs.reduce(Either.right(backend)) do |result, decorator_config|
+        result.bind do |current_backend|
+          @decorator_registry.resolve(decorator_config.name, current_backend, **decorator_config.options)
         end
       end
     rescue => e
       Either.left(StoreError.new(:decorator_application, 'decorator', "Failed to apply decorator: #{e.message}", e))
     end
 
-    # @rbs (Store[untyped]) -> either[Error, Store[untyped]]
-    def apply_instrumentation(store)
+    # @rbs (Backend[untyped]) -> either[Error, Backend[untyped]]
+    def apply_instrumentation(backend)
       instrumenter_source = @cache_definition.instrumenter_source
 
-      return Either.right(store) unless instrumenter_source
+      return Either.right(backend) unless instrumenter_source
 
       instrumenter =
         case instrumenter_source
@@ -184,7 +191,7 @@ module TypedCache
         end
 
       instrumenter.bind do |i|
-        @decorator_registry.resolve(:instrumented, store, instrumenter: i)
+        @decorator_registry.resolve(:instrumented, backend, instrumenter: i)
       end
     end
   end

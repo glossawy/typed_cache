@@ -16,7 +16,7 @@ module TypedCache
     # @api private
     # Default decorator set – starts with instrumentation only, but this registry
     # lets end-users register their own via `Decorators.register`.
-    REGISTRY: untyped
+    REGISTRY: Registry[Decorator]
 
     extend Forwardable
 

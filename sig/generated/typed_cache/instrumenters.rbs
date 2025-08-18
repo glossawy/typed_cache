@@ -7,7 +7,7 @@ module TypedCache
     # Registry class directly because many instrumenters mix in `Singleton`,
     # making `.new` inaccessible. Instead we implement a thin facade that
     # returns either the singleton instance (preferred) or a fresh instance.
-    REGISTRY: Registry[Symbol, Class[Instrumenter]]
+    REGISTRY: Registry[Instrumenter]
 
     extend Forwardable
 

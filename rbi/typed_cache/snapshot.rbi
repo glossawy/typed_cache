@@ -40,6 +40,12 @@ module TypedCache
 
     alias flat_map bind
 
+    sig { returns(String) }
+    def to_s; end
+
+    sig { returns(String) }
+    def inspect; end
+
     class << self
       sig { type_parameters(:T).params(key: ::TypedCache::CacheKey, value: T.type_parameter(:T)).returns(::TypedCache::Snapshot[T.type_parameter(:T)]) }
       def cached(key, value); end

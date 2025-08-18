@@ -10,12 +10,12 @@ module TypedCache
 
       let(:namespace) { make_namespace('backend_as') }
       let(:cache_store) { ::ActiveSupport::Cache::MemoryStore.new }
-      let(:store) { described_class.new(namespace, cache_store) }
+      let(:store) { Store.new(namespace, described_class.new(cache_store)) }
 
       describe '#write / #read' do
         it 'round-trips a value' do
           store.write('k', 'v')
-          expect(store.read('k').value.value).to(eq('v'))
+          expect(store.read('k')).to(be_cached_value(some('v')))
         end
       end
 
@@ -32,8 +32,13 @@ module TypedCache
 
           results = store.fetch_all(['key1', 'key2']) do |key|
             "computed_#{key}"
-          end.value
-          expect(results.map(&:value).map(&:value)).to(contain_exactly('cached1', 'computed_typed_cache:backend_as:key2'))
+          end.right_or_raise!.values
+          expect(results).to(
+            contain_exactly(
+              snapshot_of('cached1'),
+              snapshot_of('computed_typed_cache:backend_as:key2'),
+            ),
+          )
         end
       end
 

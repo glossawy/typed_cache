@@ -29,5 +29,8 @@ module TypedCache
 
     sig { abstract.params(namespace: ::TypedCache::Namespace).returns(::TypedCache::Either[Error, ::TypedCache::Store[T.untyped]]) }
     def build(namespace = T.unsafe(nil)); end
+
+    sig { abstract.params(namespace: ::TypedCache::Namespace).returns(::TypedCache::Store[T.untyped]) }
+    def build!(namespace = T.unsafe(nil)); end
   end
 end

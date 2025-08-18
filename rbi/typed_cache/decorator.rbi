@@ -4,64 +4,50 @@ module TypedCache
   module Decorator
     extend T::Generic
 
-    include ::TypedCache::Store
+    include ::TypedCache::Backend
 
     abstract!
 
-    CachedType = type_member
+    BackendType = type_member
+    KeyValue = T.type_alias { TypedCache::Backend::KeyValue }
 
-    sig { params(store: ::TypedCache::Store[CachedType]).void }
-    def initialize(store); end
+    sig { params(backend: ::TypedCache::Backend[BackendType]).void }
+    def initialize(backend); end
 
-    sig { overridable.returns(::TypedCache::Store[CachedType]) }
-    def store; end
+    sig { abstract.returns(::TypedCache::Backend[BackendType]) }
+    def backend; end
 
-    sig(:final) { params(key: T.any(String, ::TypedCache::CacheKey)).returns(::TypedCache::CacheRef[CachedType]) }
-    def ref(key); end
+    sig { override.params(key: KeyValue, opts: T::Hash[Symbol, T.untyped]).returns(::TypedCache::Either[Error, ::TypedCache::Snapshot[Maybe[BackendType]]]) }
+    def read(key, **opts); end
 
-    sig { overridable.params(key: T.any(String, ::TypedCache::CacheKey)).returns(::TypedCache::Either[Error, ::TypedCache::Snapshot[CachedType]]) }
-    def read(key); end
+    sig { override.params(key: KeyValue, value: BackendType, opts: T::Hash[Symbol, T.untyped]).returns(::TypedCache::Either[Error, ::TypedCache::Snapshot[BackendType]]) }
+    def write(key, value, **opts); end
 
-    sig { overridable.params(key: T.any(String, ::TypedCache::CacheKey), value: CachedType).returns(::TypedCache::Either[Error, ::TypedCache::Snapshot[CachedType]]) }
-    def write(key, value); end
-
-    sig { overridable.params(key: T.any(String, ::TypedCache::CacheKey)).returns(::TypedCache::Either[Error, ::TypedCache::Snapshot[CachedType]]) }
+    sig { override.params(key: KeyValue).returns(::TypedCache::Either[Error, ::TypedCache::Snapshot[Maybe[BackendType]]]) }
     def delete(key); end
 
-    sig { overridable.params(key: T.any(String, ::TypedCache::CacheKey)).returns(T::Boolean) }
+    sig { override.params(key: KeyValue).returns(T::Boolean) }
     def key?(key); end
 
-    sig { overridable.params(key: T.any(String, ::TypedCache::CacheKey), block: T.proc.params(value: CachedType).returns(CachedType)).returns(::TypedCache::Either[Error, ::TypedCache::Snapshot[CachedType]]) }
-    def fetch(key, &block); end
+    sig { override.params(key: KeyValue, opts: T::Hash[Symbol, T.untyped], block: T.proc.returns(T.nilable(BackendType))).returns(::TypedCache::Either[Error, ::TypedCache::Snapshot[Maybe[BackendType]]]) }
+    def fetch(key, **opts, &block); end
 
-    sig { overridable.params(keys: T::Array[T.any(String, ::TypedCache::CacheKey)]).returns(::TypedCache::Either[Error, T::Array[::TypedCache::Snapshot[CachedType]]]) }
-    def read_all(keys); end
+    sig { override.params(keys: T::Array[KeyValue], opts: T::Hash[Symbol, T.untyped]).returns(::TypedCache::Either[Error, T::Hash[KeyValue, Snapshot[BackendType]]]) }
+    def read_multi(keys, **opts); end
 
-    sig { overridable.params(keys: T::Array[T.any(String, ::TypedCache::CacheKey)], block: T.proc.params(key: T.any(String, ::TypedCache::CacheKey)).returns(CachedType)).returns(::TypedCache::Either[Error, T::Array[::TypedCache::Snapshot[CachedType]]]) }
-    def fetch_all(keys, &block); end
+    sig { override.params(keys: T::Array[KeyValue], opts: T::Hash[Symbol, T.untyped], block: T.proc.params(key: KeyValue).returns(T.nilable(BackendType))).returns(::TypedCache::Either[Error, T::Hash[KeyValue, Snapshot[BackendType]]]) }
+    def fetch_multi(keys, **opts, &block); end
 
-    sig { overridable.params(values: T::Hash[T.any(String, ::TypedCache::CacheKey), CachedType]).returns(::TypedCache::Either[Error, T::Array[::TypedCache::Snapshot[CachedType]]]) }
-    def write_all(values); end
+    sig { override.params(values: T::Hash[KeyValue, BackendType], opts: T::Hash[Symbol, T.untyped]).returns(::TypedCache::Either[Error, T::Hash[KeyValue, Snapshot[BackendType]]]) }
+    def write_multi(values, **opts); end
 
-    sig { overridable.void }
+    sig { override.void }
     def clear; end
-
-    sig(:final) { returns(::TypedCache::Namespace) }
-    def namespace; end
-
-    sig(:final) { params(namespace: ::TypedCache::Namespace).returns(::TypedCache::Store[CachedType]) }
-    def with_namespace(namespace); end
-
-    sig { abstract.returns(String) }
-    def store_type; end
 
     sig { overridable.params(other: T.self_type).void }
     def initialize_copy(other); end
 
-    sig(:final) { params(key: T.any(String, ::TypedCache::CacheKey)).returns(::TypedCache::CacheKey) }
-    def namespaced_key(key); end
-
-    sig { overridable.returns(::TypedCache::Instrumenter) }
+    sig { override.returns(T.nilable(::TypedCache::Instrumenter)) }
     def instrumenter; end
   end
 end

@@ -164,7 +164,7 @@ module TypedCache
     #
     # @rbs () -> String
     def inspect
-      "#<#{self.class} #{@namespace}>"
+      "Namespace(#{@namespace})"
     end
 
     # @rbs () -> Integer
@@ -176,8 +176,6 @@ module TypedCache
     def ==(other)
       other.is_a?(self.class) && other.to_s == to_s
     end
-
-    alias eql? ==
 
     private
 

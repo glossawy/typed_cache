@@ -21,6 +21,7 @@ end
 # Load custom matchers
 require_relative 'support/either_matchers'
 require_relative 'support/cache_matchers'
+require_relative 'support/maybe_matchers'
 
 RSpec.configure do |config|
   config.color = true

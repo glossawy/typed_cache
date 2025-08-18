@@ -30,7 +30,7 @@ module TypedCache
 
     # @rbs () -> String
     def inspect
-      "#<#{self.class} namespace=#{@namespace} key=#{@key}>"
+      "CacheKey(#{@namespace}:#{@key})"
     end
 
     # @rbs () -> Integer

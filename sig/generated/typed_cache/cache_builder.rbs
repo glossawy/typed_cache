@@ -46,6 +46,9 @@ module TypedCache
     # @rbs (?Namespace) -> either[Error, Store[untyped]]
     def build: (?Namespace) -> either[Error, Store[untyped]]
 
+    # @rbs (Namespace) -> Store[untyped]
+    def build!: (Namespace) -> Store[untyped]
+
     # Familiar Ruby fluent interface - always succeeds
     # Invalid configurations are caught during build()
     # @rbs (Symbol, *untyped, **untyped) -> self
@@ -64,13 +67,13 @@ module TypedCache
     # @rbs (Namespace) -> either[Error, Store[V]]
     def validate_and_build: (Namespace) -> either[Error, Store[V]]
 
-    # @rbs (Namespace) -> either[Error, Store[untyped]]
-    def create_store: (Namespace) -> either[Error, Store[untyped]]
+    # @rbs (Namespace) -> either[Error, Backend[untyped]]
+    def create_backend: (Namespace) -> either[Error, Backend[untyped]]
 
-    # @rbs (Store[untyped]) -> either[Error, Store[untyped]]
-    def apply_decorators: (Store[untyped]) -> either[Error, Store[untyped]]
+    # @rbs (Backend[untyped]) -> either[Error, Decorator[untyped]]
+    def apply_decorators: (Backend[untyped]) -> either[Error, Decorator[untyped]]
 
-    # @rbs (Store[untyped]) -> either[Error, Store[untyped]]
-    def apply_instrumentation: (Store[untyped]) -> either[Error, Store[untyped]]
+    # @rbs (Backend[untyped]) -> either[Error, Backend[untyped]]
+    def apply_instrumentation: (Backend[untyped]) -> either[Error, Backend[untyped]]
   end
 end

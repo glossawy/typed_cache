@@ -4,7 +4,7 @@ module TypedCache
   module Backends
     # @api private
     # Backend registry using composition
-    REGISTRY: untyped
+    REGISTRY: Registry[Backend]
 
     extend Forwardable
 

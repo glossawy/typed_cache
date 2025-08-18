@@ -86,6 +86,20 @@ module TypedCache
     def deconstruct_keys(keys)
       { error: }
     end
+
+    # @rbs (other: Object) -> bool
+    def ==(other)
+      other.is_a?(Left) && other.error == error
+    end
+
+    # @rbs () -> Integer
+    def hash = [Left, error].hash
+
+    # @rbs () -> String
+    def to_s = "Left(#{error})"
+
+    # @rbs () -> String
+    def inspect = "Left(#{error.inspect})"
   end
 
   # @rbs generic out R
@@ -139,5 +153,19 @@ module TypedCache
     def deconstruct_keys(keys)
       { value: }
     end
+
+    # @rbs (other: Object) -> bool
+    def ==(other)
+      other.is_a?(Right) && other.value == value
+    end
+
+    # @rbs () -> Integer
+    def hash = [Right, value].hash
+
+    # @rbs () -> String
+    def to_s = "Right(#{value})"
+
+    # @rbs () -> String
+    def inspect = "Right(#{value.inspect})"
   end
 end

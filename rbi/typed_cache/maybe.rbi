@@ -77,6 +77,18 @@ module TypedCache
 
     sig { override.returns(V) }
     def value_or_raise!; end
+
+    sig { returns(String) }
+    def to_s; end
+
+    sig { returns(String) }
+    def inspect; end
+
+    sig { params(other: Object).returns(T::Boolean) }
+    def ==(other); end
+
+    sig { returns(Integer) }
+    def hash; end
   end
 
   class Nothing
@@ -104,5 +116,17 @@ module TypedCache
 
     sig { override.returns(T.noreturn) }
     def value_or_raise!; end
+
+    sig { returns(String) }
+    def to_s; end
+
+    sig { returns(String) }
+    def inspect; end
+
+    sig { params(other: Object).returns(T::Boolean) }
+    def ==(other); end
+
+    sig { returns(Integer) }
+    def hash; end
   end
 end

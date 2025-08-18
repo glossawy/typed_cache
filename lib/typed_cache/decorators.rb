@@ -23,7 +23,7 @@ module TypedCache
     # lets end-users register their own via `Decorators.register`.
     REGISTRY = Registry.new('decorator', {
       instrumented: Instrumented,
-    }).freeze
+    }).freeze #: Registry[Decorator]
 
     class << self
       extend Forwardable

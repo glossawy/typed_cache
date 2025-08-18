@@ -9,52 +9,61 @@ module TypedCache
   # - Queries (get, key?, fetch) ask questions without side effects
   #
   # @rbs generic V
-  module Store[V]
+  class Store[V]
     type cache_key = String | CacheKey
 
     interface _Store[V]
-      def read: (cache_key) -> either[Error, Snapshot[V]]
+      def read: (cache_key) -> either[Error, Snapshot[maybe[V]]]
 
-      def read_all: (Array[cache_key]) -> either[Error, Array[Snapshot[V]]]
+      def read_all: (Array[cache_key]) -> either[Error, Hash[CacheKey, Snapshot[V]]]
 
       def ref: (cache_key) -> CacheRef[V]
 
       def write: (cache_key, V) -> either[Error, Snapshot[V]]
 
-      def write_all: (Hash[cache_key, V]) -> either[Error, Array[Snapshot[V]]]
+      def write_all: (Hash[cache_key, V]) -> either[Error, Hash[CacheKey, Snapshot[V]]]
 
-      def delete: (cache_key) -> either[Error, Snapshot[V]]
+      def delete: (cache_key) -> either[Error, maybe[V]]
 
       def key?: (cache_key) -> bool
 
-      def clear: () -> maybe[Error]
+      def clear: () -> void
 
-      def fetch: (cache_key) { () -> V? } -> either[Error, Snapshot[maybe[V]]]
+      def fetch: (cache_key) { (CacheKey) -> V? } -> either[Error, Snapshot[maybe[V]]]
 
       def fetch_all: (Array[cache_key]) { (CacheKey) -> V? } -> either[Error, Array[Snapshot[V]]]
+
+      def fetch_or_compute_all: (Array[cache_key]) { (Array[CacheKey]) -> Hash[CacheKey, V] } -> either[Error, Hash[CacheKey, Snapshot[V]]]
 
       def namespace: () -> Namespace
 
       def with_namespace: (Namespace) -> Store[V]
 
-      def store_type: () -> String
+      def at_namespace: (Namespace) -> Store[V]
+
+      def cache_for: [T] (Class[T], at: Namespace | String | Array[String]) -> Store[T]
+
+      def backend: () -> Backend[V]
     end
 
     include _Store[V]
 
-    interface _Decorator[V]
-      def initialize: (Store[V]) -> void
-    end
+    attr_reader namespace: Namespace
+
+    attr_reader backend: Backend[V]
+
+    # @rbs (Namespace, Backend[V]) -> void
+    def initialize: (Namespace, Backend[V]) -> void
 
     # @rbs (Store[V]) -> void
     def initialize_copy: (Store[V]) -> void
 
     # Retrieves a value from the cache
-    # @rbs (cache_key, **top) -> either[Error, Snapshot[V]]
-    def read: (cache_key, **top) -> either[Error, Snapshot[V]]
+    # @rbs (cache_key, **top) -> either[Error, Snapshot[maybe[V]]]
+    def read: (cache_key, **top) -> either[Error, Snapshot[maybe[V]]]
 
-    # @rbs (Array[cache_key], **top) -> either[Error, Hash[cache_key, Snapshot[V]]]
-    def read_all: (Array[cache_key], **top) -> either[Error, Hash[cache_key, Snapshot[V]]]
+    # @rbs (Array[cache_key], **top) -> either[Error, Hash[CacheKey, Snapshot[V]]]
+    def read_all: (Array[cache_key], **top) -> either[Error, Hash[CacheKey, Snapshot[V]]]
 
     # Retrieves a cache reference for a key
     # @rbs (cache_key) -> CacheRef[V]
@@ -64,59 +73,57 @@ module TypedCache
     # @rbs (cache_key, V, **top) -> either[Error, Snapshot[V]]
     def write: (cache_key, V, **top) -> either[Error, Snapshot[V]]
 
-    # @rbs (Hash[cache_key, V], **top) -> either[Error, Hash[cache_key, Snapshot[V]]]
-    def write_all: (Hash[cache_key, V], **top) -> either[Error, Hash[cache_key, Snapshot[V]]]
+    def write_all: (untyped values, **untyped kwargs) -> untyped
 
     # Removes a value from the cache, returning the removed value
-    # @rbs (cache_key) -> either[Error, Snapshot[V]]
-    def delete: (cache_key) -> either[Error, Snapshot[V]]
+    # @rbs (cache_key) -> either[Error, maybe[V]]
+    def delete: (cache_key) -> either[Error, maybe[V]]
 
     # Checks if a key exists in the cache (query operation)
     # @rbs (cache_key) -> bool
     def key?: (cache_key) -> bool
 
     # Clears all values from the cache namespace (command operation)
-    # @rbs () -> maybe[Error]
-    def clear: () -> maybe[Error]
+    # @rbs () -> void
+    def clear: () -> void
 
     # Fetches a value from cache, computing and storing it if not found
     # This is an atomic operation that combines read and write
-    # @rbs (cache_key, **top) { () -> V } -> either[Error, Snapshot[V]]
-    def fetch: (cache_key, **top) { () -> V } -> either[Error, Snapshot[V]]
+    # @rbs (cache_key, **top) { (CacheKey) -> V? } -> either[Error, Snapshot[maybe[V]]]
+    def fetch: (cache_key, **top) { (CacheKey) -> V? } -> either[Error, Snapshot[maybe[V]]]
 
-    # @rbs (Array[cache_key], **top) { (CacheKey) -> V } -> either[Error, Array[Snapshot[V]]]
-    def fetch_all: (Array[cache_key], **top) { (CacheKey) -> V } -> either[Error, Array[Snapshot[V]]]
+    # @rbs (Array[cache_key], **top) { (CacheKey) -> V? } -> either[Error, Hash[CacheKey, Snapshot[V]]]
+    def fetch_all: (Array[cache_key], **top) { (CacheKey) -> V? } -> either[Error, Hash[CacheKey, Snapshot[V]]]
+
+    # @rbs (Array[cache_key], **top) { (Array[CacheKey]) -> Hash[CacheKey, V] } -> either[Error, Hash[CacheKey, Snapshot[V]]]
+    def fetch_or_compute_all: (Array[cache_key], **top) { (Array[CacheKey]) -> Hash[CacheKey, V] } -> either[Error, Hash[CacheKey, Snapshot[V]]]
 
     # @rbs () -> Instrumenter
     def instrumenter: () -> Instrumenter
-
-    # Returns the namespace for this store (for instrumentation/debugging)
-    # @rbs () -> Namespace
-    def namespace: () -> Namespace
 
     # Accepts a String segment or a fully-formed Namespace and returns a cloned
     # store scoped to that namespace.
     # : (Namespace | String | Array[String]) -> Store[V]
     def with_namespace: (Namespace | String | Array[String]) -> Store[V]
 
-    # Returns the store type identifier for instrumentation/debugging
-    # @rbs () -> String
-    def store_type: () -> String
+    # @rbs [T] (Class[T], at: (Namespace | String | Array[String])) -> Store[T]
+    def cache_for: [T] (Class[T], at: Namespace | String | Array[String]) -> Store[T]
 
-    attr_writer namespace: Namespace
+    alias at_namespace with_namespace
+
+    # @rbs () -> String
+    def to_s: () -> String
+
+    # @rbs () -> String
+    def inspect: () -> String
+
+    attr_writer namespace: untyped
 
     private
-
-    # : (String) -> String
-    def snake_case: (String) -> String
 
     # : (cache_key) -> CacheKey
     def namespaced_key: (cache_key) -> CacheKey
   end
 
-  type backend[V] = Store::_Store[V]
-
-  type decorator[V] = backend[V] & Store::_Decorator[V]
-
-  type store[V] = backend[V] | decorator[V]
+  type store[V] = Store::_Store[V]
 end

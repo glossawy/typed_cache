@@ -7,13 +7,12 @@ RSpec::Matchers.define(:be_left) do
   end
 
   failure_message do |actual|
-    actual_repr = Object.instance_method(:to_s).bind_call(actual)
-    "expected #{actual_repr} to be Left"
+    errors = @expected_error_class == anything ? 'any error' : @expected_error_class.name
+    "expected #{actual.inspect} to be Left with #{errors}"
   end
 
   failure_message_when_negated do |actual|
-    actual_repr = Object.instance_method(:to_s).bind_call(actual)
-    "expected #{actual_repr} not to be Left"
+    "expected #{actual.inspect} not to be Left"
   end
 
   chain(:with) do |expected_error_class|
@@ -21,23 +20,23 @@ RSpec::Matchers.define(:be_left) do
   end
 end
 
-RSpec::Matchers.define(:be_right) do
+RSpec::Matchers.define(:be_right) do |expected_value|
   match do |actual|
-    @expected_value ||= anything
-    actual.right? && match(@expected_value).matches?(actual.value)
+    expected_value ||= anything
+    actual.right_or_raise!
+    match(expected_value).matches?(actual.value)
   end
 
   failure_message do |actual|
-    actual_repr = Object.instance_method(:to_s).bind_call(actual)
-    "expected #{actual_repr} to be Right"
+    description = expected_value.respond_to?(:description) ? expected_value.description : expected_value.inspect
+    "expected #{actual.inspect} to be Right with #{description}"
   end
 
   failure_message_when_negated do |actual|
-    actual_repr = Object.instance_method(:to_s).bind_call(actual)
-    "expected #{actual_repr} not to be Right"
+    "expected #{actual.inspect} not to be Right"
   end
 
-  chain(:with) do |expected_value|
-    @expected_value = expected_value
+  chain(:with) do |new_expected_value|
+    expected_value = new_expected_value
   end
 end

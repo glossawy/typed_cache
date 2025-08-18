@@ -79,6 +79,18 @@ module TypedCache
 
     # : (Array[top]) -> ({ error: E })
     def deconstruct_keys: (Array[top]) -> { error: E }
+
+    # @rbs (other: Object) -> bool
+    def ==: (other: Object) -> bool
+
+    # @rbs () -> Integer
+    def hash: () -> Integer
+
+    # @rbs () -> String
+    def to_s: () -> String
+
+    # @rbs () -> String
+    def inspect: () -> String
   end
 
   # @rbs generic out R
@@ -126,5 +138,17 @@ module TypedCache
 
     # : (Array[top]) -> ({ value: R })
     def deconstruct_keys: (Array[top]) -> { value: R }
+
+    # @rbs (other: Object) -> bool
+    def ==: (other: Object) -> bool
+
+    # @rbs () -> Integer
+    def hash: () -> Integer
+
+    # @rbs () -> String
+    def to_s: () -> String
+
+    # @rbs () -> String
+    def inspect: () -> String
   end
 end

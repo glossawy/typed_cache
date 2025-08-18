@@ -71,6 +71,18 @@ module TypedCache
 
     # : (Array[top]) -> ({ value: V })
     def deconstruct_keys: (Array[top]) -> { value: V }
+
+    # @rbs (other: Object) -> bool
+    def ==: (other: Object) -> bool
+
+    # @rbs () -> Integer
+    def hash: () -> Integer
+
+    # @rbs () -> String
+    def to_s: () -> String
+
+    # @rbs () -> String
+    def inspect: () -> String
   end
 
   class Nothing
@@ -101,5 +113,17 @@ module TypedCache
     # @rbs override
     # : -> V
     def value_or_raise!: ...
+
+    # @rbs (other: Object) -> bool
+    def ==: (other: Object) -> bool
+
+    # @rbs () -> Integer
+    def hash: () -> Integer
+
+    # @rbs () -> String
+    def to_s: () -> String
+
+    # @rbs () -> String
+    def inspect: () -> String
   end
 end

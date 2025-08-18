@@ -8,15 +8,18 @@ RSpec::Matchers.define(:be_snapshot) do |expected_value|
   end
 
   failure_message do |actual|
-    "expected #{actual} to be a snapshot with value #{expected_value}"
+    description = expected_value.respond_to?(:description) ? expected_value.description : expected_value.inspect
+    "expected #{actual.inspect} to be a snapshot with value #{description}"
   end
 
   failure_message_when_negated do |actual|
-    "expected #{actual} to not be a snapshot with value #{expected_value}"
+    description = expected_value.respond_to?(:description) ? expected_value.description : expected_value.inspect
+    "expected #{actual.inspect} to not be a snapshot with value #{description}"
   end
 
   description do
-    "be a snapshot with value #{expected_value}"
+    description = expected_value.respond_to?(:description) ? expected_value.description : expected_value.inspect
+    "be a snapshot with value #{description}"
   end
 end
 
@@ -28,15 +31,18 @@ RSpec::Matchers.define(:be_cached_value) do |expected_value|
   end
 
   failure_message do |actual|
-    "expected #{actual} to be a cache result with value #{expected_value}"
+    description = expected_value.respond_to?(:description) ? expected_value.description : expected_value.inspect
+    "expected #{actual.inspect} to be a cache result with value #{description}"
   end
 
   failure_message_when_negated do |actual|
-    "expected #{actual} to not be a cache result with value #{expected_value}"
+    description = expected_value.respond_to?(:description) ? expected_value.description : expected_value.inspect
+    "expected #{actual.inspect} to not be a cache result with value #{description}"
   end
 
   description do
-    "be a cache result with value #{expected_value}"
+    description = expected_value.respond_to?(:description) ? expected_value.description : expected_value.inspect
+    "be a cache result with value #{description}"
   end
 end
 
@@ -50,15 +56,18 @@ RSpec::Matchers.define(:be_cache_key) do |expected_key|
   end
 
   failure_message do |actual|
-    "expected #{actual} to be a cache key with value #{expected_key}"
+    description = expected_key.respond_to?(:description) ? expected_key.description : expected_key.inspect
+    "expected #{actual} to be a cache key with value #{description}"
   end
 
   failure_message_when_negated do |actual|
-    "expected #{actual} to not be a cache key with value #{expected_key}"
+    description = expected_key.respond_to?(:description) ? expected_key.description : expected_key.inspect
+    "expected #{actual} to not be a cache key with value #{description}"
   end
 
   description do
-    "be a cache key with value #{expected_key}"
+    description = expected_key.respond_to?(:description) ? expected_key.description : expected_key.inspect
+    "be a cache key with value #{description}"
   end
 end
 
@@ -72,15 +81,18 @@ RSpec::Matchers.define(:be_cache_reference) do |expected_key|
   end
 
   failure_message do |actual|
-    "expected #{actual} to be a cache reference with key #{expected_key}"
+    description = expected_key.respond_to?(:description) ? expected_key.description : expected_key.inspect
+    "expected #{actual} to be a cache reference with key #{description}"
   end
 
   failure_message_when_negated do |actual|
-    "expected #{actual} to not be a cache reference with key #{expected_key}"
+    description = expected_key.respond_to?(:description) ? expected_key.description : expected_key.inspect
+    "expected #{actual} to not be a cache reference with key #{description}"
   end
 
   description do
-    "be a cache reference with value #{expected_key}"
+    description = expected_key.respond_to?(:description) ? expected_key.description : expected_key.inspect
+    "be a cache reference with value #{description}"
   end
 end
 

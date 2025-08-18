@@ -78,6 +78,20 @@ module TypedCache
     def deconstruct_keys(keys)
       { value: }
     end
+
+    # @rbs (other: Object) -> bool
+    def ==(other)
+      other.is_a?(Some) && other.value == value
+    end
+
+    # @rbs () -> Integer
+    def hash = [Some, value].hash
+
+    # @rbs () -> String
+    def to_s = "Some(#{value})"
+
+    # @rbs () -> String
+    def inspect = "Some(#{value.inspect})"
   end
 
   class Nothing
@@ -106,5 +120,19 @@ module TypedCache
     # @rbs override
     #: -> V
     def value_or_raise! = raise TypedCache::TypeError, 'Nothing has no value'
+
+    # @rbs (other: Object) -> bool
+    def ==(other)
+      other.is_a?(Nothing)
+    end
+
+    # @rbs () -> Integer
+    def hash = [Nothing].hash
+
+    # @rbs () -> String
+    def to_s = 'Nothing'
+
+    # @rbs () -> String
+    def inspect = to_s
   end
 end

@@ -22,11 +22,28 @@ module TypedCache
       builder
     end
 
-    let(:store) { builder.build(namespace).value }
+    let(:store) { builder.build!(namespace) }
+    let(:backend) { store.backend }
+
+    describe '#build!' do
+      it 'builds a store' do
+        expect(store).to(be_a(Store))
+      end
+
+      it 'raises an error if the build fails' do
+        builder = TypedCache.builder.with_backend(:invalid)
+        expect { builder.build!(namespace) }.to(raise_error(ArgumentError))
+      end
+    end
 
     describe '#build' do
       it 'builds a store without decorators' do
-        expect(store).to(be_a(Backends::Memory))
+        expect(backend).to(be_a(Backends::Memory))
+      end
+
+      it 'returns a Left if the build fails' do
+        builder = TypedCache.builder.with_backend(:invalid)
+        expect(builder.build(namespace)).to(be_left.with(ArgumentError))
       end
     end
 
@@ -40,27 +57,28 @@ module TypedCache
       end
 
       it 'builds a store with a decorator' do
-        decorator = store
+        decorator = backend
         expect(decorator).to(be_a(Decorators::Instrumented))
       end
 
       it 'the decorator wraps the backend' do
-        decorator = store
-        expect(decorator.store).to(be_a(Backends::Memory))
+        expect(backend.backend).to(be_a(Backends::Memory))
       end
 
       context 'with a custom decorator' do
         let(:decorator_class) do
           Class.new do
             include Decorator
-            attr_reader :store
+            attr_reader :backend
 
-            def initialize(store, **)
-              @store = store
+            def initialize(backend, **)
+              @backend = backend
             end
 
             def read(key)
-              super.map { |snapshot| snapshot.map { |v| "decorated_#{v}" } }
+              result = super
+
+              "decorated_#{result}" if result
             end
           end
         end
@@ -71,7 +89,7 @@ module TypedCache
         it 'applies the decorator' do
           store.write('k', 'v')
           result = store.read('k')
-          expect(result).to(be_cached_value('decorated_v'))
+          expect(result).to(be_cached_value(some('decorated_v')))
         end
       end
     end
@@ -81,11 +99,11 @@ module TypedCache
         let(:instrumenter_source) { :rails }
 
         it 'applies the instrumented decorator' do
-          expect(store).to(be_a(Decorators::Instrumented))
+          expect(backend).to(be_a(Decorators::Instrumented))
         end
 
         it 'applies the correct instrumenter type' do
-          expect(store.instrumenter).to(be_a(Instrumenters::ActiveSupport))
+          expect(backend.instrumenter).to(be_a(Instrumenters::ActiveSupport))
         end
       end
 
@@ -93,11 +111,11 @@ module TypedCache
         let(:instrumenter_source) { :dry }
 
         it 'applies the instrumented decorator' do
-          expect(store).to(be_a(Decorators::Instrumented))
+          expect(backend).to(be_a(Decorators::Instrumented))
         end
 
         it 'applies the correct instrumenter type' do
-          expect(store.instrumenter).to(be_a(Instrumenters::Monitor))
+          expect(backend.instrumenter).to(be_a(Instrumenters::Monitor))
         end
       end
 
@@ -105,11 +123,11 @@ module TypedCache
         let(:instrumenter_source) { :default }
 
         it 'applies the instrumented decorator' do
-          expect(store).to(be_a(Decorators::Instrumented))
+          expect(backend).to(be_a(Decorators::Instrumented))
         end
 
         it 'applies the correct instrumenter type' do
-          expect(store.instrumenter).to(be_a(Instrumenters::Null))
+          expect(backend.instrumenter).to(be_a(Instrumenters::Null))
         end
       end
 
@@ -117,7 +135,7 @@ module TypedCache
         let(:instrumenter_source) { Instrumenters::Null.new(namespace: 'custom') }
 
         it 'accepts a custom instrumenter instance' do
-          expect(store.instrumenter).to(be(instrumenter_source))
+          expect(backend.instrumenter).to(be(instrumenter_source))
         end
       end
 

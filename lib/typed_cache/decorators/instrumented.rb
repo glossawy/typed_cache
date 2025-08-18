@@ -9,7 +9,7 @@ module TypedCache
 
     extend Forwardable
 
-    attr_reader :store #: TypedCache::Store[V]
+    attr_reader :backend #: Backend[V]
     attr_reader :instrumenter #: Instrumenter
 
     class << self
@@ -27,7 +27,7 @@ module TypedCache
             return #{alias_prefix}_without_instrumentation(...) if @in_instrumentation
 
             key = #{alias_prefix}_instrumentation_key(...)
-            instrumenter.instrument(:"#{operation}", key, store_type: store_type) do
+            instrumenter.instrument(:"#{operation}", key) do
               @in_instrumentation = true
 
               #{alias_prefix}_without_instrumentation(...)
@@ -42,9 +42,9 @@ module TypedCache
       end
     end
 
-    #: (TypedCache::Store[V], instrumenter: Instrumenter) -> void
-    def initialize(store, instrumenter:)
-      @store = store
+    #: (Backend[V], instrumenter: Instrumenter) -> void
+    def initialize(backend, instrumenter:)
+      @backend = backend
       @instrumenter = instrumenter
 
       # Avoid instrumenting the cache calls themselves, fetch_all may call fetch for example
@@ -58,21 +58,14 @@ module TypedCache
       @instrumenter = other.instrumenter
     end
 
-    # @rbs override
-    #: -> String
-    def store_type
-      # Use polymorphism - delegate to the wrapped store
-      "instrumented(#{store.store_type})"
-    end
-
     # Additional methods that might exist on the wrapped store
     def respond_to_missing?(method_name, include_private = false)
-      store.respond_to?(method_name, include_private) || super
+      backend.respond_to?(method_name, include_private) || super
     end
 
     def method_missing(method_name, *args, &block)
-      if store.respond_to?(method_name)
-        store.send(method_name, *args, &block)
+      if backend.respond_to?(method_name)
+        backend.send(method_name, *args, &block)
       else
         super
       end
@@ -80,12 +73,12 @@ module TypedCache
 
     # Instrument core operations with proper key extraction
     instrument(:read) { |key, *_| key }
-    instrument(:read_all) { |keys, *_| keys.map(&:to_s).join('_') }
-    instrument(:write)    { |key, *_| key }
-    instrument(:write_all) { |values, *_| values.map { |key, _| key.to_s }.join('_') }
+    instrument(:read_multi) { |keys, *_| keys.map(&:to_s).join('_') }
+    instrument(:write) { |key, *_| key }
+    instrument(:write_multi) { |values, *_| values.map { |key, _| key.to_s }.join('_') }
     instrument(:delete) { |key, *_| key }
     instrument(:fetch)  { |key, *_| key }
-    instrument(:fetch_all) { |keys, *_| keys.map(&:to_s).join('_') }
+    instrument(:fetch_multi) { |keys, *_| keys.map(&:to_s).join('_') }
     instrument(:key?)   { |key, *_| key }
     instrument(:clear)  { 'all' }
   end

@@ -7,20 +7,32 @@ module TypedCache
   module Decorator[V]
     extend Forwardable
 
-    include Store[V]
+    interface _Decorator[V]
+      def initialize: (Backend[V]) -> void
+    end
 
-    include Store::_Store[V]
+    include Backend[V]
 
-    include Store::_Decorator[V]
+    include Backend::_Backend[V]
 
-    def store: () -> Store[V]
+    include _Decorator[V]
 
     # @rbs override
-    # : (cache_key) -> either[Error, CacheRef[V]]
-    def ref: ...
+    # @rbs () -> Backend[V]
+    def backend: ...
 
     # @rbs override
     # : (self) -> void
     def initialize_copy: ...
+
+    # @rbs override
+    # @rbs () -> String
+    def to_s: ...
+
+    # @rbs override
+    # @rbs () -> String
+    def inspect: ...
   end
+
+  type decorator[V] = Decorator::_Decorator[V] & Backend[V]
 end
