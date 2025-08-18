@@ -31,9 +31,6 @@ module TypedCache
     sig { abstract.params(key: KeyValue).returns(T::Boolean) }
     def key?(key); end
 
-    sig { abstract.returns(T.nilable(Instrumenter)) }
-    def instrumenter; end
-
     sig do
       abstract
         .type_parameters(:K)

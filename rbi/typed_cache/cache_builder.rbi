@@ -10,7 +10,7 @@ module TypedCache
     abstract!
     sealed!
 
-    sig { abstract.params(name: Symbol, args: T.untyped, options: T::Hash[Symbol, T.anything]).returns(T.all(CacheDefinition, CacheBuilder)) }
+    sig { abstract.params(name: Symbol, args: T.untyped, options: T::Hash[Symbol, T.anything]).returns(T.all(::TypedCache::CacheDefinition, ::TypedCache::CacheBuilder)) }
     def with_backend(name, *args, **options); end
 
     sig { abstract.params(name: Symbol, options: T::Hash[Symbol, T.anything]).returns(T.self_type) }

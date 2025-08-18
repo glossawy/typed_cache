@@ -17,37 +17,34 @@ module TypedCache
     sig { abstract.returns(::TypedCache::Backend[BackendType]) }
     def backend; end
 
-    sig { override.params(key: KeyValue, opts: T::Hash[Symbol, T.untyped]).returns(T.nilable(BackendType)) }
+    sig { override.overridable.params(key: KeyValue, opts: T::Hash[Symbol, T.untyped]).returns(T.nilable(BackendType)) }
     def read(key, **opts); end
 
-    sig { override.params(key: KeyValue, value: BackendType, opts: T::Hash[Symbol, T.untyped]).returns(BackendType) }
+    sig { override.overridable.params(key: KeyValue, value: BackendType, opts: T::Hash[Symbol, T.untyped]).returns(BackendType) }
     def write(key, value, **opts); end
 
-    sig { override.params(key: KeyValue, opts: T::Hash[Symbol, T.untyped]).returns(T.nilable(BackendType)) }
+    sig { override.overridable.params(key: KeyValue, opts: T::Hash[Symbol, T.untyped]).returns(T.nilable(BackendType)) }
     def delete(key, **opts); end
 
-    sig { override.params(key: KeyValue).returns(T::Boolean) }
+    sig { override.overridable.params(key: KeyValue).returns(T::Boolean) }
     def key?(key); end
 
-    sig { override.params(key: KeyValue, opts: T::Hash[Symbol, T.untyped], block: T.proc.returns(T.nilable(BackendType))).returns(T.nilable(BackendType)) }
+    sig { override.overridable.params(key: KeyValue, opts: T::Hash[Symbol, T.untyped], block: T.proc.returns(T.nilable(BackendType))).returns(T.nilable(BackendType)) }
     def fetch(key, **opts, &block); end
 
-    sig { override.params(keys: T::Array[KeyValue], opts: T::Hash[Symbol, T.untyped]).returns(T::Hash[KeyValue, BackendType]) }
+    sig { override.overridable.params(keys: T::Array[KeyValue], opts: T::Hash[Symbol, T.untyped]).returns(T::Hash[KeyValue, BackendType]) }
     def read_multi(keys, **opts); end
 
-    sig { override.params(keys: T::Array[KeyValue], opts: T::Hash[Symbol, T.untyped], block: T.proc.params(key: KeyValue).returns(T.nilable(BackendType))).returns(T::Hash[KeyValue, BackendType]) }
+    sig { override.overridable.params(keys: T::Array[KeyValue], opts: T::Hash[Symbol, T.untyped], block: T.proc.params(key: KeyValue).returns(T.nilable(BackendType))).returns(T::Hash[KeyValue, BackendType]) }
     def fetch_multi(keys, **opts, &block); end
 
-    sig { override.params(values: T::Hash[KeyValue, BackendType], opts: T::Hash[Symbol, T.untyped]).returns(T::Hash[KeyValue, BackendType]) }
+    sig { override.overridable.params(values: T::Hash[KeyValue, BackendType], opts: T::Hash[Symbol, T.untyped]).returns(T::Hash[KeyValue, BackendType]) }
     def write_multi(values, **opts); end
 
-    sig { override.void }
+    sig { override.overridable.void }
     def clear; end
 
     sig { overridable.params(other: T.self_type).void }
     def initialize_copy(other); end
-
-    sig { override.returns(T.nilable(::TypedCache::Instrumenter)) }
-    def instrumenter; end
   end
 end
