@@ -39,4 +39,9 @@ module TypedCache
     sig { abstract.returns(::TypedCache::Backend[T.untyped]) }
     def build_backend!; end
   end
+
+  class CacheBuilder
+    include ::TypedCache::CacheBuilding
+    include ::TypedCache::CacheDefinition
+  end
 end
