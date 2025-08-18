@@ -2,7 +2,9 @@
 
 == Unreleased
 
+== 0.4.1
 
+* fix: RBI issues from overlapping names
 
 == 0.4.0
 

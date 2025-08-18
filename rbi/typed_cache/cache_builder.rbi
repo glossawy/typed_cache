@@ -1,7 +1,7 @@
 # typed: strict
 
 module TypedCache
-  module CacheDefinition
+  module CacheDefining
     extend T::Sig
     extend T::Helpers
 
@@ -10,7 +10,7 @@ module TypedCache
     abstract!
     sealed!
 
-    sig { abstract.params(name: Symbol, args: T.untyped, options: T::Hash[Symbol, T.anything]).returns(T.all(::TypedCache::CacheDefinition, ::TypedCache::CacheBuilding)) }
+    sig { abstract.params(name: Symbol, args: T.untyped, options: T::Hash[Symbol, T.anything]).returns(T.all(::TypedCache::CacheDefining, ::TypedCache::CacheBuilding)) }
     def with_backend(name, *args, **options); end
 
     sig { abstract.params(name: Symbol, options: T::Hash[Symbol, T.anything]).returns(T.self_type) }
@@ -42,6 +42,6 @@ module TypedCache
 
   class CacheBuilder
     include ::TypedCache::CacheBuilding
-    include ::TypedCache::CacheDefinition
+    include ::TypedCache::CacheDefining
   end
 end
