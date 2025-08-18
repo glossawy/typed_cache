@@ -12,7 +12,7 @@ module TypedCache
     # : -> Registry
     def self.registry: () -> Registry
 
-    def resolve: (Symbol, *untyped, **untyped) -> either[Error, Store[untyped]]
+    def resolve: (Symbol, *untyped, **untyped) -> either[Error, Backend[untyped]]
 
     def available: () -> Array[Symbol]
 

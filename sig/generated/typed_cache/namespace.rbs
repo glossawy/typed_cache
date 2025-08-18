@@ -141,8 +141,6 @@ module TypedCache
     # @rbs (Object) -> bool
     def ==: (Object) -> bool
 
-    alias eql? ==
-
     private
 
     # @rbs (String) -> String

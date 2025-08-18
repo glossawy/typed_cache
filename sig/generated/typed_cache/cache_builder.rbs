@@ -49,6 +49,16 @@ module TypedCache
     # @rbs (Namespace) -> Store[untyped]
     def build!: (Namespace) -> Store[untyped]
 
+    # Constructs only a typed backend from the registry without a Store wrapper
+    # @rbs () -> either[Error, Backend[untyped]]
+    def build_backend: () -> either[Error, Backend[untyped]]
+
+    # Constructs only a typed backend from the registry without a Store wrapper,
+    # raises an error if the backend cannot be constructed
+    #
+    # @rbs () -> Backend[untyped]
+    def build_backend!: () -> Backend[untyped]
+
     # Familiar Ruby fluent interface - always succeeds
     # Invalid configurations are caught during build()
     # @rbs (Symbol, *untyped, **untyped) -> self

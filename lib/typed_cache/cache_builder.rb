@@ -16,6 +16,9 @@ module TypedCache
   # @rbs!
   #  interface _CacheBuilder
   #    def build(namespace: Namespace) -> either[Error, Store[untyped]]
+  #    def build!(namespace: Namespace) -> Store[untyped]
+  #    def build_backend -> either[Error, Backend[untyped]]
+  #    def build_backend! -> Backend[untyped]
   #  end
 
   # @rbs!
@@ -92,6 +95,20 @@ module TypedCache
     # @rbs (Namespace) -> Store[untyped]
     def build!(namespace = Namespace.root)
       build(namespace).right_or_raise!
+    end
+
+    # Constructs only a typed backend from the registry without a Store wrapper
+    # @rbs () -> either[Error, Backend[untyped]]
+    def build_backend
+      create_backend
+    end
+
+    # Constructs only a typed backend from the registry without a Store wrapper,
+    # raises an error if the backend cannot be constructed
+    #
+    # @rbs () -> Backend[untyped]
+    def build_backend!
+      create_backend.right_or_raise!
     end
 
     # Familiar Ruby fluent interface - always succeeds

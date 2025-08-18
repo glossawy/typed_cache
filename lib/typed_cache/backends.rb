@@ -23,7 +23,7 @@ module TypedCache
 
       # Convenience method delegating to registry
       # @rbs!
-      #   def resolve: (Symbol, *untyped, **untyped) -> either[Error, Store[untyped]]
+      #   def resolve: (Symbol, *untyped, **untyped) -> either[Error, Backend[untyped]]
       #   def available: -> Array[Symbol]
       #   def register: (Symbol, Class) -> either[Error, void]
       #   def registered?: (Symbol) -> bool

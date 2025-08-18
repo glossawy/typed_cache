@@ -25,6 +25,28 @@ module TypedCache
     let(:store) { builder.build!(namespace) }
     let(:backend) { store.backend }
 
+    describe '#build_backend' do
+      it 'builds a backend' do
+        expect(builder.build_backend).to(be_right.with(be_a(Backends::Memory)))
+      end
+
+      it 'returns a Left if the build fails' do
+        builder = TypedCache.builder.with_backend(:invalid)
+        expect(builder.build_backend).to(be_left.with(ArgumentError))
+      end
+    end
+
+    describe '#build_backend!' do
+      it 'builds a backend' do
+        expect(builder.build_backend!).to(be_a(Backends::Memory))
+      end
+
+      it 'raises an error if the build fails' do
+        builder = TypedCache.builder.with_backend(:invalid)
+        expect { builder.build_backend! }.to(raise_error(ArgumentError))
+      end
+    end
+
     describe '#build!' do
       it 'builds a store' do
         expect(store).to(be_a(Store))

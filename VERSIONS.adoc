@@ -4,6 +4,7 @@
 
 
 * feat: Cache building is now immutable, allowing for more flexible and composable cache definitions.
+* feat: Added `build_backend` and `build_backend!` methods to `CacheBuilder` to construct only a typed backend from the registry without a Store wrapper.
 
 * fix: Broken default methods on Store
 

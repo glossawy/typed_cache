@@ -27,10 +27,16 @@ module TypedCache
     interface!
     sealed!
 
-    sig { abstract.params(namespace: ::TypedCache::Namespace).returns(::TypedCache::Either[Error, ::TypedCache::Store[T.untyped]]) }
+    sig { abstract.params(namespace: ::TypedCache::Namespace).returns(::TypedCache::Either[::TypedCache::Error, ::TypedCache::Store[T.untyped]]) }
     def build(namespace = T.unsafe(nil)); end
 
     sig { abstract.params(namespace: ::TypedCache::Namespace).returns(::TypedCache::Store[T.untyped]) }
     def build!(namespace = T.unsafe(nil)); end
+
+    sig { abstract.returns(::TypedCache::Either[::TypedCache::Error, ::TypedCache::Backend[T.untyped]]) }
+    def build_backend; end
+
+    sig { abstract.returns(::TypedCache::Backend[T.untyped]) }
+    def build_backend!; end
   end
 end

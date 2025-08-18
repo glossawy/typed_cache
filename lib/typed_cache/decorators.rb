@@ -31,6 +31,12 @@ module TypedCache
       # Delegate common registry helpers
       delegate [:resolve, :register, :available, :registered?] => :registry
 
+      # @rbs!
+      #   def resolve: (Symbol, *untyped, **untyped) -> either[Error, Decorator[untyped]]
+      #   def available: -> Array[Symbol]
+      #   def register: (Symbol, Class) -> either[Error, void]
+      #   def registered?: (Symbol) -> bool
+
       # @api private
       # @rbs () -> Registry[Store[untyped]]
       def registry = REGISTRY
