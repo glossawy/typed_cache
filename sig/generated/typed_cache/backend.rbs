@@ -21,7 +21,7 @@ module TypedCache
 
       def write_multi: (Hash[cache_key, V], **top) -> Hash[cache_key, V]
 
-      def delete: (cache_key) -> V?
+      def delete: (cache_key, **top) -> V?
 
       def key?: (cache_key) -> bool
 
@@ -51,7 +51,7 @@ module TypedCache
     def write_multi: ...
 
     # @rbs override
-    # @rbs (cache_key) -> V?
+    # @rbs (cache_key, **top) -> V?
     def delete: ...
 
     # @rbs override
@@ -59,7 +59,7 @@ module TypedCache
     def key?: ...
 
     # @rbs override
-    # @rbs () -> void
+    # @rbs (**top) -> void
     def clear: ...
 
     # @rbs override
@@ -69,14 +69,6 @@ module TypedCache
     # @rbs override
     # @rbs (Array[cache_key], **top) { (cache_key) -> V? } -> Hash[cache_key, V]
     def fetch_multi: ...
-
-    # @rbs override
-    # @rbs () -> String
-    def to_s: ...
-
-    # @rbs override
-    # @rbs () -> String
-    def inspect: ...
   end
 
   type backend[V] = Backend::_Backend[V]
